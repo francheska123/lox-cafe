@@ -458,6 +458,9 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .field textarea.code { font: 12px/1.35 ui-monospace, Menlo, monospace; width: 100%; border: 2.5px solid var(--ink); border-radius: 10px; padding: 7px 9px; background: #fff; resize: vertical; user-select: text; -webkit-user-select: text; word-break: break-all; }
+  .field textarea#pasteCode { font-size: 16px; }
+  .codemsg { color: var(--cherry); font-weight: 600; }
 
   /* Phone layout: one screen, no scrolling while you play */
   .dumpbtn { display: none; }
@@ -764,6 +767,9 @@
       // Players from before the shop existed get back pay for days already cleared
       s = { best: b, bank: b * 15, owned: {}, theme: 'theme_mint', stars: {}, sigDrink: null, sigPastry: null };
     }
+    return normalizeSave(s);
+  }
+  function normalizeSave(s) {
     s.owned = s.owned || {}; s.stars = s.stars || {};
     s.lv = s.lv || {}; s.ach = s.ach || {}; s.regs = s.regs || {};
     s.tot = Object.assign({ shifts: 0, served: 0, pastries: 0, critics: 0, sig: 0, tasks: 0, perfect: 0, bestCombo: 0 }, s.tot || {});
@@ -1604,6 +1610,55 @@
     $('#sigBack').onclick = () => { draft = null; renderShop(); };
   }
 
+  /* ---------- Save codes: move progress between devices or addresses ---------- */
+  const encodeSave = () => 'LOX1:' + btoa(unescape(encodeURIComponent(JSON.stringify(SAVE))));
+  function decodeSave(code) {
+    const m = String(code).trim().replace(/\s+/g, '').match(/^LOX1:([A-Za-z0-9+/=]+)$/);
+    if (!m) return null;
+    try {
+      const s = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+      if (!s || typeof s !== 'object' || typeof s.best !== 'number' || typeof s.bank !== 'number') return null;
+      return normalizeSave(s);
+    } catch (e) { return null; }
+  }
+
+  function saveCodeCard(msg = '', pending = null) {
+    const p = pending;
+    showCard(`
+      <h2>Save code</h2>
+      <p>Move your café to another phone, computer or browser. Copy your code here, then paste it into Save code on the other device.</p>
+      <div class="field"><label for="myCode">Your code · Day ${SAVE.best}, ${money(SAVE.bank)} saved</label>
+        <textarea id="myCode" class="code" readonly rows="3">${encodeSave()}</textarea></div>
+      <div class="btnrow"><button class="big" id="copyCode" type="button">Copy my code</button></div>
+      <div class="field" style="margin-top:16px"><label for="pasteCode">Load a code</label>
+        <textarea id="pasteCode" class="code" rows="3" placeholder="Paste a code that starts with LOX1:"></textarea></div>
+      ${msg ? `<p class="codemsg">${msg}</p>` : ''}
+      ${p ? `<div class="unlock goal"><b>Replace this café?</b> The code has Day ${p.best} cleared and ${money(p.bank)} saved. Your progress on this device gets replaced. Copy your own code first if you want to keep it.</div>
+        <div class="btnrow"><button class="big" id="confirmLoad" type="button">Yes, load it</button><button class="big alt" id="cancelLoad" type="button">Cancel</button></div>`
+        : `<div class="btnrow"><button class="big alt" id="loadCode" type="button">Load code</button><button class="big alt" id="codeBack" type="button">Back</button></div>`}`, 'wide', !p);
+    const mine = $('#myCode');
+    $('#copyCode').onclick = () => {
+      const done = () => { $('#copyCode').textContent = 'Copied!'; };
+      const fallback = () => { mine.focus(); mine.select(); $('#copyCode').textContent = 'Selected, now copy it'; };
+      try { navigator.clipboard.writeText(mine.value).then(done, fallback); } catch (e) { fallback(); }
+    };
+    if (p) {
+      $('#confirmLoad').onclick = () => {
+        SAVE = p; persist(); applyTheme(SAVE.theme); renderDecor();
+        S = freshState(1); buildStations(); renderMenu(); renderCups(); renderOven(); renderHUD();
+        sfx.cash(); title();
+      };
+      $('#cancelLoad').onclick = () => saveCodeCard();
+    } else {
+      $('#loadCode').onclick = () => {
+        const s = decodeSave($('#pasteCode').value);
+        if (!s) { saveCodeCard("That code didn't work. Paste the whole thing, starting with LOX1:"); return; }
+        saveCodeCard('', s);
+      };
+      $('#codeBack').onclick = title;
+    }
+  }
+
   /* ---------- Overlays ---------- */
   function showCard(html, cls = '', focus = true) {
     const card = $('#card');
@@ -1630,12 +1685,14 @@
         ${SAVE.best ? `<button class="big" id="contBtn" type="button">Continue at Day ${reach()}</button><button class="big alt" id="startBtn" type="button">Replay Day 1</button>` : `<button class="big" id="startBtn" type="button">Start Day 1</button>`}
         <button class="big alt" id="shopBtn" type="button">Shop</button>
         <button class="big alt" id="stkTitle" type="button">Stickers ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button>
+        <button class="big alt" id="codeTitle" type="button">Save code</button>
       </div>
       <p class="small">Keys: 1 / 2 / 3 switch cups · Q hot cup · W iced cup · Esc pause. Progress saves in this browser.</p>`);
     $('#startBtn').onclick = () => startDay(1);
     const cb = $('#contBtn'); if (cb) cb.onclick = () => startDay(reach());
     $('#shopBtn').onclick = () => openShop(title);
     $('#stkTitle').onclick = () => stickerBook(title);
+    $('#codeTitle').onclick = () => saveCodeCard();
   }
 
   function pause(on, view = 'break') {
