@@ -1,0 +1,1744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Run a cozy coffee shop: make drinks, warm pastries and keep customers happy. A Diner Dash-style game by Francheska Guerrero.">
+<meta name="theme-color" content="#BFE6D5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lox Café">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lox Café">
+<meta property="og:description" content="Run a cozy coffee shop: make drinks, warm pastries and keep customers happy.">
+<meta property="og:url" content="https://francheska123.github.io/lox-cafe/">
+<meta property="og:image" content="https://francheska123.github.io/lox-cafe/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Lox Café</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gochi+Hand&family=Shrikhand&display=swap">
+<style>
+  /* Single-theme on purpose: the café is its own bright little world.
+     The café-theme tokens (wall, wood, awning, bar, board) are swapped by the
+     in-game Themes shop via applyTheme(). */
+  :root {
+    --ink: #2B1A14;
+    --wall: #BFE6D5;
+    --wall-2: #A8DCC6;
+    --tile: #F4FBF7;
+    --wood: #B8683D;
+    --wood-dk: #8C4A28;
+    --wood-hi: #D48454;
+    --awn: #F2545B;
+    --awn2: #FFFDF7;
+    --bar: #4A2A1A;
+    --board: #2E463C;
+    --espresso: #4A2A1A;
+    --butter: #FFD66B;
+    --cherry: #F2545B;
+    --mint: #3FA37D;
+    --paper: #FFFDF7;
+    --chalk: #F3F1E6;
+    --muted: #6B5A52;
+    --display: "Shrikhand", "Cooper Black", Georgia, serif;
+    --ui: "Fredoka", ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+    --hand: "Gochi Hand", "Comic Sans MS", cursive;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--wall);
+    background-image:
+      linear-gradient(90deg, rgba(255,255,255,.18) 50%, transparent 50%),
+      linear-gradient(rgba(255,255,255,.18) 50%, transparent 50%);
+    background-size: 36px 36px;
+    color: var(--ink);
+    font-family: var(--ui);
+    font-size: 15px;
+    padding-inline: 16px;
+    padding-block: 12px 24px;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, summary:focus-visible { outline: 3px solid var(--cherry); outline-offset: 2px; }
+
+  .game {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    gap: 14px;
+    position: relative;
+  }
+  @media (max-width: 820px) { .game { grid-template-columns: 1fr; } }
+
+  /* HUD */
+  .hud {
+    grid-column: 1 / -1;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    padding: 8px 14px;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .logo { font-family: var(--display); font-size: 24px; line-height: 1; color: var(--cherry); -webkit-text-stroke: 1px var(--ink); margin-right: auto; }
+  .logo small { font-family: var(--ui); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); -webkit-text-stroke: 0; margin-left: 6px; }
+  .stat { display: flex; flex-direction: column; line-height: 1.1; }
+  .stat .k, .task .k { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .stat .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .goalbar { width: 120px; height: 8px; border: 2px solid var(--ink); border-radius: 6px; background: #fff; overflow: hidden; margin-top: 3px; }
+  .goalbar i, .taskbar i { display: block; height: 100%; width: 0; background: var(--mint); transition: width .3s; }
+  .goalbar i.met { background: var(--butter); }
+  #streak.hot .v { color: var(--cherry); }
+  .iconbtn {
+    border: 2.5px solid var(--ink); background: var(--butter); border-radius: 10px;
+    padding: 4px 10px; font-weight: 600; font-size: 13px; box-shadow: 0 3px 0 var(--ink);
+  }
+  .iconbtn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+
+  /* Counter + customers */
+  .main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .shop {
+    position: relative;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(var(--tile) 0 62%, var(--wall-2) 62%);
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .shop::before { /* awning */
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 16px;
+    background: repeating-linear-gradient(90deg, var(--awn) 0 22px, var(--awn2) 22px 44px);
+    border-bottom: 3px solid var(--ink);
+  }
+  .rush {
+    position: absolute; top: 24px; left: 50%; transform: translateX(-50%); z-index: 3;
+    background: var(--cherry); color: #fff; border: 2.5px solid var(--ink); border-radius: 999px;
+    padding: 2px 14px; font-weight: 700; font-size: 13px; letter-spacing: .04em; white-space: nowrap;
+    animation: pulse .8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse { to { transform: translateX(-50%) scale(1.08); } }
+  .spots {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    padding: 26px 6px 0; gap: 4px;
+    position: relative; z-index: 1;
+  }
+  .spot { position: relative; height: 236px; }
+  .counter {
+    position: relative; z-index: 2;
+    height: 46px; margin-top: -20px;
+    background: var(--wood);
+    border-top: 3px solid var(--ink);
+    box-shadow: inset 0 8px 0 var(--wood-hi);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 16px 12px 0;
+  }
+  .pat { height: 10px; border: 2px solid var(--ink); border-radius: 6px; background: var(--wood-dk); overflow: hidden; opacity: 0; transition: opacity .2s; }
+  .pat.on { opacity: 1; }
+  .pat i { display: block; height: 100%; width: 100%; background: var(--mint); }
+  .pat.meh i { background: var(--butter); }
+  .pat.mad i { background: var(--cherry); }
+
+  .cust {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    background: none; border: 0; padding: 0;
+    animation: walkin .45s cubic-bezier(.2,.9,.3,1.3);
+  }
+  .cust.leaving { animation: walkout .45s ease-in forwards; pointer-events: none; }
+  .cust.wrong .person { animation: shake .35s; }
+  @keyframes walkin { from { transform: translateY(40px); opacity: 0; } }
+  @keyframes walkout { to { transform: translateY(40px) scale(.9); opacity: 0; } }
+  @keyframes shake { 25% { transform: translateX(-6px) rotate(-4deg); } 75% { transform: translateX(6px) rotate(4deg); } }
+
+  .ticket {
+    position: relative; margin-bottom: 8px;
+    background: var(--paper); border: 2.5px solid var(--ink); border-radius: 12px;
+    padding: 5px 7px; min-width: 84%; max-width: 100%;
+    font-family: var(--hand); font-size: 17px; line-height: 1.05; text-align: center;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+  .ticket::after {
+    content: ""; position: absolute; left: 50%; bottom: -9px; width: 12px; height: 12px;
+    background: inherit; border-right: 2.5px solid var(--ink); border-bottom: 2.5px solid var(--ink);
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .cust:hover .ticket, .cust:focus-visible .ticket { background: #FFF6CF; }
+  .cust.critic .ticket { background: #F1ECFF; }
+  .who { display: block; font-family: var(--ui); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--cherry); margin-bottom: 2px; }
+  .critic .who { color: #6A4BB5; }
+  .part { display: block; }
+  .part.p { font-size: 14px; margin-top: 3px; }
+  .part.p.solo { font-size: 17px; margin-top: 0; }
+  .part.done { opacity: .4; text-decoration: line-through; }
+  .spc { color: var(--cherry); }
+  .mods { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 3px; }
+  .mod { font-family: var(--ui); font-size: 10px; font-weight: 700; background: var(--cherry); color: #fff; border-radius: 6px; padding: 1px 5px; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; margin-top: 4px; }
+  .chip { font-family: var(--ui); font-size: 10px; font-weight: 600; line-height: 1; padding: 2px 4px; border-radius: 5px; border: 1.5px solid var(--ink); background: var(--c); color: var(--t); }
+  .nochips .chips { display: none; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--c); display: inline-block; flex: none; }
+
+  /* People */
+  .person { position: relative; width: 60px; height: 84px; transform-origin: bottom center; }
+  .person.kid { transform: scale(.78); }
+  .hairback { position: absolute; left: 6px; top: 6px; width: 48px; height: 52px; border-radius: 24px 24px 10px 10px; background: var(--hair); border: 3px solid var(--ink); }
+  .head { position: absolute; left: 9px; top: 10px; width: 42px; height: 42px; border-radius: 50%; background: var(--skin); border: 3px solid var(--ink); z-index: 1; }
+  .cap { position: absolute; left: 8px; top: 6px; width: 44px; height: 20px; border-radius: 22px 22px 4px 4px; background: var(--hair); border: 3px solid var(--ink); z-index: 2; }
+  .bun { position: absolute; left: 21px; top: -6px; width: 18px; height: 18px; border-radius: 50%; background: var(--hair); border: 3px solid var(--ink); }
+  .beanie { position: absolute; left: 7px; top: 2px; width: 46px; height: 24px; border-radius: 23px 23px 4px 4px; border: 3px solid var(--ink); z-index: 2;
+    background: repeating-linear-gradient(90deg, var(--shirt) 0 6px, rgba(255,255,255,.35) 6px 8px), var(--shirt); }
+  .beanie::after { content: ""; position: absolute; left: 14px; top: -11px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink); }
+  .beret { position: absolute; left: 3px; top: 3px; width: 52px; height: 17px; border-radius: 50%; background: #3A2E5C; border: 3px solid var(--ink); z-index: 2; transform: rotate(-8deg); }
+  .beret::after { content: ""; position: absolute; left: 22px; top: -8px; width: 4px; height: 7px; background: var(--ink); border-radius: 2px; }
+  .phones { position: absolute; left: 4px; top: 4px; width: 52px; height: 32px; border: 4px solid #3D3D3D; border-bottom: 0; border-radius: 26px 26px 0 0; z-index: 3; }
+  .phones::before, .phones::after { content: ""; position: absolute; bottom: -10px; width: 11px; height: 16px; border-radius: 5px; background: var(--cherry); border: 2.5px solid var(--ink); }
+  .phones::before { left: -8px; } .phones::after { right: -8px; }
+  .eye { position: absolute; top: 17px; width: 5px; height: 6px; border-radius: 50%; background: var(--ink); }
+  .eye.l { left: 10px; } .eye.r { right: 10px; }
+  .glasses { position: absolute; left: 2px; top: 12px; width: 32px; height: 13px; z-index: 1; background: linear-gradient(var(--ink), var(--ink)) center 4px / 8px 2.5px no-repeat; }
+  .glasses::before, .glasses::after { content: ""; position: absolute; top: 0; width: 12px; height: 11px; border: 2.5px solid var(--ink); border-radius: 50%; }
+  .glasses::before { left: 0; } .glasses::after { right: 0; }
+  .glasses.shades::before, .glasses.shades::after { background: var(--ink); border-radius: 3px 3px 7px 7px; }
+  .mouth { position: absolute; left: 13px; top: 25px; width: 10px; height: 5px; border-bottom: 3px solid var(--ink); border-radius: 0 0 10px 10px; transition: all .2s; }
+  .meh .mouth { height: 3px; border-radius: 0; }
+  .mad .mouth { top: 27px; border-bottom: 0; border-top: 3px solid var(--ink); border-radius: 10px 10px 0 0; }
+  .mad .eye::before { content: ""; position: absolute; top: -5px; left: -2px; width: 8px; height: 3px; background: var(--ink); }
+  .mad .eye.l::before { transform: rotate(25deg); } .mad .eye.r::before { transform: rotate(-25deg); }
+  .blush { position: absolute; top: 24px; width: 7px; height: 4px; border-radius: 50%; background: #F58E8E; opacity: .7; }
+  .blush.l { left: 3px; } .blush.r { right: 3px; }
+  .body { position: absolute; left: 0; bottom: 0; width: 60px; height: 36px; border-radius: 26px 26px 6px 6px; background: var(--shirt); border: 3px solid var(--ink); }
+  .scarf { position: absolute; left: 14px; top: -2px; width: 26px; height: 8px; border-radius: 4px; background: var(--butter); border: 2px solid var(--ink); }
+
+  /* Pastries (drawn with CSS) */
+  .pz { position: relative; width: 46px; height: 36px; display: inline-block; flex: none; vertical-align: middle; }
+  .pz .b, .pz .d { position: absolute; border: 2.5px solid var(--ink); overflow: hidden; }
+  .pz.croissant .b { left: 1px; right: 1px; bottom: 3px; height: 24px; border-radius: 50% 50% 45% 45% / 80% 80% 25% 25%; background: repeating-linear-gradient(90deg, #E7A64A 0 7px, #C9832E 7px 9px); }
+  .pz.muffin .b { left: 9px; right: 9px; bottom: 1px; height: 15px; border-radius: 2px 2px 7px 7px; background: repeating-linear-gradient(90deg, #F7A1C4 0 4px, #fff 4px 7px); }
+  .pz.muffin .d { left: 3px; right: 3px; top: 2px; height: 22px; border-radius: 50% 50% 25% 25% / 70% 70% 30% 30%; background: #C98D4E; }
+  .pz.cookie .b { left: 6px; right: 6px; top: 1px; bottom: 1px; border-radius: 50%; background: #D9A066; }
+  .pz.scone .b { left: 4px; right: 4px; bottom: 2px; height: 28px; border-radius: 45% 45% 10px 10px / 70% 70% 10px 10px; background: #E3B77A; }
+  .pz .g { position: absolute; left: 8%; right: 8%; top: 1px; height: 50%; border-radius: 0 0 40% 40% / 0 0 80% 80%; background: var(--g); }
+  .pz.cookie .g { left: 15%; right: 15%; top: 15%; height: 70%; border-radius: 50%; }
+  .pz .tp { position: absolute; inset: 1px; }
+  .tp.sprinkles { background: radial-gradient(circle at 22% 30%, #F2545B 0 1.8px, transparent 2.3px), radial-gradient(circle at 58% 22%, #5AA9E6 0 1.8px, transparent 2.3px), radial-gradient(circle at 78% 52%, #FFD66B 0 1.8px, transparent 2.3px), radial-gradient(circle at 38% 60%, #3FA37D 0 1.8px, transparent 2.3px), radial-gradient(circle at 66% 70%, #B58BE0 0 1.8px, transparent 2.3px); }
+  .tp.berries { background: radial-gradient(circle at 25% 38%, #4B5BB5 0 3px, transparent 3.5px), radial-gradient(circle at 62% 28%, #3A3F8F 0 3px, transparent 3.5px), radial-gradient(circle at 78% 62%, #4B5BB5 0 3px, transparent 3.5px), radial-gradient(circle at 45% 66%, #3A3F8F 0 3px, transparent 3.5px); }
+  .tp.nuts { background: radial-gradient(ellipse at 28% 35%, #8C5A2B 0 3px, transparent 3.5px), radial-gradient(ellipse at 66% 30%, #A9713A 0 3px, transparent 3.5px), radial-gradient(ellipse at 50% 64%, #8C5A2B 0 3px, transparent 3.5px); }
+  .tp.chips { background: radial-gradient(circle at 30% 32%, #4A2A1A 0 2.6px, transparent 3px), radial-gradient(circle at 66% 26%, #4A2A1A 0 2.6px, transparent 3px), radial-gradient(circle at 72% 64%, #4A2A1A 0 2.6px, transparent 3px), radial-gradient(circle at 36% 70%, #4A2A1A 0 2.6px, transparent 3px); }
+  .pz.cold { filter: saturate(.35) brightness(1.12); }
+  .pz.burnt { filter: brightness(.3) saturate(.3); }
+  .pz.mini { transform: scale(.72); margin: -5px -6px; }
+  .pz.big { transform: scale(2.2); margin: 26px 40px; }
+
+  /* Bar: cups, oven, dump */
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+  .cups { flex: 3 1 330px; display: grid; grid-template-columns: repeat(var(--n, 2), 1fr); gap: 10px; min-width: 0; }
+  .slot {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 16px;
+    padding: 8px 10px; display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: center;
+    box-shadow: 0 4px 0 var(--ink); text-align: left; min-width: 0;
+  }
+  .slot.target { box-shadow: 0 4px 0 var(--ink), 0 0 0 3px var(--paper), 0 0 0 5px var(--butter); }
+  .slot.active { background: #FFF3C2; box-shadow: 0 4px 0 var(--ink), 0 0 0 4px var(--butter); }
+  .slot .meta { min-width: 0; }
+  .slot .lbl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .slot .contents { font-size: 13px; font-weight: 500; line-height: 1.25; margin-top: 2px; overflow-wrap: break-word; }
+  .cups[data-n="3"] .slot { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 6px; }
+  .slot .prog { height: 7px; border: 2px solid var(--ink); border-radius: 5px; margin-top: 5px; overflow: hidden; background: #fff; display: block; }
+  .slot .prog i { display: block; height: 100%; width: 0; background: var(--espresso); }
+  .cupwrap { height: 76px; display: flex; align-items: flex-end; justify-content: center; }
+  .cup { position: relative; width: 48px; height: 58px; border: 3px solid var(--ink); border-top-width: 0; overflow: hidden; display: flex; flex-direction: column-reverse; background: #fff; }
+  .cup.hot { border-radius: 4px 4px 16px 16px; }
+  .cup.iced { width: 44px; height: 68px; border-radius: 2px 2px 10px 10px; background: #E3F5FF; border-top: 3px solid var(--ink); }
+  .cup.iced::after { content: ""; position: absolute; inset: 14px 10px auto; height: 26px; background:
+      linear-gradient(135deg, rgba(255,255,255,.9) 0 40%, transparent 40%) 0 0/12px 12px; opacity: .8; pointer-events: none; }
+  .cupholder { position: relative; }
+  .cupholder.hot::after { content: ""; position: absolute; right: -13px; top: 12px; width: 12px; height: 22px; border: 3px solid var(--ink); border-left: 0; border-radius: 0 12px 12px 0; }
+  .layer { display: block; width: 100%; flex: 0 0 auto; height: 13%; background: var(--c); }
+  .layer.top { height: 16%; border-radius: 12px 12px 0 0; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }
+  .emptycup { width: 48px; height: 58px; border: 3px dashed #BDAEA5; border-radius: 6px 6px 16px 16px; display: grid; place-items: center; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.1; }
+
+  .oven { flex: 1 1 190px; background: #3B2E2A; border: 3px solid var(--ink); border-radius: 16px; padding: 6px 8px 8px; box-shadow: 0 4px 0 var(--ink); display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .oven[hidden] { display: none; }
+  .ovlabel, .case .cl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #F3E3D6; }
+  .ovslots { display: grid; grid-template-columns: repeat(var(--n, 2), 1fr); gap: 6px; flex: 1; }
+  .ovslot { border: 2.5px solid var(--ink); border-radius: 10px; background: radial-gradient(circle at 50% 75%, #5a3a2a, #241612 75%); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; padding: 6px 4px 5px; min-height: 86px; color: #F3E3D6; font-size: 11px; font-weight: 600; }
+  .ovslot.warm { background: radial-gradient(circle at 50% 78%, #F59E3B, #5a2a12 72%); }
+  .ovslot.ready { background: radial-gradient(circle at 50% 78%, #FFE08A, #8a5a1a 72%); color: var(--ink); }
+  .ovslot.burnt { background: #1c110d; color: #F58E8E; }
+  .ovslot.active { box-shadow: 0 0 0 4px var(--butter); }
+  .ovslot .obar { width: 90%; height: 6px; border: 1.5px solid var(--ink); border-radius: 4px; background: #fff; overflow: hidden; display: block; }
+  .ovslot .obar i { display: block; height: 100%; width: 0; background: var(--mint); }
+  .ovslot.ready .obar i { background: var(--cherry); }
+
+  .trash {
+    flex: 0 0 auto;
+    border: 3px solid var(--ink); border-radius: 16px; background: #fff; box-shadow: 0 4px 0 var(--ink);
+    padding: 8px 14px; font-weight: 600; font-size: 13px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; line-height: 1.1;
+  }
+  .trash small { font-size: 10px; color: var(--muted); font-weight: 500; }
+  .trash .bin { width: 26px; height: 30px; border: 3px solid var(--ink); border-radius: 3px 3px 7px 7px; background: repeating-linear-gradient(90deg, #ddd 0 4px, #fff 4px 8px); position: relative; margin-top: 6px; }
+  .trash .bin::before { content: ""; position: absolute; left: -6px; right: -6px; top: -8px; height: 5px; border: 3px solid var(--ink); border-radius: 4px; background: #fff; }
+  .trash:active, .station:active:not(:disabled), .slot:active, .ovslot:active { transform: translateY(2px); }
+
+  /* Stations */
+  .stations {
+    background: var(--bar); border: 3px solid var(--ink); border-radius: 18px; padding: 10px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .stations.case { background: var(--wood-dk); }
+  .stations[hidden] { display: none; }
+  .case .cl { grid-column: 1 / -1; }
+  .station {
+    position: relative; overflow: hidden;
+    border: 2.5px solid var(--ink); border-radius: 12px; background: var(--paper);
+    padding: 7px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 13px; font-weight: 600; line-height: 1.1; box-shadow: 0 3px 0 rgba(0,0,0,.45); text-align: center;
+  }
+  .station .ic { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--c); }
+  .station .ic.sq { border-radius: 5px 5px 10px 10px; }
+  .station .t { font-size: 10px; font-weight: 500; color: var(--muted); }
+  .station:disabled { background: #6E5448; color: #C8B2A6; box-shadow: none; cursor: not-allowed; border-color: #3a241a; }
+  .station:disabled .ic, .station:disabled .pz { opacity: .3; }
+  .station:disabled .t { color: #C8B2A6; }
+  .station .busy { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--cherry); }
+  .station.cupbtn { background: #E8F7F0; }
+  .station.sig { background: #FFF3C2; }
+  .hint { min-height: 28px; display: flex; justify-content: center; align-items: center; }
+  .hint:not(:empty) { font-size: 14px; font-weight: 600; color: var(--cherry); background: var(--paper); border: 2px solid var(--ink); border-radius: 999px; padding: 1px 14px; width: fit-content; margin: 0 auto; }
+
+  @media (max-width: 520px) {
+    .cups { flex-basis: 100%; }
+    .slot { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 6px; }
+    .trash { flex: 1 1 100%; flex-direction: row; padding: 6px; }
+    .trash .bin { margin-top: 4px; }
+    .spot { height: 226px; }
+    .ticket { font-size: 14px; padding: 4px 4px; }
+    .part.p.solo { font-size: 14px; }
+    .person { transform: scale(.85); }
+    .person.kid { transform: scale(.66); }
+  }
+
+  /* Side: challenge + menu board */
+  .side { display: flex; flex-direction: column; gap: 14px; }
+  .task { background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; padding: 10px 12px; box-shadow: 0 4px 0 var(--ink); display: grid; gap: 5px; }
+  .task[hidden] { display: none; }
+  .task.done { background: #E8F7F0; }
+  .task .tt { font-weight: 600; line-height: 1.25; }
+  .task .rw { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; }
+  .taskbar { height: 8px; border: 2px solid var(--ink); border-radius: 6px; background: #fff; overflow: hidden; }
+  .boardwrap { position: relative; padding-top: 4px; }
+  .board {
+    background: var(--board); color: var(--chalk);
+    border: 8px solid var(--wood); outline: 3px solid var(--ink); border-radius: 6px;
+    padding: 12px 14px 14px; font-family: var(--hand);
+    box-shadow: 0 6px 0 var(--ink);
+  }
+  .board h2 { margin: 0 0 6px; font-size: 26px; font-weight: 400; text-align: center; letter-spacing: .02em; }
+  .board h3 { margin: 12px 0 4px; font-size: 19px; font-weight: 400; text-align: center; opacity: .9; }
+  .board ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .board li { display: grid; gap: 1px; }
+  .board .row { display: flex; justify-content: space-between; gap: 6px; font-size: 19px; line-height: 1; }
+  .board .price { font-variant-numeric: tabular-nums; }
+  .board .rec { font-size: 14px; opacity: .8; }
+  .board .new { color: var(--butter); font-size: 13px; margin-left: 4px; }
+  .board .foot { margin-top: 10px; padding-top: 8px; border-top: 1.5px dashed rgba(243,241,230,.4); font-size: 14px; opacity: .85; line-height: 1.2; }
+
+  /* Floaters */
+  .floater { position: absolute; z-index: 20; pointer-events: none; font-weight: 700; font-size: 20px; color: var(--mint); -webkit-text-stroke: .6px var(--ink); animation: floatup 1.1s ease-out forwards; white-space: nowrap; transform: translateX(-50%); }
+  .floater.bad { color: var(--cherry); font-size: 16px; }
+  .floater.combo { color: var(--butter); font-size: 15px; }
+  @keyframes floatup { to { transform: translate(-50%, -54px); opacity: 0; } }
+
+  /* Overlay cards */
+  .overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(43,26,20,.55);
+    display: grid; place-items: center; padding: 16px;
+  }
+  .overlay[hidden] { display: none; }
+  .card {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 0 8px 0 var(--ink);
+    width: min(460px, 100%); padding: 22px 22px 20px; text-align: center; max-height: 100%; overflow: auto;
+  }
+  .card.wide { width: min(660px, 100%); }
+  .card h1 { font-family: var(--display); font-weight: 400; font-size: 46px; line-height: 1; margin: 0; color: var(--cherry); -webkit-text-stroke: 1.5px var(--ink); text-wrap: balance; }
+  .card h2 { font-family: var(--display); font-weight: 400; font-size: 32px; margin: 0 0 6px; color: var(--espresso); text-wrap: balance; }
+  .card .ver { display: inline-block; margin: 10px 0 10px; background: var(--butter); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 12px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .card ol { text-align: left; margin: 0 0 16px; padding-left: 22px; line-height: 1.45; }
+  .card ol li { margin-bottom: 4px; }
+  .card p { margin: 0 0 12px; line-height: 1.4; }
+  .bank { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .big {
+    border: 3px solid var(--ink); background: var(--mint); color: #fff; font-weight: 700; font-size: 20px;
+    border-radius: 14px; padding: 10px 26px; box-shadow: 0 5px 0 var(--ink); -webkit-text-stroke: .4px var(--ink);
+  }
+  .big:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+  .big.alt { background: #fff; color: var(--ink); -webkit-text-stroke: 0; font-size: 16px; }
+  .big:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+  .btnrow { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .stars { font-size: 40px; letter-spacing: 6px; margin: 4px 0 8px; color: #D9CFC8; }
+  .stars b { color: var(--butter); -webkit-text-stroke: 1.5px var(--ink); font-weight: 400; }
+  .results { display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; text-align: left; margin: 8px 0 14px; font-size: 15px; }
+  .results span:nth-child(even) { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .small { font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.4; }
+  .recipes { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 6px; text-align: left; }
+  .recipes li { border: 2px solid #E6DCD4; border-radius: 12px; padding: 7px 10px; display: grid; gap: 4px; }
+  .recipes li.isnew { background: #FFF3C2; border-color: var(--ink); }
+  .recipes li.rmod { border-style: dashed; font-size: 13px; }
+  .rname { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .newtag { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; background: var(--cherry); color: #fff; border-radius: 6px; padding: 1px 6px; }
+  .newtag.sig { background: #6A4BB5; }
+  .rsteps { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--muted); }
+  .rstep { display: inline-flex; align-items: center; gap: 4px; }
+  .rstep + .rstep::before { content: "+"; margin-right: 6px; color: #BDAEA5; }
+  .unlock { background: #E8F7F0; border: 2px dashed var(--mint); border-radius: 12px; padding: 8px 10px; margin-bottom: 12px; font-size: 14px; text-align: left; line-height: 1.35; }
+  .unlock.goal { background: #FFF3C2; border-color: #D9A93A; }
+  .fullmenu { text-align: left; margin-bottom: 14px; }
+  .fullmenu summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+
+  /* Shop */
+  .shopsec h3 { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: left; margin: 14px 0 6px; }
+  .item { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; text-align: left; border: 2px solid #E6DCD4; border-radius: 12px; padding: 8px 10px; margin-bottom: 6px; }
+  .item .nm { font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .item .ds { font-size: 13px; color: var(--muted); line-height: 1.3; }
+  .buy { grid-row: 1 / span 2; grid-column: 2; border: 2.5px solid var(--ink); border-radius: 10px; background: var(--butter); font-weight: 700; padding: 6px 12px; box-shadow: 0 3px 0 var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .buy:disabled { background: #EEE6E0; color: #9C8D85; box-shadow: none; cursor: not-allowed; border-color: #CDBFB6; }
+  .buy.owned { background: #E8F7F0; }
+  .buy.owned:disabled { color: var(--mint); border-color: var(--mint); }
+  .swatch { display: inline-flex; gap: 3px; }
+  .swatch i { width: 13px; height: 13px; border-radius: 3px; border: 1.5px solid var(--ink); background: var(--c); }
+
+  /* Signature makers */
+  .field { text-align: left; margin-bottom: 10px; }
+  .field label, .plabel { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; text-align: left; }
+  .field input { font: inherit; font-size: 16px; border: 2.5px solid var(--ink); border-radius: 10px; padding: 7px 10px; width: 100%; background: #fff; user-select: text; }
+  .field input:focus-visible { outline: 3px solid var(--butter); }
+  .picks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+  .pick { border: 2px solid var(--ink); border-radius: 10px; background: #fff; padding: 4px 9px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+  .pick.on { background: var(--butter); }
+  .pick:disabled { opacity: .4; cursor: not-allowed; }
+  .pick.static { cursor: default; }
+  .preview { display: flex; justify-content: center; margin: 4px 0 8px; }
+
+
+  /* Decor (bought in the shop, drawn into the café) */
+  .lights { position: absolute; left: 0; right: 0; top: 17px; height: 14px; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 6px 9px, #FFD66B 0 3.5px, transparent 4px) 0 0 / 24px 14px repeat-x,
+      radial-gradient(circle at 18px 9px, #F7A1C4 0 3.5px, transparent 4px) 0 0 / 24px 14px repeat-x,
+      linear-gradient(var(--ink), var(--ink)) 0 4px / 100% 1.5px no-repeat; }
+  .lights[hidden] { display: none; }
+  .decor { position: absolute; left: 0; right: 0; top: 30px; height: 34px; z-index: 0; pointer-events: none;
+    display: flex; justify-content: space-around; align-items: flex-end; padding-inline: 10px; }
+  .dc { position: relative; display: inline-block; flex: none; }
+  .dc.plant { width: 24px; height: 30px; }
+  .dc.plant::before { content: ""; position: absolute; left: 5px; bottom: 0; width: 14px; height: 11px; background: #C2643A; border: 2px solid var(--ink); border-radius: 1px 1px 5px 5px; }
+  .dc.plant::after { content: ""; position: absolute; left: 0; top: 0; width: 20px; height: 18px; border: 2px solid var(--ink); border-radius: 50% 50% 40% 40%;
+    background: radial-gradient(circle at 30% 40%, #5FC29A 0 4px, transparent 4.5px), #3FA37D; }
+  .dc.clock { width: 24px; height: 24px; border-radius: 50%; border: 2.5px solid var(--ink);
+    background: linear-gradient(var(--ink), var(--ink)) 9px 4px / 2px 7px no-repeat, linear-gradient(var(--ink), var(--ink)) 10px 9px / 6px 2px no-repeat, #fff; }
+  .dc.shelf { width: 42px; height: 22px;
+    background: linear-gradient(#F2545B, #F2545B) 3px 5px / 9px 10px no-repeat, linear-gradient(#5AA9E6, #5AA9E6) 16px 5px / 9px 10px no-repeat, linear-gradient(#FFD66B, #FFD66B) 29px 5px / 9px 10px no-repeat; }
+  .dc.shelf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--wood); border: 2px solid var(--ink); border-radius: 2px; }
+  .dc.records { width: 32px; height: 24px; }
+  .dc.records::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 11px; background: #8C4A28; border: 2px solid var(--ink); border-radius: 3px; }
+  .dc.records::after { content: ""; position: absolute; left: 4px; bottom: 7px; width: 22px; height: 9px; border-radius: 50%; background: radial-gradient(circle, #F2545B 0 2px, #222 2.5px); border: 2px solid var(--ink); }
+  .dc.art { width: 34px; height: 26px; border: 3px solid var(--wood); outline: 2px solid var(--ink);
+    background: linear-gradient(135deg, #2A4D73 0 45%, #DDE35F 45% 58%, #6EBFEA 58%); }
+  .dc.sign { font-family: var(--display); font-size: 13px; line-height: 1; color: #FF8AC8; background: #2B1A14; border: 2px solid #FF8AC8; border-radius: 6px; padding: 2px 5px 3px;
+    text-shadow: 0 0 6px #FF8AC8; box-shadow: 0 0 8px rgba(255,138,200,.6); }
+  .dc.cat { width: 26px; height: 20px; }
+  .dc.cat::before { content: ""; position: absolute; left: 1px; bottom: 0; width: 22px; height: 16px; border-radius: 50% 50% 45% 45%; background: #E0A33A; border: 2px solid var(--ink);
+    box-shadow: inset 5px -3px 0 #F3C46B; }
+  .dc.cat::after { content: ""; position: absolute; left: 3px; top: 0; width: 18px; height: 8px;
+    background: linear-gradient(135deg, transparent 50%, var(--ink) 50%) 0 0 / 7px 8px no-repeat, linear-gradient(225deg, transparent 50%, var(--ink) 50%) 11px 0 / 7px 8px no-repeat; }
+  .dprev { display: inline-flex; align-items: flex-end; height: 30px; }
+  .dprev .dc.lightsicon { width: 40px; height: 14px; background: radial-gradient(circle at 6px 9px, #FFD66B 0 3.5px, transparent 4px) 0 0 / 14px 14px repeat-x, linear-gradient(var(--ink), var(--ink)) 0 4px / 100% 1.5px no-repeat; }
+
+  /* Upgrade level pips + sticker book */
+  .pips { display: inline-flex; gap: 3px; }
+  .pips i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; }
+  .pips i.on { background: var(--mint); }
+  .shopnote { background: #FFF3C2; border: 2px solid var(--ink); border-radius: 12px; padding: 6px 10px; margin-bottom: 10px; font-weight: 600; }
+  .stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 14px; text-align: left; }
+  .stk { border: 2px dashed #D9CFC8; border-radius: 14px; padding: 8px 10px; display: grid; gap: 2px; font-size: 13px; color: var(--muted); }
+  .stk b { color: var(--ink); font-size: 14px; }
+  .stk .badge { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; border: 2.5px solid #D9CFC8; background: #F3EEEA; color: #CDBFB6; margin-bottom: 2px; }
+  .stk.have { border: 2.5px solid var(--ink); background: #fff; }
+  .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
+  .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
+  .hint.good:not(:empty) { color: var(--mint); }
+
+  /* Phone layout: one screen, no scrolling while you play */
+  .dumpbtn { display: none; }
+  .lbl-m { display: none; }
+  .pad { display: flex; flex-direction: column; gap: 14px; }
+  @media (max-width: 600px) {
+    body { padding-block: 6px; }
+    .game { height: 100%; display: flex; flex-direction: column; gap: 6px; }
+    .side { display: none; }
+    .hud { flex-wrap: nowrap; gap: 8px; padding: 5px 8px; border-radius: 12px; box-shadow: 0 3px 0 var(--ink); }
+    .logo, #soundBtn, #hintsBtn { display: none; }
+    .stat .k { font-size: 8.5px; letter-spacing: .06em; }
+    .stat .v { font-size: 16px; }
+    .goalbar { width: 62px; height: 6px; }
+    #menuBtn { margin-left: auto; }
+    .iconbtn { padding: 5px 8px; font-size: 12px; box-shadow: 0 2px 0 var(--ink); }
+    .main { flex: 1; min-height: 0; gap: 6px; }
+    .shop { flex: 1; min-height: 150px; display: flex; flex-direction: column; border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
+    .spots { flex: 1; min-height: 0; padding: 18px 2px 0; gap: 2px; }
+    .spot { height: auto; }
+    .counter { flex: none; height: 26px; margin-top: -12px; padding: 9px 6px 0; box-shadow: inset 0 5px 0 var(--wood-hi); }
+    .pat { height: 7px; border-width: 1.5px; }
+    .ticket { font-size: 12.5px; padding: 3px 4px; min-width: 0; width: 100%; border-width: 2px; border-radius: 9px; margin-bottom: 7px; box-shadow: 0 2px 0 var(--ink); }
+    .ticket::after { width: 9px; height: 9px; bottom: -6px; border-width: 2px; }
+    .part.p, .part.p.solo { font-size: 12px; }
+    .who { font-size: 8px; letter-spacing: .03em; }
+    .chips { gap: 1px; margin-top: 2px; }
+    .chip { font-size: 8.5px; padding: 1px 2px; border-width: 1px; border-radius: 4px; }
+    .mod { font-size: 8.5px; padding: 0 3px; }
+    .person, .person.kid { transform: none; zoom: .8; }
+    .person.kid { zoom: .62; }
+    .decor { top: 22px; height: 26px; zoom: .8; }
+    .lights { top: 16px; }
+    .rush { top: 20px; font-size: 11px; padding: 1px 10px; }
+
+    .bar { flex: none; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 5px; }
+    .cups, .oven { display: contents; }
+    .ovlabel, .bar > .trash { display: none; }
+    .slot, .cups[data-n="3"] .slot { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 3px 2px 4px; gap: 0; border-width: 2.5px; border-radius: 12px; box-shadow: 0 3px 0 var(--ink); }
+    .slot .contents { display: none !important; }
+    .slot .lbl { font-size: 9px; letter-spacing: .04em; }
+    .cupwrap { height: 50px; }
+    .cupwrap > * { zoom: .7; }
+    .slot .prog { width: 90%; height: 5px; margin-top: 2px; border-width: 1.5px; }
+    .ovslot { min-height: 0; padding: 3px 2px 4px; font-size: 9px; gap: 1px; border-radius: 12px; }
+    .ovslot .pz { zoom: .85; }
+
+    .hint { position: fixed; left: 50%; top: 38%; transform: translateX(-50%); z-index: 30; pointer-events: none; min-height: 0; white-space: nowrap; box-shadow: 0 3px 0 var(--ink); }
+    .hint:empty { display: none; }
+
+    .pad { flex: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 5px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
+    .pad > .stations:not([hidden]) { display: contents; }
+    .case .station:not(:disabled) { background: #FBEBD9; }
+    .station { padding: 5px 1px 4px; font-size: 10.5px; gap: 3px; border-width: 2px; border-radius: 9px; min-height: 46px; box-shadow: 0 2px 0 rgba(0,0,0,.45); overflow-wrap: anywhere; }
+    .station .ic { width: 20px; height: 20px; border-width: 2px; }
+    .station .t, .case .cl { display: none; }
+    .station:disabled { display: none; }
+    .station .pz.mini { transform: none; zoom: .55; margin: 0; }
+    .lbl-f { display: none; }
+    .lbl-m { display: inline; }
+    .dumpbtn { display: flex; }
+    .ic.dumpic { border-radius: 3px 3px 7px 7px; background: repeating-linear-gradient(90deg, #ddd 0 3px, #fff 3px 6px); }
+    .card { padding: 18px 14px 16px; }
+    .card h1 { font-size: 40px; }
+    .card h2 { font-size: 27px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cust, .cust.leaving, .cust.wrong .person, .floater, .rush { animation-duration: .01s; }
+  }
+</style>
+
+</head>
+<body>
+<div class="game" id="game">
+  <header class="hud">
+    <div class="logo">Lox Café<small>V1.6 · Behind the Bar</small></div>
+    <div class="stat"><span class="k">Day</span><span class="v" id="day">1</span></div>
+    <div class="stat"><span class="k">Shift left</span><span class="v" id="clock">1:30</span></div>
+    <div class="stat"><span class="k">Tips today</span><span class="v" id="money">$0.00</span><span class="goalbar"><i id="goalfill"></i></span></div>
+    <div class="stat" id="streak"><span class="k">Combo</span><span class="v" id="streakv">×0</span></div>
+    <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    <button class="iconbtn" id="hintsBtn" type="button" aria-pressed="false">Hints: new drinks</button>
+    <button class="iconbtn" id="menuBtn" type="button">Menu</button>
+    <button class="iconbtn" id="pauseBtn" type="button">Pause</button>
+  </header>
+
+  <div class="main">
+    <section class="shop" aria-label="Counter">
+      <div class="lights" id="lights" hidden></div>
+      <div class="decor" id="decor"></div>
+      <div class="rush" id="rush" hidden>Rush hour! Everything pays 25% more</div>
+      <div class="spots" id="spots">
+        <div class="spot"></div><div class="spot"></div><div class="spot"></div><div class="spot"></div>
+      </div>
+      <div class="counter" id="pats">
+        <div class="pat"><i></i></div><div class="pat"><i></i></div><div class="pat"><i></i></div><div class="pat"><i></i></div>
+      </div>
+    </section>
+
+    <section class="bar" aria-label="Your cups and oven">
+      <div class="cups" id="cups"></div>
+      <div class="oven" id="oven" hidden><span class="ovlabel">Oven</span><div class="ovslots" id="ovslots"></div></div>
+      <button class="trash" id="trash" type="button"><span class="bin"></span><span>Dump<br><small>selected</small></span></button>
+    </section>
+    <div class="hint" id="hint" role="status"></div>
+
+    <div class="pad">
+      <section class="stations" id="stations" aria-label="Drink stations"></section>
+      <section class="stations case" id="case" aria-label="Pastry case" hidden></section>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="task" id="task" hidden>
+      <span class="k">Today's challenge</span>
+      <span class="tt" id="taskText"></span>
+      <span class="taskbar"><i id="taskFill"></i></span>
+      <span class="rw"><span id="taskProg"></span><span id="taskReward"></span></span>
+    </div>
+    <div class="boardwrap">
+      <div class="board">
+        <h2>Today's Menu</h2>
+        <ul id="menu"></ul>
+        <div id="pastryBoard"></div>
+        <div class="foot" id="boardfoot">Build it, then tap the customer to hand it over.</div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="card" id="card"></div>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+  /* ---------- Content ---------- */
+  const ING = {
+    hot:     { label: 'Hot cup', m: 'Hot',       short: 'Hot',     c: '#FFFFFF', cup: true, day: 1 },
+    iced:    { label: 'Iced cup', m: 'Iced',      short: 'Iced',    c: '#CFEFFF', cup: true, day: 3 },
+    shot:    { label: 'Espresso',      short: 'Esp',     c: '#4A2A1A', day: 1, dark: true, station: 'machine', note: 'espresso machine' },
+    water:   { label: 'Water',         short: 'Water',   c: '#C9A27E', day: 1 },
+    milk:    { label: 'Milk',          short: 'Milk',    c: '#FFF3DC', day: 1, station: 'steamer', time: 1.0, note: 'steam wand' },
+    oat:     { label: 'Oat milk', m: 'Oat',      short: 'Oat',     c: '#EAD7A8', day: 7, station: 'steamer', time: 1.0, note: 'steam wand' },
+    foam:    { label: 'Foam',          short: 'Foam',    c: '#FFFFFF', day: 2, top: true },
+    vanilla: { label: 'Vanilla',       short: 'Van',     c: '#FBE7A1', day: 4 },
+    caramel: { label: 'Caramel',       short: 'Caramel', c: '#D98B2B', day: 5 },
+    choc:    { label: 'Chocolate', m: 'Choc',     short: 'Choc',    c: '#6B3B24', day: 6, dark: true },
+    chai:    { label: 'Chai',          short: 'Chai',    c: '#C68A52', day: 11 },
+    matcha:  { label: 'Matcha',        short: 'Matcha',  c: '#8DBF5A', day: 13 },
+    pumpkin: { label: 'Pumpkin spice', m: 'Pumpkin', short: 'Pumpkin', c: '#E8833A', day: 16 },
+    whip:    { label: 'Whip',          short: 'Whip',    c: '#FFFFFF', day: 6, top: true },
+  };
+  const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip'];
+
+  // One new idea per day. Days 10+ keep adding recipes so later days stay fresh.
+  const DRINKS = [
+    { name: 'Espresso',            cup: 'hot',  items: ['shot'],                          price: 3.00, day: 1 },
+    { name: 'Americano',           cup: 'hot',  items: ['shot','water'],                  price: 3.50, day: 1 },
+    { name: 'Latte',               cup: 'hot',  items: ['shot','milk'],                   price: 4.50, day: 1 },
+    { name: 'Cappuccino',          cup: 'hot',  items: ['shot','milk','foam'],            price: 4.75, day: 2 },
+    { name: 'Iced Latte',          cup: 'iced', items: ['shot','milk'],                   price: 5.00, day: 3 },
+    { name: 'Iced Americano',      cup: 'iced', items: ['shot','water'],                  price: 4.00, day: 3 },
+    { name: 'Vanilla Latte',       cup: 'hot',  items: ['shot','milk','vanilla'],         price: 5.25, day: 4 },
+    { name: 'Iced Caramel Latte',  cup: 'iced', items: ['shot','milk','caramel'],         price: 5.75, day: 5 },
+    { name: 'Mocha',               cup: 'hot',  items: ['shot','choc','milk','whip'],     price: 6.00, day: 6 },
+    { name: 'Iced Mocha',          cup: 'iced', items: ['shot','choc','milk','whip'],     price: 6.25, day: 8 },
+    { name: 'Chai Latte',          cup: 'hot',  items: ['chai','milk'],                   price: 5.00, day: 11 },
+    { name: 'Matcha Latte',        cup: 'hot',  items: ['matcha','milk'],                 price: 5.25, day: 13 },
+    { name: 'Hot Chocolate',       cup: 'hot',  items: ['choc','milk','whip'],            price: 4.00, day: 14 },
+    { name: 'Pumpkin Spice Latte', cup: 'hot',  items: ['shot','pumpkin','milk','whip'],  price: 6.50, day: 16 },
+    { name: 'Iced Chai',           cup: 'iced', items: ['chai','milk'],                   price: 5.25, day: 18 },
+    { name: 'Iced Matcha',         cup: 'iced', items: ['matcha','milk'],                 price: 5.50, day: 19 },
+  ];
+
+  const PASTRY_BASE = {
+    croissant: { label: 'Croissant',        short: 'Croissant', day: 10, price: 3.50, look: { base: 'croissant' } },
+    muffin:    { label: 'Blueberry Muffin', short: 'Muffin',    day: 12, price: 3.75, look: { base: 'muffin', top: 'berries' } },
+    cookie:    { label: 'Cookie',           short: 'Cookie',    day: 15, price: 2.50, look: { base: 'cookie', top: 'chips' } },
+  };
+
+  const OAT_DAY = 7, SHOT_DAY = 9, OVEN_DAY = 10, REG_DAY = 12, RUSH_DAY = 13,
+        KID_DAY = 14, CRITIC_DAY = 15, SPECIAL_DAY = 17, TASK_DAY = 3;
+
+  const NEWS = {
+    3:  { title: 'Daily challenges', text: 'Each day has a bonus challenge. Finish it for extra savings.' },
+    8:  { title: 'Longer shifts', text: 'Shifts grow by 10 seconds a day from here, up to 2½ minutes.' },
+    10: { title: 'Pastries and the oven', text: 'Tap a pastry in the case to warm it (3 seconds). When it says Ready, tap it, then tap the customer. After 10 more seconds it burns.' },
+    12: { title: 'Regulars', text: 'Regulars have names and a usual order. They tip 50% more.' },
+    13: { title: 'Rush hour', text: 'Once a shift, customers pour in for 20 seconds. Everything pays 25% more while it lasts.' },
+    14: { title: 'Kids', text: 'Little ones come in for hot chocolate, and sometimes a cookie.' },
+    15: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but pays 2.5×.' },
+    17: { title: 'Daily specials', text: 'One drink a day is the special (★). It pays 50% more and gets ordered more.' },
+  };
+
+  const REGULARS = [
+    { name: 'Marisol',  fav: 'Vanilla Latte',      pastry: 'croissant', look: { skin: '#C98D63', hair: '#2B1A14', shirt: '#F7A1C4', style: 1, acc: 'none' } },
+    { name: 'Dev',      fav: 'Americano',          pastry: null,        look: { skin: '#9C6644', hair: '#2B1A14', shirt: '#5AA9E6', style: 0, acc: 'glasses' } },
+    { name: 'Kelly',    fav: 'Iced Caramel Latte', pastry: 'muffin',    look: { skin: '#E8B48F', hair: '#6B3B24', shirt: '#B58BE0', style: 2, acc: 'none' } },
+    { name: 'Tío Beto', fav: 'Espresso',           pastry: 'croissant', look: { skin: '#C98D63', hair: '#3D3D3D', shirt: '#3FA37D', style: 3, acc: 'glasses' } },
+    { name: 'Priya',    fav: 'Chai Latte',         pastry: 'cookie',    look: { skin: '#9C6644', hair: '#2B1A14', shirt: '#FF9F5A', style: 1, acc: 'headphones' } },
+    { name: 'Sam',      fav: 'Mocha',              pastry: 'cookie',    look: { skin: '#F6D2B5', hair: '#E0A33A', shirt: '#F2545B', style: 0, acc: 'beanie' } },
+  ];
+
+  // One-time equipment
+  const UPGRADES = [
+    { id: 'steamer2', name: 'Second steam wand',       desc: 'Steam two milks at the same time.',      price: 35 },
+    { id: 'machine2', name: 'Second espresso machine', desc: 'Pull two shots at once.',                price: 60 },
+    { id: 'cup3',     name: 'Third cup spot',          desc: 'Juggle three drinks. Key 3 selects it.', price: 90 },
+    { id: 'oven3',    name: 'Bigger oven',             desc: 'Warm three pastries at once.',           price: 50, day: OVEN_DAY },
+  ];
+  // Upgrades with levels: [price, what that level does]
+  const TIERS = [
+    { id: 'grinder',   name: 'Grinder',         levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s']] },
+    { id: 'chairs',    name: 'Comfy seating',   levels: [[50, 'Customers wait 10% longer'], [110, 'Customers wait 20% longer'], [200, 'Customers wait 30% longer']] },
+    { id: 'tipsign',   name: 'Tip jar',         levels: [[75, 'Every order pays 8% more'], [150, 'Every order pays 16% more'], [260, 'Every order pays 25% more']] },
+    { id: 'ovenspeed', name: 'Convection oven', day: OVEN_DAY, levels: [[60, 'Pastries warm in 2.5s and take 3s longer to burn'], [130, 'Pastries warm in 2s and take 6s longer to burn']] },
+  ];
+  const DECOR = [
+    { id: 'decor_plant',   cls: 'plant',   name: 'Monstera plant',     price: 45 },
+    { id: 'decor_clock',   cls: 'clock',   name: 'Wall clock',         price: 50 },
+    { id: 'decor_lights',  cls: 'lights',  name: 'String lights',      price: 60 },
+    { id: 'decor_shelf',   cls: 'shelf',   name: 'Mug shelf',          price: 90 },
+    { id: 'decor_records', cls: 'records', name: 'Record player',      price: 120 },
+    { id: 'decor_art',     cls: 'art',     name: 'Lapis painting',     price: 150 },
+    { id: 'decor_sign',    cls: 'sign',    name: 'Neon LOX sign',      price: 180 },
+    { id: 'decor_cat',     cls: 'cat',     name: 'Mochi the café cat', price: 250, desc: 'Curls up by the window. Also makes customers 5% more patient.' },
+  ];
+  const MAKERS = [
+    { id: 'sigdrink',  name: 'Signature drink',  desc: 'Invent a drink and name it. It goes on the menu and pays 50% more.', price: 100 },
+    { id: 'sigpastry', name: 'Signature pastry', desc: 'Design your own pastry for the case. It pays 50% more.',            price: 100, day: OVEN_DAY },
+  ];
+  const THEMES = [
+    { id: 'theme_mint',   name: 'Mint Tile',    price: 0,  v: { wall: '#BFE6D5', 'wall-2': '#A8DCC6', tile: '#F4FBF7', wood: '#B8683D', 'wood-dk': '#8C4A28', 'wood-hi': '#D48454', awn: '#F2545B', awn2: '#FFFDF7', bar: '#4A2A1A', board: '#2E463C' } },
+    { id: 'theme_rose',   name: 'Rose Parlor',  price: 30, v: { wall: '#F7C9D4', 'wall-2': '#F0B3C2', tile: '#FFF4F6', wood: '#C77D8E', 'wood-dk': '#9A5468', 'wood-hi': '#DE9AAA', awn: '#8E3A59', awn2: '#FFF4F6', bar: '#5B2A3E', board: '#3E2A33' } },
+    { id: 'theme_lemon',  name: 'Lemon Diner',  price: 30, v: { wall: '#FFE79A', 'wall-2': '#FFD66B', tile: '#FFFBEA', wood: '#E05A47', 'wood-dk': '#B23A2F', 'wood-hi': '#F07C6B', awn: '#2E6FB5', awn2: '#FFFBEA', bar: '#2B3A55', board: '#2E463C' } },
+    { id: 'theme_cabin',  name: 'Forest Cabin', price: 40, v: { wall: '#CFE3C3', 'wall-2': '#B5D1A6', tile: '#F6FAF1', wood: '#7A4E2D', 'wood-dk': '#5A3820', 'wood-hi': '#9A6A43', awn: '#3F7A4A', awn2: '#F6FAF1', bar: '#3A2A1C', board: '#26372B' } },
+    { id: 'theme_cocoa',  name: 'Cocoa House',  price: 80, v: { wall: '#F3DCC4', 'wall-2': '#E8C3A0', tile: '#FAF3E7', wood: '#8A3E1F', 'wood-dk': '#5E2A14', 'wood-hi': '#A85A35', awn: '#3A1809', awn2: '#FAF3E7', bar: '#3A1809', board: '#2A1A12' } },
+    { id: 'theme_neon',   name: 'Midnight Neon', price: 120, v: { wall: '#2B2140', 'wall-2': '#231A36', tile: '#EDE6FF', wood: '#5B3FA0', 'wood-dk': '#3A2770', 'wood-hi': '#8063C9', awn: '#FF8AC8', awn2: '#2B2140', bar: '#1E1630', board: '#241B38' } },
+    { id: 'theme_lapis',  name: 'Lapis Night',  price: 40, v: { wall: '#2A4D73', 'wall-2': '#23405F', tile: '#DCEBF7', wood: '#3B6A96', 'wood-dk': '#213A57', 'wood-hi': '#5B8CBA', awn: '#DDE35F', awn2: '#2A4D73', bar: '#1C2E44', board: '#1F3A2E' } },
+  ];
+  const GLAZES = [
+    { id: 'none', label: 'No glaze' }, { id: 'pink', label: 'Pink', c: '#F7A1C4' }, { id: 'choc', label: 'Chocolate', c: '#5B3423' },
+    { id: 'lemon', label: 'Lemon', c: '#FFE27A' }, { id: 'lapis', label: 'Lapis', c: '#6EBFEA' },
+  ];
+  const TOPS = [
+    { id: 'none', label: 'Plain' }, { id: 'sprinkles', label: 'Sprinkles' }, { id: 'berries', label: 'Berries' },
+    { id: 'nuts', label: 'Nuts' }, { id: 'chips', label: 'Choc chips' },
+  ];
+  const SIG_BASES = [
+    { id: 'croissant', label: 'Croissant', day: 10 }, { id: 'scone', label: 'Scone', day: 10 },
+    { id: 'muffin', label: 'Muffin', day: 12 }, { id: 'cookie', label: 'Cookie', day: 15 },
+  ];
+
+  const STICKERS = [
+    { id: 'first',     name: 'Open for business',  desc: 'Finish your first shift',             reward: 10,  goal: 1,    cur: () => SAVE.tot.shifts },
+    { id: 'serve50',   name: 'Finding a rhythm',   desc: 'Serve 50 customers',                  reward: 25,  goal: 50,   cur: () => SAVE.tot.served },
+    { id: 'serve250',  name: 'Neighborhood spot',  desc: 'Serve 250 customers',                 reward: 75,  goal: 250,  cur: () => SAVE.tot.served },
+    { id: 'serve1000', name: 'Local legend',       desc: 'Serve 1,000 customers',               reward: 200, goal: 1000, cur: () => SAVE.tot.served },
+    { id: 'combo10',   name: 'In the zone',        desc: 'Reach a ×10 combo',                   reward: 40,  goal: 10,   cur: () => SAVE.tot.bestCombo },
+    { id: 'perfect',   name: 'Flawless shift',     desc: 'No walkouts and no wrong orders all shift', reward: 50, goal: 1, cur: () => SAVE.tot.perfect },
+    { id: 'stars3',    name: 'Gold star',          desc: 'Earn 3 stars on a day',               reward: 30,  goal: 1,    cur: () => Object.values(SAVE.stars).filter(v => v >= 3).length },
+    { id: 'stars30',   name: 'Star collector',     desc: 'Collect 30 stars',                    reward: 100, goal: 30,   cur: () => Object.values(SAVE.stars).reduce((a, b) => a + b, 0) },
+    { id: 'tasks10',   name: 'Challenge accepted', desc: 'Finish 10 daily challenges',          reward: 60,  goal: 10,   cur: () => SAVE.tot.tasks },
+    { id: 'pastry50',  name: 'Rise and shine',     desc: 'Serve 50 pastries',                   reward: 50,  goal: 50,   cur: () => SAVE.tot.pastries },
+    { id: 'critic5',   name: "Critics' choice",    desc: 'Win over 5 food critics',             reward: 60,  goal: 5,    cur: () => SAVE.tot.critics },
+    { id: 'allregs',   name: 'Everybody knows your name', desc: 'Serve every regular at least once', reward: 50, goal: 6, cur: () => REGULARS.filter(g => SAVE.regs[g.name]).length },
+    { id: 'bestie',    name: 'Bestie',             desc: 'Serve one regular 15 times',          reward: 75,  goal: 15,   cur: () => Math.max(0, ...Object.values(SAVE.regs)) },
+    { id: 'sig10',     name: 'House favorite',     desc: 'Serve your signature drink 10 times', reward: 40,  goal: 10,   cur: () => SAVE.tot.sig },
+    { id: 'day20',     name: 'Twenty days strong', desc: 'Clear Day 20',                        reward: 100, goal: 20,   cur: () => SAVE.best },
+    { id: 'cozy',      name: 'Home sweet café',    desc: 'Own every piece of decor',            reward: 150, goal: 8,    cur: () => decorCount() },
+  ];
+  const BADGE = ['#F2545B', '#3FA37D', '#5AA9E6', '#E0A33A', '#B58BE0', '#FF9F5A', '#2A4D73', '#F7A1C4'];
+
+  const SKIN = ['#F6D2B5','#E8B48F','#C98D63','#9C6644','#6F4630','#FFE0C7'];
+  const HAIR = ['#2B1A14','#6B3B24','#E0A33A','#B23A2F','#3D3D3D','#8A5CC2','#2E6FB5'];
+  const SHIRT = ['#F2545B','#3FA37D','#5AA9E6','#FFD66B','#B58BE0','#FF9F5A','#F7A1C4'];
+
+  // Pacing: arrivals speed up gently; patience is a base per day plus extra
+  // seconds for every step in the order. Shifts lengthen from day 8.
+  const dur = d => d < 8 ? 90 : Math.min(150, 90 + 10 * (d - 7));
+  const cfg = d => {
+    const D = dur(d);
+    const base = d <= 20 ? 25 + 7 * (d - 1) : 158 + 4 * (d - 20);
+    return {
+      dur: D,
+      spawn: Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)),
+      patience: Math.max(22, 30 - (d - 1)),
+      perStep: 4,
+      goal: Math.round(base * D / 90),
+    };
+  };
+
+  /* ---------- Save data (this browser only) ---------- */
+  let SAVE;
+  function loadSave() {
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem('lox-save')); } catch (e) {}
+    if (!s || typeof s !== 'object') {
+      let b = 0;
+      try { b = +localStorage.getItem('beandash-best') || 0; } catch (e) {}
+      // Players from before the shop existed get back pay for days already cleared
+      s = { best: b, bank: b * 15, owned: {}, theme: 'theme_mint', stars: {}, sigDrink: null, sigPastry: null };
+    }
+    s.owned = s.owned || {}; s.stars = s.stars || {};
+    s.lv = s.lv || {}; s.ach = s.ach || {}; s.regs = s.regs || {};
+    s.tot = Object.assign({ shifts: 0, served: 0, pastries: 0, critics: 0, sig: 0, tasks: 0, perfect: 0, bestCombo: 0 }, s.tot || {});
+    // Older saves bought these as one-time items; they become level 1 of the new upgrade tracks
+    ['grinder', 'chairs', 'tipsign'].forEach(id => { if (s.owned[id] && !s.lv[id]) s.lv[id] = 1; });
+    s.owned.theme_mint = true;
+    return s;
+  }
+  function persist() {
+    try { localStorage.setItem('lox-save', JSON.stringify(SAVE)); localStorage.setItem('beandash-best', SAVE.best); } catch (e) {}
+  }
+  const own = id => !!SAVE.owned[id];
+  const reach = () => SAVE.best + 1;
+
+  let hintsAll = false;
+  try { hintsAll = localStorage.getItem('lox-hints') === 'all'; } catch (e) {}
+
+  /* ---------- Sound ---------- */
+  let actx = null, soundOn = true;
+  function initAudio() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } }
+  function beep(f, d = .08, type = 'sine', vol = .08, slide = 0) {
+    if (!soundOn || !actx) return;
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = f;
+    if (slide) o.frequency.linearRampToValueAtTime(f + slide, actx.currentTime + d);
+    g.gain.setValueAtTime(vol, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + d);
+    o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime + d);
+  }
+  const sfx = {
+    click: () => beep(520, .05, 'triangle'),
+    done:  () => beep(880, .09, 'sine', .07),
+    cash:  () => { beep(988, .08, 'square', .04); setTimeout(() => beep(1319, .14, 'square', .04), 70); },
+    bad:   () => beep(180, .22, 'sawtooth', .05, -60),
+    walk:  () => beep(300, .3, 'triangle', .05, -150),
+    bell:  () => beep(1568, .25, 'sine', .05),
+    burn:  () => beep(140, .3, 'sawtooth', .04, -40),
+  };
+
+  /* ---------- Helpers ---------- */
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  const money = n => '$' + n.toFixed(2);
+  const pickWeighted = (list, w) => rnd(list.flatMap(x => Array(w(x)).fill(x)));
+  const mkCup = () => ({ base: null, items: [], busy: null });
+  const plural = n => /s$/.test(n) ? n : n + 's';
+
+  function pastries() {
+    const p = { ...PASTRY_BASE };
+    if (SAVE.sigPastry) p.sig = { label: SAVE.sigPastry.name, short: SAVE.sigPastry.name, day: SAVE.sigPastry.day, price: 5.50, look: SAVE.sigPastry.look, sig: true };
+    return p;
+  }
+  const allDrinks = () => SAVE.sigDrink ? [...DRINKS, { ...SAVE.sigDrink, sig: true }] : DRINKS;
+  const unlockedDrinks = d => allDrinks().filter(x => x.day <= d);
+  const unlockedPastries = d => { const P = pastries(); return Object.keys(P).filter(k => P[k].day <= d); };
+  const lv = id => SAVE.lv[id] || 0;
+  const shotTime = () => [1.5, 1.2, .9, .7][lv('grinder')];
+  const warmTime = () => [3, 2.5, 2][lv('ovenspeed')];
+  const burnTime = () => [10, 13, 16][lv('ovenspeed')];
+  const decorCount = () => DECOR.filter(d => own(d.id)).length;
+  const tipMult = () => [1, 1.08, 1.16, 1.25][lv('tipsign')] * (1 + .02 * decorCount());
+  const patienceMult = () => 1 + .1 * lv('chairs') + (own('decor_cat') ? .05 : 0);
+  const hearts = name => { const n = SAVE.regs[name] || 0; return n < 5 ? 1 : n < 15 ? 2 : 3; };
+  const stationTime = k => k === 'shot' ? shotTime() : ING[k].time;
+  const cap = st => st === 'machine' ? (own('machine2') ? 2 : 1) : (own('steamer2') ? 2 : 1);
+  const showsRecipe = o => !!o.drink && (hintsAll || o.drink.sig || S.day - o.drink.day < 2);
+
+  function applyTheme(id) {
+    const t = THEMES.find(x => x.id === id) || THEMES[0];
+    Object.entries(t.v).forEach(([k, v]) => document.documentElement.style.setProperty('--' + k, v));
+  }
+
+  let hintTimer = 0;
+  function hint(msg, good = false) {
+    const el = $('#hint'); el.textContent = msg; el.classList.toggle('good', good);
+    clearTimeout(hintTimer); hintTimer = setTimeout(() => el.textContent = '', 1800);
+  }
+
+  function floater(anchor, text, cls = '', dy = 0) {
+    const g = $('#game').getBoundingClientRect(), r = anchor.getBoundingClientRect();
+    const f = document.createElement('div');
+    f.className = 'floater ' + cls; f.textContent = text;
+    f.style.left = (r.left - g.left + r.width / 2) + 'px';
+    f.style.top = (r.top - g.top + dy) + 'px';
+    $('#game').appendChild(f);
+    setTimeout(() => f.remove(), 1150);
+  }
+
+  function pastryHTML(look, cls = '') {
+    const gl = GLAZES.find(x => x.id === look.glaze);
+    const inner = (gl && gl.c ? `<span class="g" style="--g:${gl.c}"></span>` : '') +
+                  (look.top && look.top !== 'none' ? `<span class="tp ${look.top}"></span>` : '');
+    if (look.base === 'muffin') return `<span class="pz muffin ${cls}"><span class="b"></span><span class="d">${inner}</span></span>`;
+    return `<span class="pz ${look.base} ${cls}"><span class="b">${inner}</span></span>`;
+  }
+
+  function randomLook() {
+    return { skin: rnd(SKIN), hair: rnd(HAIR), shirt: rnd(SHIRT), style: Math.floor(Math.random() * 4), acc: rnd(['none','none','none','glasses','beanie','headphones']) };
+  }
+  function personHTML(L) {
+    const critic = L.acc === 'critic', hat = critic || L.acc === 'beanie';
+    return `<span class="person${L.kid ? ' kid' : ''}">
+        ${L.style === 1 ? '<span class="hairback"></span>' : ''}
+        ${L.style === 2 && !hat ? '<span class="bun"></span>' : ''}
+        <span class="head"><span class="eye l"></span><span class="eye r"></span><span class="blush l"></span><span class="blush r"></span><span class="mouth"></span>${L.acc === 'glasses' ? '<span class="glasses"></span>' : critic ? '<span class="glasses shades"></span>' : ''}</span>
+        ${L.style !== 3 && !hat ? '<span class="cap"></span>' : ''}
+        ${L.acc === 'beanie' ? '<span class="beanie"></span>' : ''}
+        ${critic ? '<span class="beret"></span>' : ''}
+        ${L.acc === 'headphones' ? '<span class="phones"></span>' : ''}
+        <span class="body">${critic ? '<span class="scarf"></span>' : ''}</span>
+      </span>`;
+  }
+
+  /* ---------- Daily challenge ---------- */
+  function makeTask(d, c) {
+    const expected = Math.floor(c.dur / c.spawn);
+    const drinks = unlockedDrinks(d).filter(x => x.name !== 'Espresso' && !x.sig);
+    const serveN = Math.max(5, Math.round(expected * .6));
+    const comboN = Math.min(8, 3 + Math.floor(d / 4));
+    const pick = rnd(drinks), pickN = drinks.length > 8 ? 2 : 3;
+    const opts = [
+      { text: `Serve ${serveN} customers`, n: serveN, prog: s => s.stats.served },
+      { text: `Reach a ×${comboN} combo`, n: comboN, prog: s => s.bestStreak },
+      { text: 'No walkouts all shift', clean: s => s.stats.missed },
+      { text: 'Hand over zero wrong orders', clean: s => s.stats.wrong },
+      { text: `Serve ${pickN} ${plural(pick.name)}`, n: pickN, prog: s => s.stats.byDrink[pick.name] || 0 },
+    ];
+    if (d >= OVEN_DAY) opts.push({ text: 'Serve 4 pastries', n: 4, prog: s => s.stats.pastries });
+    if (d >= REG_DAY) opts.push({ text: 'Serve 2 regulars', n: 2, prog: s => s.stats.regulars });
+    const t = rnd(opts); t.reward = 10 + 2 * d;
+    return t;
+  }
+  function taskStatus(t) {
+    if (t.n) { const p = Math.min(t.n, t.prog(S)); return { done: p >= t.n, frac: p / t.n, label: `${p} / ${t.n}` }; }
+    const v = t.clean(S);
+    return { done: v === 0, frac: v === 0 ? 1 : 0, label: v === 0 ? 'So far so good' : 'Missed it this time' };
+  }
+
+  /* ---------- State ---------- */
+  let S = null;
+  let stationBusyEls = {};
+  function freshState(d) {
+    const c = cfg(d);
+    const specials = unlockedDrinks(d).filter(x => x.name !== 'Espresso' && !x.sig);
+    const rs = c.dur * (0.3 + Math.random() * 0.3);
+    return {
+      day: d, c, t: 0, money: 0, streak: 0, bestStreak: 0,
+      stats: { served: 0, missed: 0, wrong: 0, pastries: 0, regulars: 0, critics: 0, sig: 0, byDrink: {} },
+      spots: [null, null, null, null],
+      cups: Array.from({ length: own('cup3') ? 3 : 2 }, () => mkCup()), cupSel: 0, sel: { k: 'cup', i: 0 },
+      oven: d >= OVEN_DAY ? Array(own('oven3') ? 3 : 2).fill(null) : [],
+      busy: { machine: 0, steamer: 0 }, nextSpawn: 1, running: false, paused: false,
+      rush: d >= RUSH_DAY ? { start: rs, end: rs + 20 } : null, inRush: false,
+      special: d >= SPECIAL_DAY && specials.length ? rnd(specials).name : null,
+      task: d >= TASK_DAY ? makeTask(d, c) : null,
+    };
+  }
+
+  /* ---------- Day setup ---------- */
+  function startDay(d) {
+    initAudio();
+    document.querySelectorAll('.cust').forEach(e => e.remove());
+    S = freshState(d);
+    buildStations(); renderMenu(); renderCups(); renderOven(); renderHUD();
+    document.querySelectorAll('.pat').forEach(p => p.className = 'pat');
+    $('#rush').hidden = true;
+    const P = pastries();
+    const fresh = unlockedDrinks(d).filter(x => x.day === d && !x.sig).length + unlockedPastries(d).filter(k => P[k].day === d && !P[k].sig).length;
+    const secs = S.c.dur;
+    showCard(`
+      <h2>Day ${d} menu</h2>
+      <p>${d === 1 ? 'Learn these three, then open up.' : fresh ? `${fresh} new item${fresh > 1 ? 's' : ''} today, marked in yellow.` : 'Same menu, busier crowd.'}
+        Goal: <b>${money(S.c.goal)}</b> in <b>${secs} seconds</b>.</p>
+      ${NEWS[d] ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
+      ${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text}. Bonus <b>${money(S.task.reward)}</b> to savings.</div>` : ''}
+      ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> pays 50% more.</p>` : ''}
+      ${recipesHTML(d, d >= 6)}
+      <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>
+      <p class="small">Tickets spell out the recipe for new drinks during their first two days. Tap Hints up top to show it on every ticket. The Menu button pauses the clock and shows every recipe.</p>`);
+    $('#openBtn').onclick = () => {
+      S.running = true; last = performance.now();
+      $('#overlay').hidden = true; sfx.bell();
+    };
+  }
+
+  function recipesHTML(d, collapse = false) {
+    const P = pastries();
+    const isNew = x => x.day === d && d > 1 && !x.sig;
+    const drinkLi = x => `<li class="${isNew(x) ? 'isnew' : ''}">
+        <span class="rname">${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}${x.sig ? '<span class="newtag sig">Yours</span>' : ''}${S && x.name === S.special ? ' <span class="spc">★ special</span>' : ''}</span>
+        <span class="rsteps">${[x.cup, ...x.items].map(k => `<span class="rstep"><span class="dot" style="--c:${ING[k].c}"></span>${ING[k].label}</span>`).join('')}</span>
+      </li>`;
+    const pastryLi = k => `<li class="${isNew(P[k]) ? 'isnew' : ''}">
+        <span class="rname">${pastryHTML(P[k].look, 'mini')} ${esc(P[k].label)}${isNew(P[k]) ? '<span class="newtag">New</span>' : ''}${P[k].sig ? '<span class="newtag sig">Yours</span>' : ''}</span>
+        <span class="rsteps"><span class="rstep">Pastry case</span><span class="rstep">Oven ${warmTime()}s</span><span class="rstep">Serve</span></span>
+      </li>`;
+    const mods = [];
+    if (d >= OAT_DAY) mods.push(`<li class="rmod"><b>Oat</b> tag: use Oat milk instead of Milk</li>`);
+    if (d >= SHOT_DAY) mods.push(`<li class="rmod"><b>+Shot</b> tag: add one more Espresso</li>`);
+    const drinks = unlockedDrinks(d), pk = unlockedPastries(d);
+    const all = drinks.map(drinkLi).join('') + pk.map(pastryLi).join('') + mods.join('');
+    if (!collapse) return `<ul class="recipes">${all}</ul>`;
+    const fresh = drinks.filter(isNew).map(drinkLi).join('') + pk.filter(k => isNew(P[k])).map(pastryLi).join('');
+    return `${fresh ? `<ul class="recipes">${fresh}</ul>` : ''}<details class="fullmenu"><summary>Full menu (${drinks.length + pk.length} items)</summary><ul class="recipes">${all}</ul></details>`;
+  }
+
+  function buildStations() {
+    const wrap = $('#stations'); wrap.innerHTML = ''; stationBusyEls = {};
+    STATION_ORDER.forEach(k => {
+      const ing = ING[k];
+      if (ing.day > S.day + 1) return; // tease only tomorrow's unlock
+      const locked = ing.day > S.day;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
+      b.disabled = locked;
+      const sub = locked ? `Day ${ing.day}` : ing.station ? `${stationTime(k)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
+      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span>`;
+      b.addEventListener('click', () => add(k));
+      wrap.appendChild(b);
+      stationBusyEls[k] = b.querySelector('.busy');
+    });
+    const d2 = document.createElement('button');
+    d2.type = 'button'; d2.className = 'station dumpbtn';
+    d2.innerHTML = '<span class="ic dumpic"></span>Dump<span class="t">selected</span>';
+    d2.addEventListener('click', dump);
+    wrap.appendChild(d2);
+    const cs = $('#case'), P = pastries();
+    const keys = Object.keys(P).filter(k => P[k].day <= S.day + 1);
+    cs.hidden = !keys.length;
+    cs.innerHTML = keys.length ? '<span class="cl">Pastry case · tap one to warm it in the oven</span>' : '';
+    keys.forEach(k => {
+      const locked = P[k].day > S.day;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'station' + (P[k].sig ? ' sig' : ''); b.disabled = locked;
+      b.innerHTML = `${pastryHTML(P[k].look, 'mini')}${esc(P[k].short)}<span class="t">${locked ? `Day ${P[k].day}` : P[k].sig ? 'your signature' : `warm ${warmTime()}s`}</span>`;
+      b.addEventListener('click', () => bake(k));
+      cs.appendChild(b);
+    });
+    $('#oven').hidden = !S.oven.length;
+  }
+
+  function renderMenu() {
+    const ul = $('#menu'); ul.innerHTML = '';
+    unlockedDrinks(S.day).forEach(d => {
+      const li = document.createElement('li');
+      const rec = [ING[d.cup].label.replace(' cup', '')].concat(d.items.map(i => ING[i].label)).join(' + ');
+      const tag = d.sig ? '<span class="new">yours!</span>' : d.day === S.day && S.day > 1 ? '<span class="new">new!</span>' : '';
+      const star = d.name === S.special ? '★ ' : '';
+      li.innerHTML = `<div class="row"><span>${star}${esc(d.name)}${tag}</span><span class="price">${d.price.toFixed(2)}</span></div><div class="rec">${rec}</div>`;
+      ul.appendChild(li);
+    });
+    const P = pastries(), pk = unlockedPastries(S.day);
+    $('#pastryBoard').innerHTML = pk.length ? `<h3>From the oven</h3><ul>${pk.map(k => `<li><div class="row"><span>${esc(P[k].label)}${P[k].day === S.day && !P[k].sig ? '<span class="new">new!</span>' : ''}</span><span class="price">${P[k].price.toFixed(2)}</span></div></li>`).join('')}</ul>` : '';
+    const notes = [];
+    if (S.day >= OAT_DAY) notes.push('“Oat” means swap Milk for Oat milk.');
+    if (S.day >= SHOT_DAY) notes.push('“+Shot” means one more Espresso.');
+    notes.push('Build it, then tap the customer to hand it over.');
+    $('#boardfoot').innerHTML = notes.join('<br>');
+  }
+
+  /* ---------- Customers ---------- */
+  function makeOrder() {
+    const d = S.day, drinks = unlockedDrinks(d), pk = unlockedPastries(d), P = pastries();
+    const here = S.spots.filter(Boolean).map(c => c.o.who);
+    const regs = d >= REG_DAY ? REGULARS.filter(g => !here.includes(g.name) && drinks.some(x => x.name === g.fav)) : [];
+    const drinkW = x => (x.day === d && d > 1 ? 2 : 1) + (x.sig ? 2 : 0) + (x.name === S.special ? 1 : 0);
+    const pastryW = k => (P[k].day === d ? 2 : 1) + (P[k].sig ? 2 : 0);
+    let kind = 'normal', who = null, look = randomLook(), drink = null, pastry = null;
+
+    if (regs.length && Math.random() < .14) {
+      const g = rnd(regs); kind = 'regular'; who = g.name; look = { ...g.look };
+      drink = drinks.find(x => x.name === g.fav);
+      if (g.pastry && pk.includes(g.pastry)) pastry = g.pastry;
+    } else if (d >= KID_DAY && Math.random() < .1) {
+      kind = 'kid'; look.kid = true; look.acc = 'none';
+      drink = drinks.find(x => x.name === 'Hot Chocolate');
+      if (pk.includes('cookie') && Math.random() < .5) pastry = 'cookie';
+    } else {
+      if (d >= CRITIC_DAY && Math.random() < .07) { kind = 'critic'; look.acc = 'critic'; }
+      const rr = Math.random();
+      if (pk.length && rr < .12) pastry = pickWeighted(pk, pastryW);
+      else {
+        drink = pickWeighted(drinks, drinkW);
+        if (pk.length && rr < .42) pastry = pickWeighted(pk, pastryW);
+      }
+    }
+    if (!drink && !pastry) drink = pickWeighted(drinks, drinkW);
+
+    let dr = null;
+    if (drink) {
+      dr = { name: drink.name, day: drink.day, cup: drink.cup, items: [...drink.items], price: drink.price, mods: [], sig: !!drink.sig, special: drink.name === S.special };
+      if (kind === 'normal' || kind === 'critic') {
+        if (d >= OAT_DAY && dr.items.includes('milk') && Math.random() < .3) {
+          dr.items[dr.items.indexOf('milk')] = 'oat'; dr.mods.push('Oat'); dr.price += .75;
+        }
+        if (d >= SHOT_DAY && dr.items.includes('shot') && Math.random() < .2) { dr.items.push('shot'); dr.mods.push('+Shot'); dr.price += .75; }
+      }
+    }
+    return { kind, who, look, drink: dr, pastry };
+  }
+
+  function spawn() {
+    const free = S.spots.map((c, i) => c ? -1 : i).filter(i => i >= 0);
+    if (!free.length) return false;
+    const i = rnd(free), o = makeOrder(), P = pastries();
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'cust' + (showsRecipe(o) ? '' : ' nochips') + (o.kind === 'critic' ? ' critic' : '');
+    const parts = [o.drink && `${o.drink.mods.join(' ')} ${o.drink.name}`, o.pastry && P[o.pastry].label].filter(Boolean).join(' and ');
+    el.setAttribute('aria-label', `${o.who || (o.kind === 'critic' ? 'Food critic' : 'Customer')} wants ${parts}. Tap to serve.`);
+    el.style.cssText = `--skin:${o.look.skin};--hair:${o.look.hair};--shirt:${o.look.shirt}`;
+    const tag = o.kind === 'regular' ? `${esc(o.who)} ${'♥'.repeat(hearts(o.who))}` : o.kind === 'critic' ? 'Food critic ★' : '';
+    let dpart = '';
+    if (o.drink) {
+      const mods = o.drink.mods.length ? `<span class="mods">${o.drink.mods.map(m => `<span class="mod">${m}</span>`).join('')}</span>` : '';
+      const chips = `<span class="chips">${[o.drink.cup, ...o.drink.items].map(k => `<span class="chip" style="--c:${ING[k].c};--t:${ING[k].dark ? '#fff' : 'var(--ink)'}">${ING[k].short}</span>`).join('')}</span>`;
+      dpart = `<span class="part d">${esc(o.drink.name)}${o.drink.special ? ' <span class="spc">★</span>' : ''}${mods}${chips}</span>`;
+    }
+    const ppart = o.pastry ? `<span class="part p${o.drink ? '' : ' solo'}">${o.drink ? '+ ' : ''}${esc(P[o.pastry].label)}</span>` : '';
+    el.innerHTML = `<span class="ticket">${tag ? `<span class="who">${tag}</span>` : ''}${dpart}${ppart}</span>${personHTML(o.look)}`;
+    el.addEventListener('click', () => serve(i));
+    document.querySelectorAll('.spot')[i].appendChild(el);
+    const steps = (o.drink ? 1 + o.drink.items.length : 0) + (o.pastry ? 3 : 0);
+    const mult = patienceMult() * (o.kind === 'critic' ? .7 : o.kind === 'regular' ? 1.2 : 1);
+    S.spots[i] = { o, el, p: 1, drinkDone: false, pastryDone: false, patience: (S.c.patience + S.c.perStep * steps) * mult * (0.9 + Math.random() * .25) };
+    document.querySelectorAll('.pat')[i].classList.add('on');
+    sfx.click();
+    return true;
+  }
+
+  function leave(i) {
+    const c = S.spots[i]; if (!c) return;
+    c.el.classList.add('leaving');
+    setTimeout(() => c.el.remove(), 460);
+    S.spots[i] = null;
+    document.querySelectorAll('.pat')[i].className = 'pat';
+  }
+
+  function diff(cup, dr) {
+    if (cup.base !== dr.cup) return dr.cup === 'iced' ? 'I wanted it iced!' : 'I wanted it hot!';
+    const need = [...dr.items];
+    for (const k of cup.items) { const j = need.indexOf(k); if (j >= 0) need.splice(j, 1); else return `No ${ING[k].label.toLowerCase()}, please!`; }
+    if (need.length) return `Missing ${ING[need[0]].label.toLowerCase()}!`;
+    return null;
+  }
+
+  function reject(c, msg) {
+    c.p = Math.max(0.02, c.p - .25);
+    S.streak = 0; S.stats.wrong++;
+    c.el.classList.remove('wrong'); void c.el.offsetWidth; c.el.classList.add('wrong');
+    floater(c.el.querySelector('.ticket'), msg, 'bad');
+    sfx.bad(); renderHUD();
+  }
+
+  function serve(i) {
+    if (!S || !S.running || S.paused) return;
+    const c = S.spots[i]; if (!c) return;
+    const P = pastries();
+    if (S.sel.k === 'oven') {
+      const slot = S.oven[S.sel.i];
+      if (!slot) { hint('Pick a pastry from the oven first.'); return; }
+      if (slot.st === 'warm') { hint('That pastry is still warming.'); return; }
+      if (!c.o.pastry) return reject(c, "I didn't order food!");
+      if (c.pastryDone) return reject(c, 'I already have my food!');
+      if (slot.st === 'burnt') return reject(c, "It's burnt!");
+      if (slot.key !== c.o.pastry) return reject(c, `I wanted the ${P[c.o.pastry].label.toLowerCase()}!`);
+      S.oven[S.sel.i] = null; S.sel = { k: 'cup', i: S.cupSel };
+      c.pastryDone = true; S.stats.pastries++;
+      c.el.querySelector('.part.p').classList.add('done');
+      renderOven(); renderCups();
+    } else {
+      const cup = S.cups[S.sel.i];
+      if (!cup.base) { hint(c.o.drink ? 'Make their drink first. Start with a cup.' : 'They only want food. Warm a pastry in the oven.'); return; }
+      if (cup.busy) { hint('Hang on, that cup is still being filled.'); return; }
+      if (!c.o.drink) return reject(c, 'I only wanted food!');
+      if (c.drinkDone) return reject(c, 'I already have my drink!');
+      const problem = diff(cup, c.o.drink);
+      if (problem) return reject(c, problem);
+      S.cups[S.sel.i] = mkCup();
+      c.drinkDone = true; S.stats.byDrink[c.o.drink.name] = (S.stats.byDrink[c.o.drink.name] || 0) + 1;
+      c.el.querySelector('.part.d').classList.add('done');
+      renderCups();
+    }
+    if ((c.o.drink && !c.drinkDone) || (c.o.pastry && !c.pastryDone)) {
+      c.p = Math.min(1, c.p + .15);
+      floater(c.el.querySelector('.ticket'), '✓ One more thing!', 'combo');
+      sfx.done(); renderHUD();
+      return;
+    }
+    pay(i);
+  }
+
+  function pay(i) {
+    const c = S.spots[i], o = c.o, P = pastries(), tk = c.el.querySelector('.ticket');
+    S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak);
+    let base = 0;
+    if (o.drink) base += o.drink.price * (o.drink.special ? 1.5 : 1);
+    if (o.pastry) base += P[o.pastry].price;
+    const tip = base * (0.15 + 0.5 * c.p) * (o.kind === 'regular' ? 1.5 * (1 + .1 * (hearts(o.who) - 1)) : 1);
+    let earned = (base + tip) * (1 + 0.1 * Math.min(S.streak - 1, 5));
+    if (o.kind === 'critic') earned *= 2.5;
+    earned *= tipMult();
+    if (S.inRush) earned *= 1.25;
+    S.money += earned; S.stats.served++;
+    if (o.kind === 'regular') { S.stats.regulars++; SAVE.regs[o.who] = (SAVE.regs[o.who] || 0) + 1; }
+    if (o.kind === 'critic') S.stats.critics++;
+    if (o.drink && o.drink.sig) S.stats.sig++;
+    floater(tk, '+' + money(earned));
+    if (o.kind === 'critic') floater(tk, 'Rave review!', 'combo', 22);
+    else if (o.kind === 'regular') floater(tk, `Thanks! See you tomorrow`, 'combo', 22);
+    else if (S.streak >= 2) floater(tk, `Combo ×${S.streak}`, 'combo', 22);
+    sfx.cash();
+    leave(i);
+    renderHUD();
+  }
+
+  /* ---------- Cups, stations, oven ---------- */
+  function selectCup(i) {
+    if (!S || !S.running || S.paused || i >= S.cups.length) return;
+    S.cupSel = i; S.sel = { k: 'cup', i }; sfx.click(); renderCups(); renderOven();
+  }
+
+  function add(k) {
+    if (!S || !S.running || S.paused) return;
+    const ing = ING[k];
+    if (S.sel.k !== 'cup') { S.sel = { k: 'cup', i: S.cupSel }; renderOven(); }
+    const cup = S.cups[S.cupSel];
+    if (ing.cup) {
+      if (cup.base && cup.items.length) { hint('This cup has stuff in it. Dump it or pick another cup.'); return; }
+      cup.base = k; sfx.click(); renderCups(); return;
+    }
+    if (!cup.base) { hint('Grab a hot or iced cup first.'); return; }
+    if (cup.busy) { hint('That cup is busy. Switch to another cup.'); return; }
+    if (cup.items.length >= 6) { hint('This cup is full.'); return; }
+    if (ing.station) {
+      if (S.busy[ing.station] >= cap(ing.station)) { hint(`The ${ing.note} is busy.`); return; }
+      S.busy[ing.station]++;
+      cup.busy = { k, start: S.t, until: S.t + stationTime(k) };
+      sfx.click(); renderCups(); return;
+    }
+    cup.items.push(k); sfx.click(); renderCups();
+  }
+
+  function bake(k) {
+    if (!S || !S.running || S.paused || !S.oven.length) return;
+    const free = S.oven.findIndex(x => !x);
+    if (free < 0) { hint('The oven is full. Serve or dump a pastry first.'); return; }
+    S.oven[free] = { key: k, t0: S.t, readyAt: S.t + warmTime(), burnAt: S.t + warmTime() + burnTime(), st: 'warm' };
+    sfx.click(); renderOven();
+  }
+
+  function selectOven(i) {
+    if (!S || !S.running || S.paused) return;
+    const o = S.oven[i];
+    if (!o) { hint('Tap a pastry in the case to warm it here.'); return; }
+    if (o.st === 'warm') { hint('Still warming…'); return; }
+    S.sel = { k: 'oven', i }; sfx.click();
+    if (o.st === 'burnt') hint('Burnt! Tap Dump to toss it.');
+    renderOven(); renderCups();
+  }
+
+  function cupHTML(cup, i) {
+    let vis;
+    if (!cup.base) vis = `<span class="emptycup">no cup</span>`;
+    else {
+      const layers = cup.items.map(k => `<span class="layer${ING[k].top ? ' top' : ''}" style="--c:${ING[k].c}"></span>`).join('');
+      vis = `<span class="cupholder ${cup.base}" style="display:block"><span class="cup ${cup.base}">${layers}</span></span>`;
+    }
+    const parts = cup.items.map(k => ING[k].label);
+    if (cup.busy) parts.push(ING[cup.busy.k].label + '…');
+    const txt = !cup.base ? 'Pick a cup' : (ING[cup.base].label + (parts.length ? ': ' + parts.join(', ') : ''));
+    return `<span class="cupwrap">${vis}</span><span class="meta"><span class="lbl" style="display:block"><span class="lbl-f">Cup ${i + 1} · key ${i + 1}</span><span class="lbl-m">Cup ${i + 1}</span></span><span class="contents" style="display:block">${txt}</span>${cup.busy ? '<span class="prog"><i></i></span>' : ''}</span>`;
+  }
+
+  function renderCups() {
+    const wrap = $('#cups');
+    wrap.style.setProperty('--n', S.cups.length);
+    wrap.dataset.n = S.cups.length;
+    wrap.innerHTML = S.cups.map((cup, i) => {
+      const act = S.sel.k === 'cup' && S.sel.i === i, tgt = !act && S.cupSel === i;
+      return `<button class="slot${act ? ' active' : ''}${tgt ? ' target' : ''}" type="button" data-i="${i}" aria-pressed="${act}">${cupHTML(cup, i)}</button>`;
+    }).join('');
+  }
+
+  function renderOven() {
+    const wrap = $('#ovslots');
+    if (!S.oven.length) { wrap.innerHTML = ''; return; }
+    wrap.style.setProperty('--n', S.oven.length);
+    const P = pastries();
+    wrap.innerHTML = S.oven.map((o, i) => {
+      if (!o) return `<button class="ovslot" type="button" data-i="${i}"><span>empty</span></button>`;
+      const act = S.sel.k === 'oven' && S.sel.i === i;
+      const label = o.st === 'warm' ? 'Warming' : o.st === 'ready' ? 'Ready!' : 'Burnt';
+      return `<button class="ovslot ${o.st}${act ? ' active' : ''}" type="button" data-i="${i}" aria-label="${esc(P[o.key].label)}: ${label}">${pastryHTML(P[o.key].look, o.st === 'warm' ? 'cold' : o.st === 'burnt' ? 'burnt' : '')}<span>${label}</span><span class="obar"><i></i></span></button>`;
+    }).join('');
+  }
+
+  /* ---------- HUD ---------- */
+  function renderHUD() {
+    $('#day').textContent = S.day;
+    const left = Math.max(0, Math.ceil(S.c.dur - S.t));
+    $('#clock').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    $('#money').textContent = money(S.money);
+    const pct = Math.min(100, S.money / S.c.goal * 100);
+    const gf = $('#goalfill'); gf.style.width = pct + '%'; gf.classList.toggle('met', pct >= 100);
+    $('#streakv').textContent = '×' + S.streak;
+    $('#streak').classList.toggle('hot', S.streak >= 3);
+    const tk = $('#task');
+    tk.hidden = !S.task;
+    if (S.task) {
+      const st = taskStatus(S.task);
+      $('#taskText').textContent = S.task.text;
+      $('#taskFill').style.width = st.frac * 100 + '%';
+      $('#taskProg').textContent = st.label;
+      $('#taskReward').textContent = '+' + money(S.task.reward);
+      tk.classList.toggle('done', st.done && !!S.task.n);
+      if (S.running && S.task.n && S.lastTaskLabel !== undefined && st.label !== S.lastTaskLabel) {
+        hint(st.done ? `Challenge done! +${money(S.task.reward)}` : `Challenge: ${st.label}`, true);
+      }
+      S.lastTaskLabel = st.label;
+    }
+  }
+
+  /* ---------- Loop ---------- */
+  let last = performance.now();
+  function loop(ts) {
+    const dt = Math.min(.1, (ts - last) / 1000); last = ts;
+    if (S && S.running && !S.paused) update(dt);
+    requestAnimationFrame(loop);
+  }
+
+  let lastSec = -1;
+  function update(dt) {
+    S.t += dt;
+    const left = S.c.dur - S.t;
+
+    const inR = !!S.rush && S.t >= S.rush.start && S.t < S.rush.end;
+    if (inR !== S.inRush) { S.inRush = inR; $('#rush').hidden = !inR; if (inR) { sfx.bell(); S.nextSpawn = Math.min(S.nextSpawn, S.t + 1); } }
+
+    if (left > 6 && S.t >= S.nextSpawn) {
+      S.nextSpawn = S.t + (spawn() ? S.c.spawn * (0.75 + Math.random() * .5) * (S.inRush ? .55 : 1) : 1);
+    }
+
+    S.spots.forEach((c, i) => {
+      if (!c) return;
+      c.p -= dt / c.patience;
+      const mood = c.p > .6 ? '' : c.p > .3 ? 'meh' : 'mad';
+      if (c.mood !== mood) { c.el.classList.remove('meh', 'mad'); if (mood) c.el.classList.add(mood); c.mood = mood; }
+      const pat = document.querySelectorAll('.pat')[i];
+      pat.className = 'pat on ' + mood;
+      pat.firstElementChild.style.width = Math.max(0, c.p * 100) + '%';
+      if (c.p <= 0) {
+        S.stats.missed++; S.streak = 0;
+        floater(c.el.querySelector('.ticket'), c.o.kind === 'critic' ? 'Bad review…' : 'Walked out', 'bad');
+        sfx.walk(); leave(i); renderHUD();
+      }
+    });
+
+    let cupsChanged = false;
+    const frac = {};
+    S.cups.forEach((cup, i) => {
+      if (!cup.busy) return;
+      const b = cup.busy, f = Math.min(1, (S.t - b.start) / (b.until - b.start));
+      frac[b.k] = Math.max(frac[b.k] || 0, f);
+      const bar = document.querySelector(`#cups .slot[data-i="${i}"] .prog i`); if (bar) bar.style.width = f * 100 + '%';
+      if (S.t >= b.until) {
+        cup.items.push(b.k); cup.busy = null;
+        S.busy[ING[b.k].station]--;
+        sfx.done(); cupsChanged = true;
+      }
+    });
+    Object.entries(stationBusyEls).forEach(([k, el]) => { el.style.width = (frac[k] || 0) * 100 + '%'; });
+    if (cupsChanged) renderCups();
+
+    let ovenChanged = false;
+    S.oven.forEach((o, i) => {
+      if (!o) return;
+      const st = S.t < o.readyAt ? 'warm' : S.t < o.burnAt ? 'ready' : 'burnt';
+      if (st !== o.st) { o.st = st; ovenChanged = true; st === 'ready' ? sfx.done() : st === 'burnt' && sfx.burn(); }
+      const bar = document.querySelector(`#ovslots .ovslot[data-i="${i}"] .obar i`);
+      if (bar) bar.style.width = (st === 'warm' ? (S.t - o.t0) / (o.readyAt - o.t0) : st === 'ready' ? 1 - (S.t - o.readyAt) / (o.burnAt - o.readyAt) : 0) * 100 + '%';
+    });
+    if (ovenChanged) renderOven();
+
+    const sec = Math.ceil(left);
+    if (sec !== lastSec) { lastSec = sec; renderHUD(); if (sec <= 5 && sec > 0) beep(660, .05, 'square', .03); }
+    if (left <= 0) endDay();
+  }
+
+  function unlocksFor(n) {
+    const P = pastries();
+    const list = [
+      ...STATION_ORDER.filter(k => ING[k].day === n).map(k => ING[k].label),
+      ...DRINKS.filter(d => d.day === n).map(d => d.name),
+      ...Object.keys(PASTRY_BASE).filter(k => P[k].day === n).map(k => P[k].label),
+    ];
+    if (n === OAT_DAY) list.push('“Oat” requests');
+    if (n === SHOT_DAY) list.push('“+Shot” requests');
+    if (NEWS[n]) list.push(NEWS[n].title.toLowerCase());
+    return list;
+  }
+
+  function endDay() {
+    S.running = false; S.inRush = false; $('#rush').hidden = true;
+    S.spots.forEach((c, i) => c && leave(i));
+    S.cups.forEach(c => c.busy = null); S.busy = { machine: 0, steamer: 0 };
+    S.oven = S.oven.map(() => null); S.sel = { k: 'cup', i: S.cupSel };
+    Object.values(stationBusyEls).forEach(b => b.style.width = 0);
+    renderCups(); renderOven();
+    const ratio = S.money / S.c.goal, pass = ratio >= 1;
+    const stars = pass ? (ratio >= 1.6 ? 3 : ratio >= 1.3 ? 2 : 1) : 0;
+    const taskDone = S.task ? taskStatus(S.task).done : false;
+    const bonus = taskDone ? S.task.reward : 0;
+    const added = Math.round((S.money + bonus) * 100) / 100;
+    SAVE.bank = Math.round((SAVE.bank + added) * 100) / 100;
+    if (pass && S.day > SAVE.best) SAVE.best = S.day;
+    if (pass) SAVE.stars[S.day] = Math.max(SAVE.stars[S.day] || 0, stars);
+    const T = SAVE.tot;
+    T.shifts++; T.served += S.stats.served; T.pastries += S.stats.pastries; T.critics += S.stats.critics; T.sig += S.stats.sig;
+    if (taskDone) T.tasks++;
+    if (S.stats.served > 0 && S.stats.missed === 0 && S.stats.wrong === 0) T.perfect++;
+    T.bestCombo = Math.max(T.bestCombo, S.bestStreak);
+    const newStickers = checkStickers();
+    persist();
+    const R = { day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, task: S.task && S.task.text, taskDone, bonus, added, hasOven: S.oven.length > 0, stickers: newStickers.map(x => ({ name: x.name, reward: x.reward })) };
+    showResults(R);
+    sfx.bell();
+  }
+
+  function showResults(R) {
+    const next = R.day + 1;
+    const unlocks = R.pass ? unlocksFor(next) : [];
+    showCard(`
+      <h2>${R.pass ? 'Shift complete!' : 'Not quite…'}</h2>
+      <div class="stars">${[1, 2, 3].map(n => n <= R.stars ? '<b>★</b>' : '★').join('')}</div>
+      <div class="results">
+        <span>Tips today</span><span>${money(R.money)}</span>
+        <span>Day goal</span><span>${money(R.goal)}</span>
+        <span>Customers served</span><span>${R.stats.served}</span>
+        ${R.hasOven ? `<span>Pastries served</span><span>${R.stats.pastries}</span>` : ''}
+        <span>Wrong handoffs</span><span>${R.stats.wrong}</span>
+        <span>Walkouts</span><span>${R.stats.missed}</span>
+        <span>Best combo</span><span>×${R.bestStreak}</span>
+        ${R.task ? `<span>Challenge: ${R.task}</span><span>${R.taskDone ? '✓ +' + money(R.bonus) : '✗'}</span>` : ''}
+      </div>
+      <p class="bank">Savings: ${money(SAVE.bank)} <span class="small">(+${money(R.added)})</span></p>
+      ${R.stickers && R.stickers.length ? `<div class="unlock goal"><b>New sticker${R.stickers.length > 1 ? 's' : ''}!</b> ${R.stickers.map(x => `${x.name} (+${money(x.reward)})`).join(', ')}</div>` : ''}
+      ${unlocks.length ? `<div class="unlock"><b>Day ${next} unlocks:</b> ${unlocks.join(', ')}</div>` : ''}
+      ${R.pass ? '' : `<p>You needed ${money(R.goal - R.money)} more. You still keep today's tips. Upgrades in the Shop can help.</p>`}
+      <div class="btnrow">
+        ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
+        <button class="big alt" id="shopBtn" type="button">Shop</button>
+        <button class="big alt" id="homeBtn" type="button">Title</button>
+      </div>`);
+    const nb = $('#nextBtn'), rb = $('#retryBtn');
+    if (nb) nb.onclick = () => startDay(next);
+    if (rb) rb.onclick = () => startDay(R.day);
+    $('#shopBtn').onclick = () => openShop(() => showResults(R));
+    $('#homeBtn').onclick = title;
+  }
+
+  /* ---------- Shop ---------- */
+  let shopBack = null;
+  function openShop(back) { initAudio(); shopBack = back; renderShop(); }
+
+  let shopNote = '';
+  function renderShop() {
+    const r = reach();
+    const priceBtn = (attr, id, price, day) => day && day > r
+      ? `<button class="buy" type="button" disabled>Day ${day}</button>`
+      : `<button class="buy" type="button" data-${attr}="${id}" ${SAVE.bank < price ? 'disabled' : ''}>Buy ${money(price)}</button>`;
+    const owned = label => `<button class="buy owned" type="button" disabled>${label}</button>`;
+    const row = (name, desc, btn, extra = '') => `<div class="item"><span class="nm">${name}${extra}</span><span class="ds">${desc}</span>${btn}</div>`;
+    const tiers = TIERS.map(t => {
+      const L = lv(t.id), max = t.levels.length;
+      const pips = ` <span class="pips" aria-label="Level ${L} of ${max}">${t.levels.map((_, i) => `<i class="${i < L ? 'on' : ''}"></i>`).join('')}</span>`;
+      if (L >= max) return row(t.name, t.levels[max - 1][1], owned('Maxed'), pips);
+      const [price, desc] = t.levels[L];
+      return row(t.name, (L ? 'Next level: ' : '') + desc + '.', priceBtn('tier', t.id, price, t.day), pips);
+    }).join('');
+    const ups = UPGRADES.map(it => row(it.name, it.desc, own(it.id) ? owned('Owned') : priceBtn('buy', it.id, it.price, it.day))).join('');
+    const decor = DECOR.map(d => row(d.name, d.desc || 'Shows up in your café and adds 2% to every order.',
+      own(d.id) ? owned('Owned') : priceBtn('buy', d.id, d.price), ` <span class="dprev">${decorHTML(d.cls, true)}</span>`)).join('');
+    const makers = MAKERS.map(it => {
+      const made = it.id === 'sigdrink' ? SAVE.sigDrink : SAVE.sigPastry;
+      const extra = made ? ` <span class="newtag sig">${esc(made.name)}</span>` : '';
+      return row(it.name, it.desc, own(it.id) ? `<button class="buy owned" type="button" data-make="${it.id}">${made ? 'Edit' : 'Create'}</button>` : priceBtn('buy', it.id, it.price, it.day), extra);
+    }).join('');
+    const themes = THEMES.map(t => {
+      const sw = ` <span class="swatch">${['wall', 'wood', 'awn', 'bar'].map(k => `<i style="--c:${t.v[k]}"></i>`).join('')}</span>`;
+      const btn = own(t.id)
+        ? (SAVE.theme === t.id ? owned('In use') : `<button class="buy owned" type="button" data-use="${t.id}">Use</button>`)
+        : priceBtn('buy', t.id, t.price);
+      return row(t.name, t.price ? 'New walls, counter, awning and bar colors.' : 'The original look.', btn, sw);
+    }).join('');
+    const cozy = Math.round((tipMult() / [1, 1.08, 1.16, 1.25][lv('tipsign')] - 1) * 100);
+    showCard(`
+      <h2>Café shop</h2>
+      <p class="bank">Savings: ${money(SAVE.bank)}</p>
+      ${shopNote ? `<div class="shopnote">${shopNote}</div>` : ''}
+      <p class="small" style="margin-top:-6px">You keep every day's tips, even on days you miss the goal.</p>
+      <div class="btnrow"><button class="big alt" id="stkBtn" type="button">Sticker book · ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button></div>
+      <div class="shopsec"><h3>Upgrades</h3>${tiers}${ups}</div>
+      <div class="shopsec"><h3>Decor · cozy bonus now +${cozy}%</h3>${decor}</div>
+      <div class="shopsec"><h3>Make it yours</h3>${makers}</div>
+      <div class="shopsec"><h3>Café themes</h3>${themes}</div>
+      <div class="btnrow" style="margin-top:14px"><button class="big" id="shopDone" type="button">Done</button></div>`, 'wide');
+    shopNote = '';
+    document.querySelectorAll('[data-buy]').forEach(b => b.onclick = () => buy(b.dataset.buy));
+    document.querySelectorAll('[data-tier]').forEach(b => b.onclick = () => buyTier(b.dataset.tier));
+    document.querySelectorAll('[data-make]').forEach(b => b.onclick = () => b.dataset.make === 'sigdrink' ? drinkMaker() : pastryMaker());
+    document.querySelectorAll('[data-use]').forEach(b => b.onclick = () => { SAVE.theme = b.dataset.use; applyTheme(SAVE.theme); persist(); sfx.click(); renderShop(); });
+    $('#stkBtn').onclick = () => stickerBook(renderShop);
+    $('#shopDone').onclick = () => { if (S && !S.running) { buildStations(); renderCups(); renderOven(); renderMenu(); } shopBack ? shopBack() : title(); };
+  }
+
+  function afterPurchase() {
+    const fresh = checkStickers();
+    if (fresh.length) shopNote = `New sticker: ${fresh.map(x => `${x.name} (+${money(x.reward)})`).join(', ')}`;
+    persist(); sfx.cash();
+  }
+
+  function buy(id) {
+    const it = [...UPGRADES, ...MAKERS, ...THEMES, ...DECOR].find(x => x.id === id);
+    if (!it || own(id) || SAVE.bank < it.price) return;
+    SAVE.bank = Math.round((SAVE.bank - it.price) * 100) / 100;
+    SAVE.owned[id] = true;
+    if (id.startsWith('theme_')) { SAVE.theme = id; applyTheme(id); }
+    if (id.startsWith('decor_')) renderDecor();
+    afterPurchase();
+    if (id === 'sigdrink') drinkMaker();
+    else if (id === 'sigpastry') pastryMaker();
+    else renderShop();
+  }
+
+  function buyTier(id) {
+    const t = TIERS.find(x => x.id === id), L = lv(id);
+    if (!t || L >= t.levels.length) return;
+    const price = t.levels[L][0];
+    if (SAVE.bank < price) return;
+    SAVE.bank = Math.round((SAVE.bank - price) * 100) / 100;
+    SAVE.lv[id] = L + 1;
+    afterPurchase(); renderShop();
+  }
+
+  /* ---------- Decor + stickers ---------- */
+  function decorHTML(cls, preview = false) {
+    if (cls === 'lights') return preview ? '<span class="dc lightsicon"></span>' : '';
+    return cls === 'sign' ? '<span class="dc sign">LOX</span>' : `<span class="dc ${cls}"></span>`;
+  }
+  function renderDecor() {
+    $('#lights').hidden = !own('decor_lights');
+    $('#decor').innerHTML = DECOR.filter(d => d.cls !== 'lights' && own(d.id)).map(d => decorHTML(d.cls)).join('');
+  }
+
+  function checkStickers() {
+    const fresh = STICKERS.filter(x => !SAVE.ach[x.id] && x.cur() >= x.goal);
+    fresh.forEach(x => { SAVE.ach[x.id] = true; SAVE.bank = Math.round((SAVE.bank + x.reward) * 100) / 100; });
+    return fresh;
+  }
+
+  function stickerBook(back) {
+    const got = STICKERS.filter(x => SAVE.ach[x.id]).length;
+    showCard(`
+      <h2>Sticker book</h2>
+      <p>${got} of ${STICKERS.length} collected. Each sticker adds a bonus to your savings.</p>
+      <div class="stickers">${STICKERS.map((x, i) => {
+        const have = !!SAVE.ach[x.id], cur = Math.min(x.goal, x.cur());
+        return `<div class="stk${have ? ' have' : ''}"><span class="badge" style="--c:${BADGE[i % BADGE.length]}">★</span><b>${x.name}</b><span>${x.desc}</span><span class="sp">${have ? 'Earned · +' + money(x.reward) : `${cur.toLocaleString()} / ${x.goal.toLocaleString()} · +${money(x.reward)}`}</span></div>`;
+      }).join('')}</div>
+      <div class="btnrow"><button class="big" id="stkDone" type="button">Done</button></div>`, 'wide');
+    $('#stkDone').onclick = back;
+  }
+
+  /* ---------- Signature makers ---------- */
+  let draft = null;
+  const sigDrinkPrice = n => Math.round((2.5 + 0.8 * n) * 1.5 * 4) / 4;
+
+  function drinkMaker() {
+    const r = reach();
+    if (!draft || draft.type !== 'drink') {
+      const s = SAVE.sigDrink;
+      draft = s ? { type: 'drink', name: s.name, cup: s.cup, items: [...s.items] } : { type: 'drink', name: '', cup: 'hot', items: [] };
+    }
+    const ings = STATION_ORDER.filter(k => !ING[k].cup && ING[k].day <= r);
+    const n = draft.items.length;
+    const chip = k => `<span class="dot" style="--c:${ING[k].c}"></span>${ING[k].label}`;
+    showCard(`
+      <h2>Signature drink</h2>
+      <div class="field"><label for="sigName">Name it</label><input id="sigName" maxlength="22" placeholder="The Lox Special" value="${esc(draft.name)}" autocomplete="off"></div>
+      <span class="plabel">Cup</span>
+      <div class="picks">${['hot', 'iced'].map(k => `<button type="button" class="pick${draft.cup === k ? ' on' : ''}" data-cup="${k}" ${ING[k].day > r ? 'disabled' : ''}>${chip(k)}</button>`).join('')}</div>
+      <span class="plabel">Add ingredients (2 to 5, repeats are fine)</span>
+      <div class="picks">${ings.map(k => `<button type="button" class="pick" data-add="${k}" ${n >= 5 ? 'disabled' : ''}>${chip(k)}</button>`).join('')}</div>
+      <span class="plabel">Your recipe${n ? ' · tap an ingredient to take it out' : ''}</span>
+      <div class="picks"><span class="pick on static">${chip(draft.cup)}</span>${draft.items.map((k, i) => `<button type="button" class="pick on" data-rm="${i}">${chip(k)} ×</button>`).join('')}</div>
+      <p>Sells for <b>${money(sigDrinkPrice(Math.max(n, 2)))}</b>. It shows up on days when you have all its ingredients.</p>
+      <div class="btnrow"><button class="big" id="sigSave" type="button" ${n < 2 ? 'disabled' : ''}>Add to menu</button><button class="big alt" id="sigBack" type="button">Back to shop</button></div>`, 'wide', false);
+    const inp = $('#sigName'); inp.oninput = () => { draft.name = inp.value; };
+    document.querySelectorAll('[data-cup]').forEach(b => b.onclick = () => { draft.cup = b.dataset.cup; drinkMaker(); });
+    document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { if (draft.items.length < 5) draft.items.push(b.dataset.add); sfx.click(); drinkMaker(); });
+    document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { draft.items.splice(+b.dataset.rm, 1); drinkMaker(); });
+    $('#sigSave').onclick = () => {
+      let name = draft.name.trim() || 'The Lox Special';
+      if (DRINKS.some(d => d.name.toLowerCase() === name.toLowerCase())) name += ' (yours)';
+      SAVE.sigDrink = { name, cup: draft.cup, items: [...draft.items], price: sigDrinkPrice(draft.items.length), day: Math.max(ING[draft.cup].day, ...draft.items.map(k => ING[k].day)) };
+      persist(); draft = null; sfx.cash(); renderShop();
+    };
+    $('#sigBack').onclick = () => { draft = null; renderShop(); };
+  }
+
+  function pastryMaker() {
+    const r = reach();
+    if (!draft || draft.type !== 'pastry') {
+      const s = SAVE.sigPastry;
+      draft = s ? { type: 'pastry', name: s.name, ...s.look } : { type: 'pastry', name: '', base: 'scone', glaze: 'pink', top: 'sprinkles' };
+    }
+    const bases = SIG_BASES.filter(b => b.day <= r);
+    const pick = (attr, id, label, on, extra = '') => `<button type="button" class="pick${on ? ' on' : ''}" data-${attr}="${id}">${extra}${label}</button>`;
+    showCard(`
+      <h2>Signature pastry</h2>
+      <div class="preview">${pastryHTML({ base: draft.base, glaze: draft.glaze, top: draft.top }, 'big')}</div>
+      <div class="field"><label for="sigName">Name it</label><input id="sigName" maxlength="22" placeholder="Lapis Scone" value="${esc(draft.name)}" autocomplete="off"></div>
+      <span class="plabel">Base</span>
+      <div class="picks">${bases.map(b => pick('base', b.id, b.label, draft.base === b.id)).join('')}</div>
+      <span class="plabel">Glaze</span>
+      <div class="picks">${GLAZES.map(g => pick('glaze', g.id, g.label, draft.glaze === g.id, g.c ? `<span class="dot" style="--c:${g.c}"></span>` : '')).join('')}</div>
+      <span class="plabel">Topping</span>
+      <div class="picks">${TOPS.map(t => pick('top', t.id, t.label, draft.top === t.id)).join('')}</div>
+      <p>Sells for <b>${money(5.5)}</b>. Warm it in the oven like the others.</p>
+      <div class="btnrow"><button class="big" id="sigSave" type="button">Add to the case</button><button class="big alt" id="sigBack" type="button">Back to shop</button></div>`, 'wide', false);
+    const inp = $('#sigName'); inp.oninput = () => { draft.name = inp.value; };
+    ['base', 'glaze', 'top'].forEach(a => document.querySelectorAll(`[data-${a}]`).forEach(b => b.onclick = () => { draft[a] = b.dataset[a]; sfx.click(); pastryMaker(); }));
+    $('#sigSave').onclick = () => {
+      const name = draft.name.trim() || 'Lox Special Pastry';
+      SAVE.sigPastry = { name, look: { base: draft.base, glaze: draft.glaze, top: draft.top }, day: SIG_BASES.find(b => b.id === draft.base).day };
+      persist(); draft = null; sfx.cash(); renderShop();
+    };
+    $('#sigBack').onclick = () => { draft = null; renderShop(); };
+  }
+
+  /* ---------- Overlays ---------- */
+  function showCard(html, cls = '', focus = true) {
+    const card = $('#card');
+    card.className = 'card ' + cls;
+    card.innerHTML = html; $('#overlay').hidden = false;
+    if (focus) { const f = card.querySelector('button:not(:disabled)'); if (f) f.focus({ preventScroll: true }); card.scrollTop = 0; }
+  }
+
+  function title() {
+    if (S) { S.running = false; S.paused = false; }
+    $('#pauseBtn').textContent = 'Pause';
+    const starCount = Object.values(SAVE.stars).reduce((a, b) => a + b, 0);
+    showCard(`
+      <h1>Lox Café</h1>
+      <span class="ver">V1.6 · Behind the Bar</span>
+      <p class="bank">Savings: ${money(SAVE.bank)}${SAVE.best ? ` · Best: Day ${SAVE.best} · ${starCount} ★` : ''}</p>
+      <ol>
+        <li>Customers line up with an order ticket.</li>
+        <li>Pick a <b>hot or iced cup</b>, then tap stations to add ingredients. Espresso and milk take a moment, so juggle your cups.</li>
+        <li><b>Tap the customer</b> to hand over what you've selected. Fast service means bigger tips; back-to-back right orders build a combo.</li>
+      </ol>
+      <p>Hit each day's goal to unlock new drinks. Every tip goes into savings for upgrades, themes and your own signature recipes.</p>
+      <div class="btnrow">
+        ${SAVE.best ? `<button class="big" id="contBtn" type="button">Continue at Day ${reach()}</button><button class="big alt" id="startBtn" type="button">Replay Day 1</button>` : `<button class="big" id="startBtn" type="button">Start Day 1</button>`}
+        <button class="big alt" id="shopBtn" type="button">Shop</button>
+        <button class="big alt" id="stkTitle" type="button">Stickers ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button>
+      </div>
+      <p class="small">Keys: 1 / 2 / 3 switch cups · Q hot cup · W iced cup · Esc pause. Progress saves in this browser.</p>`);
+    $('#startBtn').onclick = () => startDay(1);
+    const cb = $('#contBtn'); if (cb) cb.onclick = () => startDay(reach());
+    $('#shopBtn').onclick = () => openShop(title);
+    $('#stkTitle').onclick = () => stickerBook(title);
+  }
+
+  function pause(on, view = 'break') {
+    if (!S || !S.running) return;
+    S.paused = on;
+    $('#pauseBtn').textContent = on ? 'Resume' : 'Pause';
+    if (on) {
+      const btns = `${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text} · ${taskStatus(S.task).label}</div>` : ''}
+        <div class="btnrow"><button class="big" id="resumeBtn" type="button">Back to the bar</button><button class="big alt" id="quitBtn" type="button">Title</button></div>
+        <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button></div>`;
+      showCard(view === 'menu'
+        ? `<h2>Day ${S.day} menu</h2><p>The clock is stopped while you look.</p>${recipesHTML(S.day)}${btns}`
+        : `<h2>On break</h2><p>Customers will wait. Promise.</p>${btns}`);
+      $('#resumeBtn').onclick = () => pause(false);
+      $('#quitBtn').onclick = title;
+      $('#pSound').onclick = toggleSound; $('#pHints').onclick = toggleHints; syncToggles();
+    } else {
+      $('#overlay').hidden = true; last = performance.now();
+    }
+  }
+
+  /* ---------- Wiring ---------- */
+  $('#cups').addEventListener('click', e => { const b = e.target.closest('.slot'); if (b) selectCup(+b.dataset.i); });
+  $('#ovslots').addEventListener('click', e => { const b = e.target.closest('.ovslot'); if (b) selectOven(+b.dataset.i); });
+  function dump() {
+    if (!S || !S.running || S.paused) return;
+    if (S.sel.k === 'oven') {
+      if (S.oven[S.sel.i]) { S.oven[S.sel.i] = null; beep(220, .12, 'triangle', .06, -80); }
+      S.sel = { k: 'cup', i: S.cupSel }; renderOven(); renderCups(); return;
+    }
+    const cup = S.cups[S.sel.i];
+    if (cup.busy) S.busy[ING[cup.busy.k].station]--;
+    S.cups[S.sel.i] = mkCup(); beep(220, .12, 'triangle', .06, -80); renderCups();
+  }
+  $('#trash').addEventListener('click', dump);
+  $('#pauseBtn').addEventListener('click', () => pause(!(S && S.paused)));
+  function syncToggles() {
+    const sl = soundOn ? 'Sound on' : 'Sound off', hl = hintsAll ? 'Hints: all drinks' : 'Hints: new drinks';
+    $('#soundBtn').textContent = sl; $('#soundBtn').setAttribute('aria-pressed', soundOn);
+    $('#hintsBtn').textContent = hl; $('#hintsBtn').setAttribute('aria-pressed', hintsAll);
+    const ps = $('#pSound'), ph = $('#pHints');
+    if (ps) ps.textContent = sl;
+    if (ph) ph.textContent = hl;
+  }
+  function toggleSound() { soundOn = !soundOn; syncToggles(); }
+  function toggleHints() {
+    hintsAll = !hintsAll; syncToggles();
+    try { localStorage.setItem('lox-hints', hintsAll ? 'all' : 'new'); } catch (e) {}
+    if (S) S.spots.forEach(c => c && c.el.classList.toggle('nochips', !showsRecipe(c.o)));
+  }
+  syncToggles();
+  $('#hintsBtn').addEventListener('click', toggleHints);
+  $('#menuBtn').addEventListener('click', () => { if (S && S.running && !S.paused) pause(true, 'menu'); });
+  $('#soundBtn').addEventListener('click', toggleSound);
+  document.addEventListener('keydown', e => {
+    if (!S || !S.running) return;
+    if (e.key === 'Escape') { pause(!S.paused); return; }
+    if (S.paused) return;
+    if (['1', '2', '3'].includes(e.key)) selectCup(+e.key - 1);
+    if (e.key === 'q' || e.key === 'Q') add('hot');
+    if ((e.key === 'w' || e.key === 'W') && ING.iced.day <= S.day) add('iced');
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && S && S.running && !S.paused) pause(true); });
+
+  /* ---------- Boot ---------- */
+  SAVE = loadSave(); persist();
+  applyTheme(SAVE.theme);
+  renderDecor();
+  // A live-looking bar behind the title card
+  S = freshState(1);
+  S.cups[0] = { base: 'hot', items: ['shot', 'milk'], busy: null };
+  buildStations(); renderMenu(); renderCups(); renderOven(); renderHUD();
+  title();
+  requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>
