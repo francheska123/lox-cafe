@@ -483,6 +483,23 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .stat .k { white-space: nowrap; }
+  .diffpick { display: inline-flex; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; margin: 2px 0 4px; box-shadow: 0 3px 0 var(--ink); }
+  .dp { border: 0; background: #fff; padding: 6px 14px; font-weight: 700; font-size: 14px; }
+  .dp + .dp { border-left: 2.5px solid var(--ink); }
+  .dp.on { background: var(--butter); }
+  .dpnote { margin: 4px 0 12px !important; }
+  .kbd { display: none; position: absolute; top: 3px; right: 4px; font: 700 9px/1.3 var(--ui); color: var(--muted); border: 1.5px solid #CDBFB6; border-radius: 4px; padding: 0 3px; text-transform: uppercase; background: rgba(255,255,255,.8); pointer-events: none; }
+  .ovslot, .trash { position: relative; }
+  .desk { display: none; }
+  @media (hover: hover) and (pointer: fine) and (min-width: 601px) {
+    .kbd, .desk { display: inline-block; }
+    .spot::after { content: attr(data-key); position: absolute; left: 4px; bottom: 50px; font: 700 10px/1.3 var(--ui); color: var(--muted); border: 1.5px solid #CDBFB6; border-radius: 4px; padding: 0 4px; background: rgba(255,255,255,.85); z-index: 2; }
+  }
+  .kgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 6px 18px; text-align: left; margin-bottom: 14px; }
+  .kgrid h3 { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 8px 0 6px; }
+  .krow { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 5px; }
+  .kcap { min-width: 26px; text-align: center; font-weight: 700; font-size: 12px; border: 2px solid var(--ink); border-bottom-width: 3.5px; border-radius: 6px; padding: 1px 6px; background: #fff; white-space: nowrap; }
   .titlelogo { display: block; width: 120px; height: 120px; margin: -8px auto 2px; }
   @media (max-width: 600px) { .titlelogo { width: 92px; height: 92px; } }
   .field textarea.code { font: 12px/1.35 ui-monospace, Menlo, monospace; width: 100%; border: 2.5px solid var(--ink); border-radius: 10px; padding: 7px 9px; background: #fff; resize: vertical; user-select: text; -webkit-user-select: text; word-break: break-all; }
@@ -541,7 +558,7 @@
     .pad { flex: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 5px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
     .pad > .stations:not([hidden]) { display: contents; }
     .case .station:not(:disabled) { background: #FBEBD9; }
-    .station { padding: 5px 1px 4px; font-size: 10.5px; gap: 3px; border-width: 2px; border-radius: 9px; min-height: 46px; box-shadow: 0 2px 0 rgba(0,0,0,.45); overflow-wrap: anywhere; }
+    .station { padding: 5px 0 4px; font-size: min(10.5px, 2.65vw); letter-spacing: -.01em; white-space: nowrap; gap: 3px; border-width: 2px; border-radius: 9px; min-height: 46px; box-shadow: 0 2px 0 rgba(0,0,0,.45); }
     .station .ic { width: 20px; height: 20px; border-width: 2px; }
     .station .t, .case .cl { display: none; }
     .station:disabled { display: none; }
@@ -566,8 +583,8 @@
   <header class="hud">
     <div class="logo">Lox Café<small>V1.6 · Behind the Bar</small></div>
     <div class="stat"><span class="k">Day</span><span class="v" id="day">1</span></div>
-    <div class="stat"><span class="k">Shift left</span><span class="v" id="clock">1:30</span></div>
-    <div class="stat"><span class="k">Tips today</span><span class="v" id="money">$0.00</span><span class="goalbar"><i id="goalfill"></i></span></div>
+    <div class="stat"><span class="k"><span class="lbl-f">Shift left</span><span class="lbl-m">Time</span></span><span class="v" id="clock">1:30</span></div>
+    <div class="stat"><span class="k"><span class="lbl-f">Tips today</span><span class="lbl-m">Tips</span></span><span class="v" id="money">$0.00</span><span class="goalbar"><i id="goalfill"></i></span></div>
     <div class="stat" id="streak"><span class="k">Combo</span><span class="v" id="streakv">×0</span></div>
     <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
     <button class="iconbtn" id="hintsBtn" type="button" aria-pressed="false">Hints: new drinks</button>
@@ -581,7 +598,7 @@
       <div class="decor" id="decor"></div>
       <div class="rush" id="rush" hidden>Rush hour! Everything pays 25% more</div>
       <div class="spots" id="spots">
-        <div class="spot"></div><div class="spot"></div><div class="spot"></div><div class="spot"></div>
+        <div class="spot" data-key="A"></div><div class="spot" data-key="S"></div><div class="spot" data-key="D"></div><div class="spot" data-key="F"></div>
       </div>
       <div class="counter" id="pats">
         <div class="pat"><i></i></div><div class="pat"><i></i></div><div class="pat"><i></i></div><div class="pat"><i></i></div>
@@ -591,7 +608,7 @@
     <section class="bar" aria-label="Your cups and oven">
       <div class="cups" id="cups"></div>
       <div class="oven" id="oven" hidden><span class="ovlabel">Oven</span><div class="ovslots" id="ovslots"></div></div>
-      <button class="trash" id="trash" type="button"><span class="bin"></span><span>Dump<br><small>selected</small></span></button>
+      <button class="trash" id="trash" type="button"><span class="bin"></span><span>Dump<br><small>selected</small></span><span class="kbd">⌫</span></button>
     </section>
     <div class="hint" id="hint" role="status"></div>
 
@@ -775,15 +792,22 @@
   // Pacing: arrivals speed up gently; patience is a base per day plus extra
   // seconds for every step in the order. Shifts lengthen from day 8.
   const dur = d => d < 8 ? 90 : Math.min(150, 90 + 10 * (d - 7));
+  // Difficulty mostly changes how many customers come in; goals scale to match
+  const DIFFS = {
+    easy:   { label: 'Easy',   spawn: 1.4,  patience: 1.2, goal: .72, pay: 1,    note: 'Fewer customers, and they wait longer.' },
+    medium: { label: 'Medium', spawn: 1,    patience: 1,   goal: 1,   pay: 1,    note: 'The classic pace.' },
+    hard:   { label: 'Hard',   spawn: .75,  patience: .9,  goal: 1.3, pay: 1.15, note: 'More customers, less patience, 15% more pay.' },
+  };
+  const difficulty = () => DIFFS[SAVE && SAVE.diff] || DIFFS.medium;
   const cfg = d => {
-    const D = dur(d);
+    const D = dur(d), M = difficulty();
     const base = d <= 20 ? 25 + 7 * (d - 1) : 158 + 4 * (d - 20);
     return {
       dur: D,
-      spawn: Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)),
-      patience: Math.max(22, 30 - (d - 1)),
+      spawn: Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)) * M.spawn,
+      patience: Math.max(22, 30 - (d - 1)) * M.patience,
       perStep: 4,
-      goal: Math.round(base * D / 90),
+      goal: Math.round(base * D / 90 * M.goal),
     };
   };
 
@@ -807,6 +831,7 @@
     // Older saves bought these as one-time items; they become level 1 of the new upgrade tracks
     ['grinder', 'chairs', 'tipsign'].forEach(id => { if (s.owned[id] && !s.lv[id]) s.lv[id] = 1; });
     s.owned.theme_mint = true;
+    if (!DIFFS[s.diff]) s.diff = 'medium';
     return s;
   }
   function persist() {
@@ -973,12 +998,14 @@
       <h2>Day ${d} menu</h2>
       <p>${d === 1 ? 'Learn these three, then open up.' : fresh ? `${fresh} new item${fresh > 1 ? 's' : ''} today, marked in yellow.` : 'Same menu, busier crowd.'}
         Goal: <b>${money(S.c.goal)}</b> in <b>${secs} seconds</b>.</p>
+      ${diffPicker()}
       ${NEWS[d] ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
       ${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text}. Bonus <b>${money(S.task.reward)}</b> to savings.</div>` : ''}
       ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> pays 50% more.</p>` : ''}
       ${recipesHTML(d, d >= 6)}
       <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>
       <p class="small">Tickets spell out the recipe for new drinks during their first two days. Tap Hints up top to show it on every ticket. The Menu button pauses the clock and shows every recipe.</p>`);
+    wireDiff(() => startDay(d));
     $('#openBtn').onclick = () => {
       S.running = true; last = performance.now();
       $('#overlay').hidden = true; sfx.bell();
@@ -1016,7 +1043,7 @@
       b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
       b.disabled = locked;
       const sub = locked ? `Day ${ing.day}` : ing.station ? `${stationTime(k)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
-      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span>`;
+      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k]}</span>`;
       b.addEventListener('click', () => add(k));
       wrap.appendChild(b);
       stationBusyEls[k] = b.querySelector('.busy');
@@ -1034,7 +1061,7 @@
       const locked = P[k].day > S.day;
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'station' + (P[k].sig ? ' sig' : ''); b.disabled = locked;
-      b.innerHTML = `${pastryHTML(P[k].look, 'mini')}${esc(P[k].short)}<span class="t">${locked ? `Day ${P[k].day}` : P[k].sig ? 'your signature' : `warm ${warmTime()}s`}</span>`;
+      b.innerHTML = `${pastryHTML(P[k].look, 'mini')}${esc(P[k].short)}<span class="t">${locked ? `Day ${P[k].day}` : P[k].sig ? 'your signature' : `warm ${warmTime()}s`}</span><span class="kbd">${PKEYS[k] || ''}</span>`;
       b.addEventListener('click', () => bake(k));
       cs.appendChild(b);
     });
@@ -1203,6 +1230,7 @@
     if (o.kind === 'critic') earned *= 2.5;
     earned *= tipMult();
     if (S.inRush) earned *= 1.25;
+    earned *= difficulty().pay;
     S.money += earned; S.stats.served++;
     if (o.kind === 'regular') { S.stats.regulars++; SAVE.regs[o.who] = (SAVE.regs[o.who] || 0) + 1; }
     if (o.kind === 'critic') S.stats.critics++;
@@ -1290,10 +1318,10 @@
     wrap.style.setProperty('--n', S.oven.length);
     const P = pastries();
     wrap.innerHTML = S.oven.map((o, i) => {
-      if (!o) return `<button class="ovslot" type="button" data-i="${i}"><span>empty</span></button>`;
+      if (!o) return `<button class="ovslot" type="button" data-i="${i}"><span>empty</span><span class="kbd">${i + 4}</span></button>`;
       const act = S.sel.k === 'oven' && S.sel.i === i;
       const label = o.st === 'warm' ? 'Warming' : o.st === 'ready' ? 'Ready!' : 'Burnt';
-      return `<button class="ovslot ${o.st}${act ? ' active' : ''}" type="button" data-i="${i}" aria-label="${esc(P[o.key].label)}: ${label}">${pastryHTML(P[o.key].look, o.st === 'warm' ? 'cold' : o.st === 'burnt' ? 'burnt' : '')}<span>${label}</span><span class="obar"><i></i></span></button>`;
+      return `<button class="ovslot ${o.st}${act ? ' active' : ''}" type="button" data-i="${i}" aria-label="${esc(P[o.key].label)}: ${label}">${pastryHTML(P[o.key].look, o.st === 'warm' ? 'cold' : o.st === 'burnt' ? 'burnt' : '')}<span>${label}</span><span class="obar"><i></i></span><span class="kbd">${i + 4}</span></button>`;
     }).join('');
   }
 
@@ -1690,6 +1718,47 @@
     }
   }
 
+  function diffPicker() {
+    const cur = SAVE.diff;
+    return `<div class="diffpick" role="group" aria-label="Difficulty">${Object.entries(DIFFS).map(([id, m]) =>
+      `<button type="button" class="dp${cur === id ? ' on' : ''}" data-diff="${id}" aria-pressed="${cur === id}">${m.label}</button>`).join('')}</div>
+      <p class="small dpnote">${DIFFS[cur].note}</p>`;
+  }
+  function wireDiff(onChange) {
+    document.querySelectorAll('[data-diff]').forEach(b => b.onclick = () => {
+      if (SAVE.diff === b.dataset.diff) return;
+      SAVE.diff = b.dataset.diff; persist(); sfx.click(); onChange();
+    });
+  }
+
+  /* ---------- Keyboard shortcuts (computers) ---------- */
+  const KEYS = { hot: 'q', iced: 'w', shot: 'e', water: 'r', milk: 't', oat: 'y', foam: 'u', vanilla: 'i', caramel: 'o', choc: 'p',
+                 chai: 'z', matcha: 'x', pumpkin: 'c', whip: 'v' };
+  const PKEYS = { croissant: 'b', muffin: 'n', cookie: 'm', sig: ',' };
+  const SPOT_KEYS = ['a', 's', 'd', 'f'];
+  function keysCard(back) {
+    const row = (k, what) => `<div class="krow"><span class="kcap">${k}</span><span>${what}</span></div>`;
+    const sk = Object.entries(KEYS).map(([k, key]) => row(key.toUpperCase(), ING[k].label)).join('');
+    const pk = Object.entries(PKEYS).map(([k, key]) => row(key === ',' ? ',' : key.toUpperCase(), k === 'sig' ? 'Your signature pastry' : PASTRY_BASE[k].label)).join('');
+    showCard(`
+      <h2>Keyboard shortcuts</h2>
+      <p>Play without the mouse. Keys also show on each button.</p>
+      <div class="kgrid">
+        <div><h3>Serve &amp; pick</h3>
+          ${row('A S D F', 'Serve customer 1–4 (left to right)')}
+          ${row('1 2 3', 'Pick cup 1–3')}
+          ${row('4 5 6', 'Pick from oven slot 1–3')}
+          ${row('⌫', 'Dump what you picked')}
+          ${row('Esc', 'Pause')}
+          ${row('?', 'This list')}
+        </div>
+        <div><h3>Stations</h3>${sk}</div>
+        <div><h3>Pastry case</h3>${pk}</div>
+      </div>
+      <div class="btnrow"><button class="big" id="keysDone" type="button">Got it</button></div>`, 'wide');
+    $('#keysDone').onclick = back;
+  }
+
   /* ---------- Overlays ---------- */
   function showCard(html, cls = '', focus = true) {
     const card = $('#card');
@@ -1707,6 +1776,7 @@
       <h1>Lox Café</h1>
       <span class="ver">V1.6 · Behind the Bar</span>
       <p class="bank">Savings: ${money(SAVE.bank)}${SAVE.best ? ` · Best: Day ${SAVE.best} · ${starCount} ★` : ''}</p>
+      ${diffPicker()}
       <ol>
         <li>Customers line up with an order ticket.</li>
         <li>Pick a <b>hot or iced cup</b>, then tap stations to add ingredients. Espresso and milk take a moment, so juggle your cups.</li>
@@ -1718,13 +1788,16 @@
         <button class="big alt" id="shopBtn" type="button">Shop</button>
         <button class="big alt" id="stkTitle" type="button">Stickers ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button>
         <button class="big alt" id="codeTitle" type="button">Save code</button>
+        <button class="big alt desk" id="keysTitle" type="button">Shortcuts</button>
       </div>
-      <p class="small">Keys: 1 / 2 / 3 switch cups · Q hot cup · W iced cup · Esc pause. Progress saves in this browser.</p>`);
+      <p class="small">Progress saves in this browser. On a computer, press ? for keyboard shortcuts.</p>`);
     $('#startBtn').onclick = () => startDay(1);
     const cb = $('#contBtn'); if (cb) cb.onclick = () => startDay(reach());
     $('#shopBtn').onclick = () => openShop(title);
     $('#stkTitle').onclick = () => stickerBook(title);
     $('#codeTitle').onclick = () => saveCodeCard();
+    $('#keysTitle').onclick = () => keysCard(title);
+    wireDiff(title);
   }
 
   function pause(on, view = 'break') {
@@ -1734,13 +1807,14 @@
     if (on) {
       const btns = `${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text} · ${taskStatus(S.task).label}</div>` : ''}
         <div class="btnrow"><button class="big" id="resumeBtn" type="button">Back to the bar</button><button class="big alt" id="quitBtn" type="button">Title</button></div>
-        <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button></div>`;
+        <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button><button class="big alt desk" id="pKeys" type="button">Shortcuts</button></div>`;
       showCard(view === 'menu'
         ? `<h2>Day ${S.day} menu</h2><p>The clock is stopped while you look.</p>${recipesHTML(S.day)}${btns}`
         : `<h2>On break</h2><p>Customers will wait. Promise.</p>${btns}`);
       $('#resumeBtn').onclick = () => pause(false);
       $('#quitBtn').onclick = title;
       $('#pSound').onclick = toggleSound; $('#pHints').onclick = toggleHints; syncToggles();
+      $('#pKeys').onclick = () => keysCard(() => pause(true, view));
     } else {
       $('#overlay').hidden = true; last = performance.now();
     }
@@ -1780,12 +1854,27 @@
   $('#menuBtn').addEventListener('click', () => { if (S && S.running && !S.paused) pause(true, 'menu'); });
   $('#soundBtn').addEventListener('click', toggleSound);
   document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input, textarea')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (!S || !S.running) return;
-    if (e.key === 'Escape') { pause(!S.paused); return; }
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (key === 'Escape') { pause(!S.paused); return; }
+    if (key === '?' && !S.paused) { pause(true); keysCard(() => pause(true)); return; }
     if (S.paused) return;
-    if (['1', '2', '3'].includes(e.key)) selectCup(+e.key - 1);
-    if (e.key === 'q' || e.key === 'Q') add('hot');
-    if ((e.key === 'w' || e.key === 'W') && ING.iced.day <= S.day) add('iced');
+    let hit = true;
+    if (['1', '2', '3'].includes(key)) selectCup(+key - 1);
+    else if (['4', '5', '6'].includes(key) && +key - 4 < S.oven.length) selectOven(+key - 4);
+    else if (SPOT_KEYS.includes(key)) serve(SPOT_KEYS.indexOf(key));
+    else if (key === 'Backspace' || key === 'Delete') dump();
+    else {
+      const st = Object.keys(KEYS).find(k => KEYS[k] === key);
+      const pk = Object.keys(PKEYS).find(k => PKEYS[k] === key);
+      const P = pastries();
+      if (st && ING[st].day <= S.day) add(st);
+      else if (pk && P[pk] && P[pk].day <= S.day && S.oven.length) bake(pk);
+      else hit = false;
+    }
+    if (hit) e.preventDefault();
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && S && S.running && !S.paused) pause(true); });
 
