@@ -622,7 +622,7 @@
     <div class="logo">Lox Café<small>V1.6 · Behind the Bar</small></div>
     <div class="stat"><span class="k">Day</span><span class="v" id="day">1</span></div>
     <div class="stat"><span class="k"><span class="lbl-f">Shift left</span><span class="lbl-m">Time</span></span><span class="v" id="clock">1:30</span></div>
-    <div class="stat"><span class="k"><span class="lbl-f">Tips today</span><span class="lbl-m">Tips</span></span><span class="v" id="money">$0.00</span><span class="goalbar"><i id="goalfill"></i></span></div>
+    <div class="stat"><span class="k"><span class="lbl-f">Earned today</span><span class="lbl-m">Earned</span></span><span class="v" id="money">$0.00</span><span class="goalbar"><i id="goalfill"></i></span></div>
     <div class="stat" id="streak"><span class="k">Combo</span><span class="v" id="streakv">×0</span></div>
     <button class="iconbtn" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
     <button class="iconbtn" id="hintsBtn" type="button" aria-pressed="false">Hints: new drinks</button>
@@ -634,7 +634,7 @@
     <section class="shop" aria-label="Counter">
       <div class="lights" id="lights" hidden></div>
       <div class="decor" id="decor"></div>
-      <div class="rush" id="rush" hidden>Rush hour! Everything pays 25% more</div>
+      <div class="rush" id="rush" hidden>Rush hour! Tips are up 25%</div>
       <div class="spots" id="spots">
         <div class="spot" data-key="A"></div><div class="spot" data-key="S"></div><div class="spot" data-key="D"></div><div class="spot" data-key="F"></div>
       </div>
@@ -715,28 +715,28 @@
 
   // One new idea per day. Days 10+ keep adding recipes so later days stay fresh.
   const DRINKS = [
-    { name: 'Espresso',            cup: 'hot',  items: ['shot'],                          price: 3.00, day: 1 },
-    { name: 'Americano',           cup: 'hot',  items: ['shot','water'],                  price: 3.50, day: 1 },
-    { name: 'Latte',               cup: 'hot',  items: ['shot','milk'],                   price: 4.50, day: 1 },
-    { name: 'Cappuccino',          cup: 'hot',  items: ['shot','milk','foam'],            price: 4.75, day: 2 },
-    { name: 'Iced Latte',          cup: 'iced', items: ['shot','milk'],                   price: 5.00, day: 3 },
-    { name: 'Iced Americano',      cup: 'iced', items: ['shot','water'],                  price: 4.00, day: 3 },
-    { name: 'Vanilla Latte',       cup: 'hot',  items: ['shot','milk','vanilla'],         price: 5.25, day: 4 },
-    { name: 'Iced Caramel Latte',  cup: 'iced', items: ['shot','milk','caramel'],         price: 5.75, day: 5 },
-    { name: 'Mocha',               cup: 'hot',  items: ['shot','choc','milk','whip'],     price: 6.00, day: 6 },
-    { name: 'Iced Mocha',          cup: 'iced', items: ['shot','choc','milk','whip'],     price: 6.25, day: 8 },
-    { name: 'Chai Latte',          cup: 'hot',  items: ['chai','milk'],                   price: 5.00, day: 11 },
-    { name: 'Matcha Latte',        cup: 'hot',  items: ['matcha','milk'],                 price: 5.25, day: 13 },
-    { name: 'Hot Chocolate',       cup: 'hot',  items: ['choc','milk','whip'],            price: 4.00, day: 14 },
-    { name: 'Pumpkin Spice Latte', cup: 'hot',  items: ['shot','pumpkin','milk','whip'],  price: 6.50, day: 16 },
-    { name: 'Iced Chai',           cup: 'iced', items: ['chai','milk'],                   price: 5.25, day: 18 },
-    { name: 'Iced Matcha',         cup: 'iced', items: ['matcha','milk'],                 price: 5.50, day: 19 },
+    { name: 'Espresso',            cup: 'hot',  items: ['shot'],                          price: 3.25, day: 1 },
+    { name: 'Americano',           cup: 'hot',  items: ['shot','water'],                  price: 3.75, day: 1 },
+    { name: 'Latte',               cup: 'hot',  items: ['shot','milk'],                   price: 5.25, day: 1 },
+    { name: 'Cappuccino',          cup: 'hot',  items: ['shot','milk','foam'],            price: 5.25, day: 2 },
+    { name: 'Iced Latte',          cup: 'iced', items: ['shot','milk'],                   price: 5.75, day: 3 },
+    { name: 'Iced Americano',      cup: 'iced', items: ['shot','water'],                  price: 4.25, day: 3 },
+    { name: 'Vanilla Latte',       cup: 'hot',  items: ['shot','milk','vanilla'],         price: 5.95, day: 4 },
+    { name: 'Iced Caramel Latte',  cup: 'iced', items: ['shot','milk','caramel'],         price: 6.25, day: 5 },
+    { name: 'Mocha',               cup: 'hot',  items: ['shot','choc','milk','whip'],     price: 6.25, day: 6 },
+    { name: 'Iced Mocha',          cup: 'iced', items: ['shot','choc','milk','whip'],     price: 6.50, day: 8 },
+    { name: 'Chai Latte',          cup: 'hot',  items: ['chai','milk'],                   price: 5.45, day: 11 },
+    { name: 'Matcha Latte',        cup: 'hot',  items: ['matcha','milk'],                 price: 5.95, day: 13 },
+    { name: 'Hot Chocolate',       cup: 'hot',  items: ['choc','milk','whip'],            price: 4.25, day: 14 },
+    { name: 'Pumpkin Spice Latte', cup: 'hot',  items: ['shot','pumpkin','milk','whip'],  price: 6.75, day: 16 },
+    { name: 'Iced Chai',           cup: 'iced', items: ['chai','milk'],                   price: 5.75, day: 18 },
+    { name: 'Iced Matcha',         cup: 'iced', items: ['matcha','milk'],                 price: 6.25, day: 19 },
   ];
 
   const PASTRY_BASE = {
-    croissant: { label: 'Croissant',        short: 'Croissant', day: 10, price: 3.50, look: { base: 'croissant' } },
-    muffin:    { label: 'Blueberry Muffin', short: 'Muffin',    day: 12, price: 3.75, look: { base: 'muffin', top: 'berries' } },
-    cookie:    { label: 'Cookie',           short: 'Cookie',    day: 15, price: 2.50, look: { base: 'cookie', top: 'chips' } },
+    croissant: { label: 'Croissant',        short: 'Croissant', day: 10, price: 4.25, look: { base: 'croissant' } },
+    muffin:    { label: 'Blueberry Muffin', short: 'Muffin',    day: 12, price: 3.95, look: { base: 'muffin', top: 'berries' } },
+    cookie:    { label: 'Cookie',           short: 'Cookie',    day: 15, price: 3.25, look: { base: 'cookie', top: 'chips' } },
   };
 
   const OAT_DAY = 7, SHOT_DAY = 9, OVEN_DAY = 10, REG_DAY = 12, RUSH_DAY = 13,
@@ -746,11 +746,11 @@
     3:  { title: 'Daily challenges', text: 'Each day has a bonus challenge. Finish it for extra savings.' },
     8:  { title: 'Longer shifts', text: 'Shifts grow by 10 seconds a day from here, up to 2½ minutes.' },
     10: { title: 'Pastries and the oven', text: 'Tap a pastry in the case to warm it (3 seconds). When it says Ready, tap it, then tap the customer. After 10 more seconds it burns.' },
-    12: { title: 'Regulars', text: 'Regulars have names and a usual order. They tip 50% more.' },
-    13: { title: 'Rush hour', text: 'Once a shift, customers pour in for 20 seconds. Everything pays 25% more while it lasts.' },
+    12: { title: 'Regulars', text: 'Regulars have names and a usual order. They tip a little extra, more as you become friends.' },
+    13: { title: 'Rush hour', text: 'Once a shift, customers pour in for 20 seconds. Tips are 25% bigger while it lasts.' },
     14: { title: 'Kids', text: 'Little ones come in for hot chocolate, and sometimes a cookie.' },
-    15: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but pays 2.5×.' },
-    17: { title: 'Daily specials', text: 'One drink a day is the special (★). It pays 50% more and gets ordered more.' },
+    15: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but a happy critic leaves a $10 review bonus.' },
+    17: { title: 'Daily specials', text: 'One drink a day is the special (★). It costs 20% more and gets ordered more.' },
   };
 
   const REGULARS = [
@@ -773,7 +773,7 @@
   const TIERS = [
     { id: 'grinder',   name: 'Grinder',         levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s']] },
     { id: 'chairs',    name: 'Comfy seating',   levels: [[50, 'Customers wait 10% longer'], [110, 'Customers wait 20% longer'], [200, 'Customers wait 30% longer']] },
-    { id: 'tipsign',   name: 'Tip jar',         levels: [[75, 'Every order pays 8% more'], [150, 'Every order pays 16% more'], [260, 'Every order pays 25% more']] },
+    { id: 'tipsign',   name: 'Tip jar',         levels: [[75, 'Customers tip 10% more'], [150, 'Customers tip 20% more'], [260, 'Customers tip 30% more']] },
     { id: 'ovenspeed', name: 'Convection oven', day: OVEN_DAY, levels: [[60, 'Pastries warm in 2.5s and take 3s longer to burn'], [130, 'Pastries warm in 2s and take 6s longer to burn']] },
   ];
   const DECOR = [
@@ -787,8 +787,8 @@
     { id: 'decor_cat',     cls: 'cat',     name: 'Mochi the café cat', price: 250, desc: 'Curls up by the window. Also makes customers 5% more patient.' },
   ];
   const MAKERS = [
-    { id: 'sigdrink',  name: 'Signature drink',  desc: 'Invent a drink and name it. It goes on the menu and pays 50% more.', price: 100 },
-    { id: 'sigpastry', name: 'Signature pastry', desc: 'Design your own pastry for the case. It pays 50% more.',            price: 100, day: OVEN_DAY },
+    { id: 'sigdrink',  name: 'Signature drink',  desc: 'Invent a drink and name it. It goes on the menu as a house specialty.', price: 100 },
+    { id: 'sigpastry', name: 'Signature pastry', desc: 'Design your own pastry for the case.',            price: 100, day: OVEN_DAY },
   ];
   const THEMES = [
     { id: 'theme_mint',   name: 'Mint Tile',    price: 0,  v: { wall: '#BFE6D5', 'wall-2': '#A8DCC6', tile: '#F4FBF7', wood: '#B8683D', 'wood-dk': '#8C4A28', 'wood-hi': '#D48454', awn: '#F2545B', awn2: '#FFFDF7', bar: '#4A2A1A', board: '#2E463C' } },
@@ -843,7 +843,7 @@
   const DIFFS = {
     easy:   { label: 'Easy',   spawn: 1.4,  patience: 1.2, goal: .72, pay: 1,    note: 'Fewer customers, and they wait longer.' },
     medium: { label: 'Medium', spawn: 1,    patience: 1,   goal: 1,   pay: 1,    note: 'The classic pace.' },
-    hard:   { label: 'Hard',   spawn: .75,  patience: .9,  goal: 1.3, pay: 1.15, note: 'More customers, less patience, 15% more pay.' },
+    hard:   { label: 'Hard',   spawn: .75,  patience: .9,  goal: 1.3, pay: 1.15, note: 'More customers, less patience, 15% bigger tips.' },
   };
   const difficulty = () => DIFFS[SAVE && SAVE.diff] || DIFFS.medium;
   const cfg = d => {
@@ -854,7 +854,7 @@
       spawn: Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)) * M.spawn,
       patience: Math.max(22, 30 - (d - 1)) * M.patience,
       perStep: 4,
-      goal: Math.round(base * D / 90 * M.goal),
+      goal: Math.round(base * D / 90 * M.goal * .75),
     };
   };
 
@@ -922,7 +922,7 @@
 
   function pastries() {
     const p = { ...PASTRY_BASE };
-    if (SAVE.sigPastry) p.sig = { label: SAVE.sigPastry.name, short: SAVE.sigPastry.name, day: SAVE.sigPastry.day, price: 5.50, look: SAVE.sigPastry.look, sig: true };
+    if (SAVE.sigPastry) p.sig = { label: SAVE.sigPastry.name, short: SAVE.sigPastry.name, day: SAVE.sigPastry.day, price: 5.25, look: SAVE.sigPastry.look, sig: true };
     return p;
   }
   const allDrinks = () => SAVE.sigDrink ? [...DRINKS, { ...SAVE.sigDrink, sig: true }] : DRINKS;
@@ -933,7 +933,7 @@
   const warmTime = () => [3, 2.5, 2][lv('ovenspeed')];
   const burnTime = () => [10, 13, 16][lv('ovenspeed')];
   const decorCount = () => DECOR.filter(d => own(d.id)).length;
-  const tipMult = () => [1, 1.08, 1.16, 1.25][lv('tipsign')] * (1 + .02 * decorCount());
+  const tipMult = () => [1, 1.1, 1.2, 1.3][lv('tipsign')] * (1 + .03 * decorCount());
   const patienceMult = () => 1 + .1 * lv('chairs') + (own('decor_cat') ? .05 : 0);
   const hearts = name => { const n = SAVE.regs[name] || 0; return n < 5 ? 1 : n < 15 ? 2 : 3; };
   const stationTime = k => k === 'shot' ? shotTime() : ING[k].time;
@@ -1020,7 +1020,7 @@
     const rs = c.dur * (0.3 + Math.random() * 0.3);
     return {
       day: d, c, t: 0, money: 0, streak: 0, bestStreak: 0,
-      stats: { served: 0, missed: 0, wrong: 0, pastries: 0, regulars: 0, critics: 0, sig: 0, byDrink: {} },
+      stats: { served: 0, missed: 0, wrong: 0, pastries: 0, regulars: 0, critics: 0, sig: 0, sales: 0, tips: 0, byDrink: {} },
       spots: [null, null, null, null],
       cups: Array.from({ length: own('cup3') ? 3 : 2 }, () => mkCup()), cupSel: 0, sel: { k: 'cup', i: 0 },
       oven: d >= OVEN_DAY ? Array(own('oven3') ? 3 : 2).fill(null) : [],
@@ -1049,7 +1049,7 @@
       ${diffPicker()}
       ${NEWS[d] ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
       ${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text}. Bonus <b>${money(S.task.reward)}</b> to savings.</div>` : ''}
-      ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> pays 50% more.</p>` : ''}
+      ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> costs 20% more and is extra popular.</p>` : ''}
       ${recipesHTML(d, d >= 3)}
       <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>
       <p class="small">Tickets spell out the recipe for new drinks during their first two days. Tap Hints up top to show it on every ticket. The Menu button pauses the clock and shows every recipe.</p>`, 'chalk');
@@ -1170,9 +1170,9 @@
       dr = { name: drink.name, day: drink.day, cup: drink.cup, items: [...drink.items], price: drink.price, mods: [], sig: !!drink.sig, special: drink.name === S.special };
       if (kind === 'normal' || kind === 'critic') {
         if (d >= OAT_DAY && dr.items.includes('milk') && Math.random() < .3) {
-          dr.items[dr.items.indexOf('milk')] = 'oat'; dr.mods.push('Oat'); dr.price += .75;
+          dr.items[dr.items.indexOf('milk')] = 'oat'; dr.mods.push('Oat'); dr.price += .80;
         }
-        if (d >= SHOT_DAY && dr.items.includes('shot') && Math.random() < .2) { dr.items.push('shot'); dr.mods.push('+Shot'); dr.price += .75; }
+        if (d >= SHOT_DAY && dr.items.includes('shot') && Math.random() < .2) { dr.items.push('shot'); dr.mods.push('+Shot'); dr.price += 1.00; }
       }
     }
     return { kind, who, look, drink: dr, pastry };
@@ -1273,23 +1273,27 @@
   function pay(i) {
     const c = S.spots[i], o = c.o, P = pastries(), tk = c.el.querySelector('.ticket');
     S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak);
-    let base = 0;
-    if (o.drink) base += o.drink.price * (o.drink.special ? 1.5 : 1);
-    if (o.pastry) base += P[o.pastry].price;
-    const tip = base * (0.15 + 0.5 * c.p) * (o.kind === 'regular' ? 1.5 * (1 + .1 * (hearts(o.who) - 1)) : 1);
-    let earned = (base + tip) * (1 + 0.1 * Math.min(S.streak - 1, 5));
-    if (o.kind === 'critic') earned *= 2.5;
-    earned *= tipMult();
-    if (S.inRush) earned *= 1.25;
-    earned *= difficulty().pay;
-    S.money += earned; S.stats.served++;
+    // The customer pays the menu price, then tips like a real US café customer:
+    // about 5% when they waited ages, up to 25% when service was quick.
+    let sale = 0;
+    if (o.drink) sale += o.drink.price * (o.drink.special ? 1.2 : 1);
+    if (o.pastry) sale += P[o.pastry].price;
+    let rate = 0.05 + 0.20 * Math.max(0, c.p);
+    rate += 0.01 * Math.min(S.streak - 1, 5);                         // combo: up to +5 points
+    if (o.kind === 'regular') rate += 0.03 * hearts(o.who);           // regulars tip a little extra
+    let tip = sale * rate * tipMult() * (S.inRush ? 1.25 : 1) * difficulty().pay;
+    if (o.kind === 'critic') tip += 10;                               // a happy critic's review bonus
+    sale = Math.round(sale * 100) / 100; tip = Math.round(tip * 100) / 100;
+    const earned = sale + tip;
+    S.money += earned; S.stats.sales += sale; S.stats.tips += tip; S.stats.served++;
     if (o.kind === 'regular') { S.stats.regulars++; SAVE.regs[o.who] = (SAVE.regs[o.who] || 0) + 1; }
     if (o.kind === 'critic') S.stats.critics++;
     if (o.drink && o.drink.sig) S.stats.sig++;
     floater(tk, '+' + money(earned));
-    if (o.kind === 'critic') floater(tk, 'Rave review!', 'combo', 22);
-    else if (o.kind === 'regular') floater(tk, `Thanks! See you tomorrow`, 'combo', 22);
-    else if (S.streak >= 2) floater(tk, `Combo ×${S.streak}`, 'combo', 22);
+    floater(tk, `${money(tip)} tip`, 'combo', 22);
+    if (o.kind === 'critic') floater(tk, 'Rave review! +$10', 'combo', 44);
+    else if (o.kind === 'regular') floater(tk, 'See you tomorrow!', 'combo', 44);
+    else if (S.streak >= 2) floater(tk, `Combo ×${S.streak}`, 'combo', 44);
     sfx.cash();
     leave(i);
     renderHUD();
@@ -1521,7 +1525,9 @@
       <h2>${R.pass ? 'Shift complete!' : 'Not quite…'}</h2>
       <div class="stars">${[1, 2, 3].map(n => n <= R.stars ? '<b>★</b>' : '★').join('')}</div>
       <div class="results">
-        <span>Tips today</span><span>${money(R.money)}</span>
+        <span>Sales</span><span>${money(R.stats.sales || 0)}</span>
+        <span>Tips</span><span>${money(R.stats.tips || 0)}</span>
+        <span><b>Earned today</b></span><span>${money(R.money)}</span>
         <span>Day goal</span><span>${money(R.goal)}</span>
         <span>Customers served</span><span>${R.stats.served}</span>
         ${R.hasOven ? `<span>Pastries served</span><span>${R.stats.pastries}</span>` : ''}
@@ -1566,7 +1572,7 @@
       return row(t.name, (L ? 'Next level: ' : '') + desc + '.', priceBtn('tier', t.id, price, t.day), pips);
     }).join('');
     const ups = UPGRADES.map(it => row(it.name, it.desc, own(it.id) ? owned('Owned') : priceBtn('buy', it.id, it.price, it.day))).join('');
-    const decor = DECOR.map(d => row(d.name, d.desc || 'Shows up in your café and adds 2% to every order.',
+    const decor = DECOR.map(d => row(d.name, d.desc || 'Shows up in your café. A cozier café gets 3% bigger tips.',
       own(d.id) ? owned('Owned') : priceBtn('buy', d.id, d.price), ` <span class="dprev">${decorHTML(d.cls, true)}</span>`)).join('');
     const makers = MAKERS.map(it => {
       const made = it.id === 'sigdrink' ? SAVE.sigDrink : SAVE.sigPastry;
@@ -1580,15 +1586,15 @@
         : priceBtn('buy', t.id, t.price);
       return row(t.name, t.price ? 'New walls, counter, awning and bar colors.' : 'The original look.', btn, sw);
     }).join('');
-    const cozy = Math.round((tipMult() / [1, 1.08, 1.16, 1.25][lv('tipsign')] - 1) * 100);
+    const cozy = 3 * decorCount();
     showCard(`
       <h2>Café shop</h2>
       <p class="bank">Savings: ${money(SAVE.bank)}</p>
       ${shopNote ? `<div class="shopnote">${shopNote}</div>` : ''}
-      <p class="small" style="margin-top:-6px">You keep every day's tips, even on days you miss the goal.</p>
+      <p class="small" style="margin-top:-6px">You keep everything you earn, even on days you miss the goal.</p>
       <div class="btnrow"><button class="big alt" id="stkBtn" type="button">Sticker book · ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button></div>
       <div class="shopsec"><h3>Upgrades</h3>${tiers}${ups}</div>
-      <div class="shopsec"><h3>Decor · cozy bonus now +${cozy}%</h3>${decor}</div>
+      <div class="shopsec"><h3>Decor · tips now +${cozy}% from coziness</h3>${decor}</div>
       <div class="shopsec"><h3>Make it yours</h3>${makers}</div>
       <div class="shopsec"><h3>Café themes</h3>${themes}</div>
       <div class="btnrow" style="margin-top:14px"><button class="big" id="shopDone" type="button">Done</button></div>`, 'wide');
@@ -1661,7 +1667,7 @@
 
   /* ---------- Signature makers ---------- */
   let draft = null;
-  const sigDrinkPrice = n => Math.round((2.5 + 0.8 * n) * 1.5 * 4) / 4;
+  const sigDrinkPrice = n => Math.round((3 + 0.75 * n) * 1.25 * 4) / 4 - .05; // house drinks cost a bit more
 
   function drinkMaker() {
     const r = reach();
@@ -1832,7 +1838,7 @@
     { el: () => S.spots[1] && [S.spots[1].el.querySelector('.ticket'), S.spots[1].el.querySelector('.person')], done: () => S.stats.served >= 1,
       text: 'Your cup matches the ticket. <b>Tap the customer</b> to hand it over.' },
     { el: () => $('#money').closest('.stat'), next: 'Next',
-      text: 'You got paid! Tips go here. The faster you serve, the bigger the tip. Reach the day\'s goal before the shift ends to unlock new drinks.' },
+      text: 'You got paid: the price of the latte plus a tip. The faster you serve, the bigger the tip (5% to 25%), just like a real café. Reach the day\'s goal before the shift ends to unlock new drinks.' },
     { el: () => $('#menuBtn'), next: 'Start my shift!',
       text: 'Forgot a recipe? <b>Menu</b> pauses the clock and shows them all. Pro tip: you have two cups, so start a second drink while a shot is pulling.' },
   ];
@@ -1840,7 +1846,7 @@
     S.tut = { i: 0 };
     const look = randomLook(); look.acc = 'none';
     spawn({ kind: 'normal', who: null, look, pastry: null,
-      drink: { name: 'Latte', day: 1, cup: 'hot', items: ['shot', 'milk'], price: 4.5, mods: [], sig: false, special: false } }, 1);
+      drink: { name: 'Latte', day: 1, cup: 'hot', items: ['shot', 'milk'], price: DRINKS.find(x => x.name === 'Latte').price, mods: [], sig: false, special: false } }, 1);
     $('#coach').hidden = false;
     showTutStep();
   }
