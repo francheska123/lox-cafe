@@ -72,6 +72,7 @@
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
+  html, body, button { touch-action: manipulation; }
   button { font: inherit; color: inherit; cursor: pointer; }
   button:focus-visible, summary:focus-visible { outline: 3px solid var(--cherry); outline-offset: 2px; }
 
@@ -487,7 +488,7 @@
     .fplaque { font-size: 8.5px; }
     .fshelf { padding: 5px 6px 6px; }
     .supplies .sl { display: none; }
-    .supply { flex: 1; justify-content: center; padding: 5px 4px; font-size: 11px; }
+    .supply { flex: 1; justify-content: center; padding: 8px 4px; min-height: 44px; font-size: 12px; }
     .server .person { zoom: .5; }
     .fbar .hl { display: none; }
     .hand { min-height: 46px; font-size: 12px; }
@@ -630,6 +631,12 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .arrange { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .arr { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px; min-height: 70px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; font-weight: 700; font-size: 13px; box-shadow: 0 3px 0 var(--ink); }
+  .arr .ic { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--c); }
+  .arr .ic.sq { border-radius: 5px 5px 10px 10px; }
+  .arr.on { background: var(--butter); transform: translateY(-2px); box-shadow: 0 5px 0 var(--ink); }
+  .arr.later { opacity: .55; }
   .stat .k { white-space: nowrap; }
   .diffpick { display: inline-flex; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; margin: 2px 0 4px; box-shadow: 0 3px 0 var(--ink); }
   .dp { border: 0; background: #fff; padding: 6px 14px; font-weight: 700; font-size: 14px; }
@@ -674,14 +681,14 @@
     .spot { height: auto; }
     .counter { flex: none; height: 26px; margin-top: -12px; padding: 9px 6px 0; box-shadow: inset 0 5px 0 var(--wood-hi); }
     .pat { height: 7px; border-width: 1.5px; }
-    .ticket { font-size: 12.5px; padding: 3px 4px; min-width: 0; width: 100%; border-width: 2px; border-radius: 9px; margin-bottom: 7px; box-shadow: 0 2px 0 var(--ink); }
+    .ticket { font-size: 14.5px; padding: 4px 4px; min-width: 0; width: 100%; border-width: 2px; border-radius: 9px; margin-bottom: 7px; box-shadow: 0 2px 0 var(--ink); }
     .ticket::after { width: 9px; height: 9px; bottom: -6px; border-width: 2px; }
     .part.p, .part.p.solo { font-size: 12px; }
     .who { font-size: 8px; letter-spacing: .03em; }
     .chips { gap: 1px; margin-top: 2px; }
-    .chip { font-size: 8.5px; padding: 1px 2px; border-width: 1px; border-radius: 4px; }
+    .chip { font-size: 10px; padding: 1px 3px; border-width: 1.5px; border-radius: 4px; }
     .mod { font-size: 8.5px; padding: 0 3px; }
-    .person, .person.kid { transform: none; zoom: .8; }
+    .person, .person.kid { transform: none; zoom: 1; }
     .person.kid { zoom: .62; }
     .decor { top: 22px; height: 26px; zoom: .8; }
     .lights { top: 16px; }
@@ -702,14 +709,14 @@
     .hint { position: fixed; left: 50%; top: 38%; transform: translateX(-50%); z-index: 30; pointer-events: none; min-height: 0; white-space: nowrap; box-shadow: 0 3px 0 var(--ink); }
     .hint:empty { display: none; }
 
-    .pad { flex: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 5px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
+    .pad { flex: none; display: grid; grid-template-columns: repeat(var(--cols, 5), 1fr); gap: 6px; padding: 6px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
     .pad > .stations:not([hidden]) { display: contents; }
     .case .station:not(:disabled) { background: #FBEBD9; }
-    .station { padding: 5px 0 4px; font-size: min(10.5px, 2.65vw); letter-spacing: -.01em; white-space: nowrap; gap: 3px; border-width: 2px; border-radius: 9px; min-height: 46px; box-shadow: 0 2px 0 rgba(0,0,0,.45); }
-    .station .ic { width: 20px; height: 20px; border-width: 2px; }
+    .station { padding: 7px 0 6px; font-size: min(12.5px, 3.2vw); letter-spacing: -.01em; white-space: nowrap; gap: 4px; border-width: 2.5px; border-radius: 11px; min-height: 62px; box-shadow: 0 2px 0 rgba(0,0,0,.45); }
+    .station .ic { width: 27px; height: 27px; border-width: 2.5px; }
     .station .t, .case .cl { display: none; }
     .station:disabled { display: none; }
-    .station .pz.mini { transform: none; zoom: .55; margin: 0; }
+    .station .pz.mini { transform: none; zoom: .72; margin: 0; }
     .lbl-f { display: none; }
     .lbl-m { display: inline; }
     .dumpbtn { display: flex; }
@@ -832,16 +839,16 @@
     iced:    { label: 'Iced cup', m: 'Iced',      short: 'Iced',    c: '#CFEFFF', cup: true, day: 3 },
     shot:    { label: 'Espresso',      short: 'Esp',     c: '#4A2A1A', day: 1, dark: true, station: 'machine', note: 'espresso machine' },
     water:   { label: 'Water',         short: 'Water',   c: '#C9A27E', day: 1 },
-    milk:    { label: 'Milk',          short: 'Milk',    c: '#FFF3DC', day: 1, station: 'steamer', time: 1.0, note: 'steam wand' },
+    milk:    { label: 'Milk',          short: 'Milk',    c: '#FFF3DC', tag: '#CFE6FF', ib: 'linear-gradient(#FFFFFF 0 46%, #8EC5F2 46%)', day: 1, station: 'steamer', time: 1.0, note: 'steam wand' },
     oat:     { label: 'Oat milk', m: 'Oat',      short: 'Oat',     c: '#EAD7A8', day: 7, station: 'steamer', time: 1.0, note: 'steam wand' },
-    foam:    { label: 'Foam',          short: 'Foam',    c: '#FFFFFF', day: 2, top: true },
+    foam:    { label: 'Foam',          short: 'Foam',    c: '#FFFFFF', tag: '#F1E4CF', ib: 'radial-gradient(circle at 30% 34%, #C2A98B 0 2.5px, transparent 3px), radial-gradient(circle at 66% 54%, #C2A98B 0 3px, transparent 3.5px), radial-gradient(circle at 38% 74%, #C2A98B 0 2px, transparent 2.5px), #FFFDF5', day: 2, top: true },
     vanilla: { label: 'Vanilla',       short: 'Van',     c: '#FBE7A1', day: 4 },
     caramel: { label: 'Caramel',       short: 'Caramel', c: '#D98B2B', day: 5 },
     choc:    { label: 'Chocolate', m: 'Choc',     short: 'Choc',    c: '#6B3B24', day: 6, dark: true },
     chai:    { label: 'Chai',          short: 'Chai',    c: '#C68A52', day: 11 },
     matcha:  { label: 'Matcha',        short: 'Matcha',  c: '#8DBF5A', day: 13 },
     pumpkin: { label: 'Pumpkin spice', m: 'Pumpkin', short: 'Pumpkin', c: '#E8833A', day: 16 },
-    whip:    { label: 'Whip',          short: 'Whip',    c: '#FFFFFF', day: 6, top: true },
+    whip:    { label: 'Whip',          short: 'Whip',    c: '#FFFFFF', tag: '#FFD3E5', ib: 'repeating-linear-gradient(135deg, #FFFFFF 0 3px, #F7A1C4 3px 5px)', day: 6, top: true },
   };
   const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip'];
 
@@ -979,7 +986,7 @@
   const DIFFS = {
     easy:   { label: 'Easy',   spawn: 1.4,  patience: 1.2, goal: .72, pay: 1,    note: 'Fewer customers, and they wait longer.' },
     medium: { label: 'Medium', spawn: 1,    patience: 1,   goal: 1,   pay: 1,    note: 'The classic pace.' },
-    hard:   { label: 'Hard',   spawn: .75,  patience: .9,  goal: 1.3, pay: 1.15, note: 'More customers, less patience, 15% bigger tips.' },
+    hard:   { label: 'Hard',   spawn: .6,   patience: .72, goal: 1.45, pay: 1.25, note: 'Lots more customers, much less patience. Tips are 25% bigger.' },
   };
   const difficulty = () => DIFFS[SAVE && SAVE.diff] || DIFFS.medium;
   const cfg = d => {
@@ -1205,7 +1212,7 @@
     const isNew = x => x.day === d && d > 1 && !x.sig;
     const drinkLi = x => `<li class="${isNew(x) ? 'isnew' : ''}">
         <span class="rname">${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}${x.sig ? '<span class="newtag sig">Yours</span>' : ''}${S && x.name === S.special ? ' <span class="spc">★ special</span>' : ''}</span>
-        <span class="rsteps">${[x.cup, ...x.items].map(k => `<span class="rstep"><span class="dot" style="--c:${ING[k].c}"></span>${ING[k].label}</span>`).join('')}</span>
+        <span class="rsteps">${[x.cup, ...x.items].map(k => `<span class="rstep"><span class="dot" style="--c:${ING[k].c};${ING[k].ib ? `background:${ING[k].ib}` : ''}"></span>${ING[k].label}</span>`).join('')}</span>
       </li>`;
     const pastryLi = k => `<li class="${isNew(P[k]) ? 'isnew' : ''}">
         <span class="rname">${pastryHTML(P[k].look, 'mini')} ${esc(P[k].label)}${isNew(P[k]) ? '<span class="newtag">New</span>' : ''}${P[k].sig ? '<span class="newtag sig">Yours</span>' : ''}</span>
@@ -1223,7 +1230,7 @@
 
   function buildStations() {
     const wrap = $('#stations'); wrap.innerHTML = ''; stationBusyEls = {};
-    STATION_ORDER.forEach(k => {
+    stationOrder().forEach(k => {
       const ing = ING[k];
       if (ing.day > S.day + 1) return; // tease only tomorrow's unlock
       const locked = ing.day > S.day;
@@ -1231,7 +1238,7 @@
       b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
       b.disabled = locked;
       const sub = locked ? `Day ${ing.day}` : ing.station ? `${stationTime(k)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
-      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k]}</span>`;
+      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k]}</span>`;
       b.addEventListener('click', () => add(k));
       wrap.appendChild(b);
       stationBusyEls[k] = b.querySelector('.busy');
@@ -1254,6 +1261,8 @@
       cs.appendChild(b);
     });
     $('#oven').hidden = !S.oven.length;
+    const shown = document.querySelectorAll('.pad .station:not(:disabled)').length;
+    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : 5);
   }
 
   function renderMenu() {
@@ -1330,7 +1339,7 @@
     let dpart = '';
     if (o.drink) {
       const mods = o.drink.mods.length ? `<span class="mods">${o.drink.mods.map(m => `<span class="mod">${m}</span>`).join('')}</span>` : '';
-      const chips = `<span class="chips">${[o.drink.cup, ...o.drink.items].map(k => `<span class="chip" style="--c:${ING[k].c};--t:${ING[k].dark ? '#fff' : 'var(--ink)'}">${ING[k].short}</span>`).join('')}</span>`;
+      const chips = `<span class="chips">${[o.drink.cup, ...o.drink.items].map(k => `<span class="chip" style="--c:${ING[k].tag || ING[k].c};--t:${ING[k].dark ? '#fff' : 'var(--ink)'}">${ING[k].short}</span>`).join('')}</span>`;
       dpart = `<span class="part d">${esc(o.drink.name)}${o.drink.special ? ' <span class="spc">★</span>' : ''}${mods}${chips}</span>`;
     }
     const ppart = o.pastry ? `<span class="part p${o.drink ? '' : ' solo'}">${o.drink ? '+ ' : ''}${esc(P[o.pastry].label)}</span>` : '';
@@ -2601,6 +2610,35 @@
   $('#bsprite').innerHTML = fPerson(BEA_LOOK);
   document.querySelector('#server .srvbody').innerHTML = fPerson(SERVER_LOOK);
 
+  /* ---------- Arrange stations: tap two to swap ---------- */
+  function stationOrder() {
+    const saved = (SAVE.order || []).filter(k => STATION_ORDER.includes(k));
+    return [...saved, ...STATION_ORDER.filter(k => !saved.includes(k))];
+  }
+  function arrangeCard(back, picked = null) {
+    const order = stationOrder();
+    showCard(`
+      <h2>Arrange stations</h2>
+      <p>Tap a station, then tap where you want it. They swap places.</p>
+      <div class="arrange">${order.map(k => {
+        const ing = ING[k];
+        return `<button type="button" class="arr${picked === k ? ' on' : ''}${ing.day > S.day ? ' later' : ''}" data-k="${k}"><span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span>${ing.m || ing.label}</button>`;
+      }).join('')}</div>
+      <div class="btnrow"><button class="big" id="arrDone" type="button">Done</button><button class="big alt" id="arrReset" type="button">Reset order</button></div>`, 'wide', false);
+    document.querySelectorAll('.arr').forEach(b => b.onclick = () => {
+      const k = b.dataset.k;
+      if (!picked) { sfx.click(); arrangeCard(back, k); return; }
+      if (picked !== k) {
+        const o = stationOrder(), i = o.indexOf(picked), j = o.indexOf(k);
+        [o[i], o[j]] = [o[j], o[i]];
+        SAVE.order = o; persist(); sfx.done();
+      }
+      arrangeCard(back);
+    });
+    $('#arrReset').onclick = () => { SAVE.order = []; persist(); sfx.click(); arrangeCard(back); };
+    $('#arrDone').onclick = () => { buildStations(); back(); };
+  }
+
   /* ---------- Overlays ---------- */
   function showCard(html, cls = '', focus = true) {
     const card = $('#card');
@@ -2665,7 +2703,7 @@
     if (on) {
       const btns = `${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text} · ${taskStatus(S.task).label}</div>` : ''}
         <div class="btnrow"><button class="big" id="resumeBtn" type="button">Back to the bar</button><button class="big alt" id="quitBtn" type="button">Title</button></div>
-        <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button><button class="big alt desk" id="pKeys" type="button">Shortcuts</button></div>`;
+        <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button><button class="big alt desk" id="pKeys" type="button">Shortcuts</button>${S.mode === 'floor' ? '' : '<button class="big alt" id="pArr" type="button">Arrange stations</button>'}</div>`;
       showCard(view === 'menu'
         ? `<h2>Day ${S.day} menu</h2><p>The clock is stopped while you look.</p>${S.mode === 'floor' ? floorMenuHTML(S.day) : recipesHTML(S.day)}${btns}`
         : `<h2>On break</h2><p>Customers will wait. Promise.</p>${btns}`);
@@ -2673,6 +2711,7 @@
       $('#quitBtn').onclick = title;
       $('#pSound').onclick = toggleSound; $('#pHints').onclick = toggleHints; syncToggles();
       $('#pKeys').onclick = () => keysCard(() => pause(true, view));
+      const pa = $('#pArr'); if (pa) pa.onclick = () => arrangeCard(() => pause(true, view));
     } else {
       $('#overlay').hidden = true; last = performance.now();
     }
