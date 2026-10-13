@@ -16,6 +16,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).pathname.startsWith('/api/')) return; // live high scores always come from the network
   // The game page: use the network when there is one (so updates arrive), the saved copy when offline
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req)

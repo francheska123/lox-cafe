@@ -1,6 +1,6 @@
 // Lox Café offline support. build.py copies this to docs/sw.js with a fresh
 // version stamp, so every published update replaces the old saved copy.
-const CACHE = 'lox-cafe-20261013184237';
+const CACHE = 'lox-cafe-20261013184718';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -16,6 +16,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).pathname.startsWith('/api/')) return; // live high scores always come from the network
   // The game page: use the network when there is one (so updates arrive), the saved copy when offline
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req)

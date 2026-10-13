@@ -7,7 +7,7 @@ Run:  python3 build.py
 """
 from pathlib import Path
 
-URL = 'https://francheska123.github.io/lox-cafe/'
+URL = 'https://lox-cafe.pages.dev/'
 src = Path(__file__).with_name('index.html').read_text()
 
 head = f'''<!doctype html>

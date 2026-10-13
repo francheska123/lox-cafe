@@ -14,8 +14,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Lox Café">
 <meta property="og:description" content="Run a cozy coffee shop: make drinks, warm pastries and keep customers happy.">
-<meta property="og:url" content="https://francheska123.github.io/lox-cafe/">
-<meta property="og:image" content="https://francheska123.github.io/lox-cafe/preview.png">
+<meta property="og:url" content="https://lox-cafe.pages.dev/">
+<meta property="og:image" content="https://lox-cafe.pages.dev/preview.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
   :root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
@@ -638,6 +638,12 @@
   .hsflash { font-size: 13px; color: #FF8AC8; text-shadow: 0 0 8px rgba(255,138,200,.7); animation: hsblink .8s steps(2) infinite; }
   @keyframes hsblink { 50% { opacity: .45; } }
   .arcade-in { width: 7.5ch; font: 26px/1.2 "Press Start 2P", ui-monospace, monospace; text-align: center; text-transform: uppercase; letter-spacing: .15em; color: #FFD66B; background: #000; border: 3px solid #FFD66B; border-radius: 8px; padding: 8px 6px 6px; user-select: text; -webkit-user-select: text; }
+  .hstabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .hstab { flex: 1; border: 2px solid #FFD66B; border-radius: 8px; background: transparent; color: #FFD66B; font-weight: 700; font-size: 13px; padding: 6px; }
+  .hstab.on { background: #FFD66B; color: #1E1630; }
+  .hsoff { color: #EDE6FF; font-size: 13px; margin: 6px 0 0; }
+  .hsnew .big { font-size: 15px; padding: 8px 16px; }
+  .hsmsg { font-size: 12px; color: #EDE6FF; min-height: 1em; }
   .hsboard { background: #1E1630; border: 3px solid var(--ink); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 4px 0 var(--ink); }
   .hstitle { color: #FF8AC8; font-size: 13px; margin-bottom: 10px; text-shadow: 0 0 8px rgba(255,138,200,.6); }
   .hsrow { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px; font-size: 12px; color: #FFD66B; padding: 5px 0; text-align: left; }
@@ -2699,29 +2705,80 @@
     return rank >= 0 ? { key, t: entry.t, rank: rank + 1 } : null;
   }
   const hsEntry = h => ((SAVE.hs || {})[h.key] || []).find(e => e.t === h.t);
+  // Shared "everyone" board lives on Cloudflare (functions/api/scores.js)
+  const WORLD_API = location.hostname.endsWith('lox-cafe.pages.dev') ? '/api/scores' : 'https://lox-cafe.pages.dev/api/scores';
+  async function worldGet(board) {
+    const r = await fetch(`${WORLD_API}?board=${encodeURIComponent(board)}`);
+    if (!r.ok) throw new Error('offline');
+    return (await r.json()).scores || [];
+  }
+  async function worldPost(board, n, sc) {
+    const r = await fetch(WORLD_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ board, n, s: sc }) });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || 'Could not reach the board.');
+    return data;
+  }
+
   function hsBlock(h, d) {
     const e = h && hsEntry(h);
     if (!e) return '';
     return `<div class="hsnew"><span class="arcade hsflash">${h.rank === 1 ? 'NEW HIGH SCORE!' : `#${h.rank} ON THE BOARD`}</span>
       <label for="hsName">Your initials for Day ${d}</label>
-      <input id="hsName" class="arcade-in" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(e.n)}"></div>`;
+      <input id="hsName" class="arcade-in" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(e.n === 'YOU' ? '' : e.n)}" placeholder="AAA">
+      <button class="big" id="hsPost" type="button" ${e.posted ? 'disabled' : ''}>${e.posted ? 'Posted to the world board ✓' : 'Post to the world board'}</button>
+      <span class="hsmsg" id="hsMsg" role="status"></span></div>`;
   }
   function wireHS(h) {
-    const inp = $('#hsName');
+    const inp = $('#hsName'), btn = $('#hsPost'), msg = $('#hsMsg');
     if (!inp || !h) return;
+    const sync = () => { const e = hsEntry(h); btn.disabled = !!(e && e.posted) || inp.value.length !== 3; };
     inp.oninput = () => {
       const v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
       inp.value = v;
       const e = hsEntry(h);
       if (e && v) { e.n = v; SAVE.initials = v; persist(); }
+      sync();
     };
+    btn.onclick = async () => {
+      const e = hsEntry(h);
+      if (!e || inp.value.length !== 3) return;
+      btn.disabled = true; msg.textContent = 'Posting…';
+      try {
+        const res = await worldPost(h.key, e.n, e.s);
+        e.posted = true; persist();
+        btn.textContent = 'Posted to the world board ✓';
+        msg.textContent = res.rank ? `You're #${res.rank} worldwide on this day!` : 'Posted! Not top 10 worldwide yet. Keep going!';
+        sfx.cash();
+      } catch (err) {
+        msg.textContent = err.message === 'Failed to fetch' ? 'No connection. Your score is saved on this phone.' : err.message;
+        btn.disabled = false;
+      }
+    };
+    sync();
+  }
+  function scoreRows(list, count) {
+    return Array.from({ length: count }, (_, i) => {
+      const e = list[i];
+      return `<div class="hsrow arcade"><span>${i + 1}.</span><span>${e ? esc(e.n) : '---'}</span><span>${e ? money(e.s) : '$--.--'}</span></div>`;
+    }).join('');
   }
   function scoreTable(mode, d) {
     const list = (SAVE.hs || {})[`${mode}:${d}`] || [];
-    return `<div class="hsboard"><div class="arcade hstitle">HIGH SCORES</div>${[0, 1, 2, 3, 4].map(i => {
-      const e = list[i];
-      return `<div class="hsrow arcade"><span>${i + 1}.</span><span>${e ? esc(e.n) : '---'}</span><span>${e ? money(e.s) : '$--.--'}</span></div>`;
-    }).join('')}</div>`;
+    return `<div class="hsboard"><div class="hstabs" role="tablist">
+        <button type="button" class="hstab on" data-tab="me" role="tab" aria-selected="true">This phone</button>
+        <button type="button" class="hstab" data-tab="world" role="tab" aria-selected="false">Everyone</button></div>
+      <div class="arcade hstitle" id="hsTitle">HIGH SCORES</div><div id="hsRows">${scoreRows(list, 5)}</div></div>`;
+  }
+  function wireScoreTabs(mode, d) {
+    const local = (SAVE.hs || {})[`${mode}:${d}`] || [];
+    document.querySelectorAll('.hstab').forEach(t => t.onclick = async () => {
+      document.querySelectorAll('.hstab').forEach(x => { x.classList.toggle('on', x === t); x.setAttribute('aria-selected', x === t); });
+      if (t.dataset.tab === 'me') { $('#hsTitle').textContent = 'HIGH SCORES'; $('#hsRows').innerHTML = scoreRows(local, 5); return; }
+      $('#hsTitle').textContent = 'WORLD TOP 10';
+      $('#hsRows').innerHTML = '<div class="hsrow arcade"><span></span><span>LOADING…</span><span></span></div>';
+      try { $('#hsRows').innerHTML = scoreRows(await worldGet(`${mode}:${d}`), 10); }
+      catch { $('#hsRows').innerHTML = '<p class="hsoff">The world board needs a connection. Try again online.</p>'; }
+    });
   }
 
   /* ---------- Map: every day, its stars, tap to replay ---------- */
@@ -2751,6 +2808,7 @@
       <div class="stars">${[1, 2, 3].map(i => i <= n ? '<b>★</b>' : '★').join('')}</div>
       ${scoreTable(SAVE.mode, d)}
       <div class="btnrow"><button class="big" id="playDay" type="button">Play Day ${d}</button><button class="big alt" id="dayBack" type="button">Back to map</button></div>`);
+    wireScoreTabs(SAVE.mode, d);
     $('#playDay').onclick = () => fl ? floorStartDay(d) : startDay(d);
     $('#dayBack').onclick = back;
   }
