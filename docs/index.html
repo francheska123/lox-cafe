@@ -23,10 +23,11 @@
   img { max-width: 100%; }
   [hidden] { display: none !important; }
 </style>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js'));</script>
 <title>Lox Café</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gochi+Hand&family=Shrikhand&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gochi+Hand&family=Press+Start+2P&family=Shrikhand&display=swap">
 <style>
   /* Single-theme on purpose: the café is its own bright little world.
      The café-theme tokens (wall, wood, awning, bar, board) are swapped by the
@@ -631,6 +632,28 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .arcade { font-family: "Press Start 2P", ui-monospace, Menlo, monospace; }
+  .hsnew { display: grid; justify-items: center; gap: 6px; background: #1E1630; color: #FFD66B; border: 3px solid var(--ink); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
+  .hsnew label { font-size: 12px; color: #EDE6FF; }
+  .hsflash { font-size: 13px; color: #FF8AC8; text-shadow: 0 0 8px rgba(255,138,200,.7); animation: hsblink .8s steps(2) infinite; }
+  @keyframes hsblink { 50% { opacity: .45; } }
+  .arcade-in { width: 7.5ch; font: 26px/1.2 "Press Start 2P", ui-monospace, monospace; text-align: center; text-transform: uppercase; letter-spacing: .15em; color: #FFD66B; background: #000; border: 3px solid #FFD66B; border-radius: 8px; padding: 8px 6px 6px; user-select: text; -webkit-user-select: text; }
+  .hsboard { background: #1E1630; border: 3px solid var(--ink); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 4px 0 var(--ink); }
+  .hstitle { color: #FF8AC8; font-size: 13px; margin-bottom: 10px; text-shadow: 0 0 8px rgba(255,138,200,.6); }
+  .hsrow { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px; font-size: 12px; color: #FFD66B; padding: 5px 0; text-align: left; }
+  .hsrow:nth-child(n+3) { color: #EDE6FF; }
+  .map { display: grid; gap: 14px; margin: 6px 0 16px; }
+  .maprow { position: relative; display: flex; justify-content: space-between; gap: 6px; }
+  .maprow.rev { flex-direction: row-reverse; }
+  .maprow::before { content: ""; position: absolute; left: 10%; right: 10%; top: 50%; border-top: 3px dashed #CDBFB6; z-index: 0; }
+  .mnode { position: relative; z-index: 1; width: 66px; height: 66px; border-radius: 50%; border: 3px solid var(--ink); background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; box-shadow: 0 3px 0 var(--ink); }
+  .mnode .mday { font-weight: 800; font-size: 19px; line-height: 1; }
+  .mnode .mstars { font-size: 11px; color: #D9A93A; letter-spacing: 1px; }
+  .mnode.done { background: #E8F7F0; }
+  .mnode.next { background: var(--butter); animation: seatpulse .8s ease-in-out infinite alternate; }
+  .mnode.locked { background: #EEE6E0; color: #B5A79E; box-shadow: none; border-color: #CDBFB6; cursor: not-allowed; }
+  .mnode.locked .mstars { font-size: 12px; }
+  @media (max-width: 600px) { .mnode { width: 58px; height: 58px; } .mnode .mday { font-size: 17px; } }
   .arrange { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 16px; }
   .arr { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px; min-height: 70px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; font-weight: 700; font-size: 13px; box-shadow: 0 3px 0 var(--ink); }
   .arr .ic { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--c); }
@@ -878,6 +901,7 @@
     cookie:    { label: 'Cookie',           short: 'Cookie',    day: 15, price: 3.25, look: { base: 'cookie', top: 'chips' } },
   };
 
+  const PUMP_DAY = 18, NOWHIP_DAY = 19, ADDSYR_DAY = 20;
   const OAT_DAY = 7, SHOT_DAY = 9, OVEN_DAY = 10, REG_DAY = 12, RUSH_DAY = 13,
         KID_DAY = 14, CRITIC_DAY = 15, SPECIAL_DAY = 17, TASK_DAY = 3;
 
@@ -889,6 +913,9 @@
     13: { title: 'Rush hour', text: 'Once a shift, customers pour in for 20 seconds. Tips are 25% bigger while it lasts.' },
     14: { title: 'Kids', text: 'Little ones come in for hot chocolate, and sometimes a cookie.' },
     15: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but a happy critic leaves a $10 review bonus.' },
+    18: { title: 'Extra pumps', text: 'Customers start asking for 2 pumps of syrup. Add the vanilla or caramel twice.' },
+    19: { title: 'No whip', text: 'Some customers want their drink without whipped cream. Leave the Whip off.' },
+    20: { title: 'Add a syrup', text: 'Custom lattes! "+Vanilla" or "+Caramel" means add one pump of that syrup.' },
     17: { title: 'Daily specials', text: 'One drink a day is the special (★). It costs 20% more and gets ordered more.' },
   };
 
@@ -940,6 +967,11 @@
     { id: 'theme_neon',   name: 'Midnight Neon', price: 120, v: { wall: '#2B2140', 'wall-2': '#231A36', tile: '#EDE6FF', wood: '#5B3FA0', 'wood-dk': '#3A2770', 'wood-hi': '#8063C9', awn: '#FF8AC8', awn2: '#2B2140', bar: '#1E1630', board: '#241B38' } },
     { id: 'theme_lapis',  name: 'Lapis Night',  price: 40, v: { wall: '#2A4D73', 'wall-2': '#23405F', tile: '#DCEBF7', wood: '#3B6A96', 'wood-dk': '#213A57', 'wood-hi': '#5B8CBA', awn: '#DDE35F', awn2: '#2A4D73', bar: '#1C2E44', board: '#1F3A2E' } },
   ];
+  // Shop prices raised 60% (2026-10-13) so upgrades take real saving up
+  const pr = n => Math.round(n * 1.6 / 5) * 5;
+  [...UPGRADES, ...DECOR, ...MAKERS, ...THEMES].forEach(x => { x.price = pr(x.price); });
+  TIERS.forEach(t => t.levels.forEach(l => { l[0] = pr(l[0]); }));
+
   const GLAZES = [
     { id: 'none', label: 'No glaze' }, { id: 'pink', label: 'Pink', c: '#F7A1C4' }, { id: 'choc', label: 'Chocolate', c: '#5B3423' },
     { id: 'lemon', label: 'Lemon', c: '#FFE27A' }, { id: 'lapis', label: 'Lapis', c: '#6EBFEA' },
@@ -1221,6 +1253,9 @@
     const mods = [];
     if (d >= OAT_DAY) mods.push(`<li class="rmod"><b>Oat</b> tag: use Oat milk instead of Milk</li>`);
     if (d >= SHOT_DAY) mods.push(`<li class="rmod"><b>+Shot</b> tag: add one more Espresso</li>`);
+    if (d >= PUMP_DAY) mods.push(`<li class="rmod"><b>2 pumps</b> tag: add that syrup twice</li>`);
+    if (d >= NOWHIP_DAY) mods.push(`<li class="rmod"><b>No whip</b> tag: leave the Whip off</li>`);
+    if (d >= ADDSYR_DAY) mods.push(`<li class="rmod"><b>+Vanilla / +Caramel</b> tag: add one pump of that syrup</li>`);
     const drinks = unlockedDrinks(d), pk = unlockedPastries(d);
     const all = drinks.map(drinkLi).join('') + pk.map(pastryLi).join('') + mods.join('');
     if (!collapse) return `<ul class="recipes">${all}</ul>`;
@@ -1280,6 +1315,8 @@
     const notes = [];
     if (S.day >= OAT_DAY) notes.push('“Oat” means swap Milk for Oat milk.');
     if (S.day >= SHOT_DAY) notes.push('“+Shot” means one more Espresso.');
+    if (S.day >= PUMP_DAY) notes.push('“2 pumps” means add that syrup twice.');
+    if (S.day >= NOWHIP_DAY) notes.push('“No whip” means leave it off.');
     notes.push('Build it, then tap the customer to hand it over.');
     $('#boardfoot').innerHTML = notes.join('<br>');
   }
@@ -1320,6 +1357,13 @@
           dr.items[dr.items.indexOf('milk')] = 'oat'; dr.mods.push('Oat'); dr.price += .80;
         }
         if (d >= SHOT_DAY && dr.items.includes('shot') && Math.random() < .2) { dr.items.push('shot'); dr.mods.push('+Shot'); dr.price += 1.00; }
+        // Custom orders, like a real café regular
+        const syr = dr.items.find(k => k === 'vanilla' || k === 'caramel');
+        if (d >= PUMP_DAY && syr && Math.random() < .3) { dr.items.push(syr); dr.mods.push(`2 pumps ${ING[syr].label.toLowerCase()}`); dr.price += .75; }
+        if (d >= NOWHIP_DAY && dr.items.includes('whip') && Math.random() < .3) { dr.items.splice(dr.items.indexOf('whip'), 1); dr.mods.push('No whip'); }
+        if (d >= ADDSYR_DAY && !syr && dr.items.includes('shot') && (dr.items.includes('milk') || dr.items.includes('oat')) && !dr.items.some(k => k === 'choc' || k === 'pumpkin') && Math.random() < .2) {
+          const add = rnd(['vanilla', 'caramel']); dr.items.push(add); dr.mods.push(`+${ING[add].label}`); dr.price += .75;
+        }
       }
     }
     return { kind, who, look, drink: dr, pastry };
@@ -1660,7 +1704,8 @@
     T.bestCombo = Math.max(T.bestCombo, S.bestStreak);
     const newStickers = checkStickers();
     persist();
-    const R = { day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, task: S.task && S.task.text, taskDone, bonus, added, hasOven: S.oven.length > 0, stickers: newStickers.map(x => ({ name: x.name, reward: x.reward })) };
+    const hs = recordScore('bar', S.day, S.money); persist();
+    const R = { hs, day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, task: S.task && S.task.text, taskDone, bonus, added, hasOven: S.oven.length > 0, stickers: newStickers.map(x => ({ name: x.name, reward: x.reward })) };
     showResults(R);
     sfx.bell();
   }
@@ -1687,14 +1732,16 @@
       ${R.stickers && R.stickers.length ? `<div class="unlock goal"><b>New sticker${R.stickers.length > 1 ? 's' : ''}!</b> ${R.stickers.map(x => `${x.name} (+${money(x.reward)})`).join(', ')}</div>` : ''}
       ${unlocks.length ? `<div class="unlock"><b>Day ${next} unlocks:</b> ${unlocks.join(', ')}</div>` : ''}
       ${R.pass ? '' : `<p>You needed ${money(R.goal - R.money)} more. You still keep today's tips. Upgrades in the Shop can help.</p>`}
+      ${hsBlock(R.hs, R.day)}
       <div class="btnrow">
-        ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
+        ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button><button class="big alt" id="retryBtn" type="button">Replay Day ${R.day}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
         <button class="big alt" id="shopBtn" type="button">Shop</button>
         <button class="big alt" id="homeBtn" type="button">Title</button>
       </div>`);
     const nb = $('#nextBtn'), rb = $('#retryBtn');
     if (nb) nb.onclick = () => startDay(next);
     if (rb) rb.onclick = () => startDay(R.day);
+    wireHS(R.hs);
     $('#shopBtn').onclick = () => openShop(() => showResults(R));
     $('#homeBtn').onclick = title;
   }
@@ -2468,7 +2515,8 @@
     if (S.stats.served > 0 && !S.stats.missed && !S.stats.wrong) T.perfect++;
     const stickers = checkStickers();
     persist();
-    showFloorResults({ day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, stickers: stickers.map(x => ({ name: x.name, reward: x.reward })) });
+    const hs = recordScore('floor', S.day, S.money); persist();
+    showFloorResults({ hs, day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, stickers: stickers.map(x => ({ name: x.name, reward: x.reward })) });
     sfx.bell();
   }
   function showFloorResults(R) {
@@ -2491,14 +2539,16 @@
       ${R.stickers.length ? `<div class="unlock goal"><b>New sticker${R.stickers.length > 1 ? 's' : ''}!</b> ${R.stickers.map(x => `${x.name} (+${money(x.reward)})`).join(', ')}</div>` : ''}
       ${news ? `<div class="unlock"><b>Day ${next} unlocks:</b> ${news.title.toLowerCase()}</div>` : ''}
       ${R.pass ? '' : `<p>You needed ${money(R.goal - R.money)} more. You still keep what you earned. Tip: line up several taps in a row so your server never stands still.</p>`}
+      ${hsBlock(R.hs, R.day)}
       <div class="btnrow">
-        ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
+        ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button><button class="big alt" id="retryBtn" type="button">Replay Day ${R.day}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
         <button class="big alt" id="shopBtn" type="button">Shop</button>
         <button class="big alt" id="homeBtn" type="button">Title</button>
       </div>`);
     const nb = $('#nextBtn'), rb = $('#retryBtn');
     if (nb) nb.onclick = () => floorStartDay(next);
     if (rb) rb.onclick = () => floorStartDay(R.day);
+    wireHS(R.hs);
     $('#shopBtn').onclick = () => openShop(() => showFloorResults(R));
     $('#homeBtn').onclick = title;
   }
@@ -2639,6 +2689,72 @@
     $('#arrDone').onclick = () => { buildStations(); back(); };
   }
 
+  /* ---------- Arcade high scores (top 5 per day, this device) ---------- */
+  function recordScore(mode, d, score) {
+    SAVE.hs = SAVE.hs || {};
+    const key = `${mode}:${d}`, list = SAVE.hs[key] = SAVE.hs[key] || [];
+    const entry = { n: SAVE.initials || 'YOU', s: Math.round(score * 100) / 100, t: Date.now() };
+    list.push(entry); list.sort((a, b) => b.s - a.s); list.splice(5);
+    const rank = list.indexOf(entry);
+    return rank >= 0 ? { key, t: entry.t, rank: rank + 1 } : null;
+  }
+  const hsEntry = h => ((SAVE.hs || {})[h.key] || []).find(e => e.t === h.t);
+  function hsBlock(h, d) {
+    const e = h && hsEntry(h);
+    if (!e) return '';
+    return `<div class="hsnew"><span class="arcade hsflash">${h.rank === 1 ? 'NEW HIGH SCORE!' : `#${h.rank} ON THE BOARD`}</span>
+      <label for="hsName">Your initials for Day ${d}</label>
+      <input id="hsName" class="arcade-in" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(e.n)}"></div>`;
+  }
+  function wireHS(h) {
+    const inp = $('#hsName');
+    if (!inp || !h) return;
+    inp.oninput = () => {
+      const v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
+      inp.value = v;
+      const e = hsEntry(h);
+      if (e && v) { e.n = v; SAVE.initials = v; persist(); }
+    };
+  }
+  function scoreTable(mode, d) {
+    const list = (SAVE.hs || {})[`${mode}:${d}`] || [];
+    return `<div class="hsboard"><div class="arcade hstitle">HIGH SCORES</div>${[0, 1, 2, 3, 4].map(i => {
+      const e = list[i];
+      return `<div class="hsrow arcade"><span>${i + 1}.</span><span>${e ? esc(e.n) : '---'}</span><span>${e ? money(e.s) : '$--.--'}</span></div>`;
+    }).join('')}</div>`;
+  }
+
+  /* ---------- Map: every day, its stars, tap to replay ---------- */
+  function mapCard(back = title) {
+    const fl = SAVE.mode === 'floor', best = fl ? SAVE.fbest : SAVE.best, stars = fl ? SAVE.fstars : SAVE.stars;
+    const last = Math.max(12, Math.ceil((best + 3) / 4) * 4);
+    const node = d => {
+      const st = d <= best ? 'done' : d === best + 1 ? 'next' : 'locked';
+      const n = stars[d] || 0;
+      return `<button type="button" class="mnode ${st}" data-d="${d}" ${st === 'locked' ? 'disabled' : ''} aria-label="Day ${d}${st === 'locked' ? ', locked' : `, ${n} stars`}">
+        <span class="mday">${d}</span><span class="mstars">${st === 'locked' ? '🔒' : '★'.repeat(n) + '☆'.repeat(3 - n)}</span></button>`;
+    };
+    const rows = [];
+    for (let d = 1; d <= last; d += 4) rows.push([d, d + 1, d + 2, d + 3]);
+    showCard(`
+      <h2>${fl ? 'Floor Service' : 'Behind the Bar'} map</h2>
+      <p>Tap a day to see its high scores or play it again.</p>
+      <div class="map">${rows.map((r, i) => `<div class="maprow${i % 2 ? ' rev' : ''}">${r.map(node).join('')}</div>`).join('')}</div>
+      <div class="btnrow"><button class="big alt" id="mapBack" type="button">Back</button></div>`, 'wide');
+    document.querySelectorAll('.mnode:not([disabled])').forEach(b => b.onclick = () => dayCard(+b.dataset.d, () => mapCard(back)));
+    $('#mapBack').onclick = back;
+  }
+  function dayCard(d, back) {
+    const fl = SAVE.mode === 'floor', n = (fl ? SAVE.fstars : SAVE.stars)[d] || 0;
+    showCard(`
+      <h2>${fl ? 'Floor · ' : ''}Day ${d}</h2>
+      <div class="stars">${[1, 2, 3].map(i => i <= n ? '<b>★</b>' : '★').join('')}</div>
+      ${scoreTable(SAVE.mode, d)}
+      <div class="btnrow"><button class="big" id="playDay" type="button">Play Day ${d}</button><button class="big alt" id="dayBack" type="button">Back to map</button></div>`);
+    $('#playDay').onclick = () => fl ? floorStartDay(d) : startDay(d);
+    $('#dayBack').onclick = back;
+  }
+
   /* ---------- Overlays ---------- */
   function showCard(html, cls = '', focus = true) {
     const card = $('#card');
@@ -2677,7 +2793,7 @@
       </ol>
       <p>Hit each day's goal to unlock new drinks. Every tip goes into savings for upgrades, themes and your own signature recipes.</p>`}
       <div class="btnrow">
-        ${best ? `<button class="big" id="contBtn" type="button">Continue at Day ${best + 1}</button><button class="big alt" id="startBtn" type="button">Replay Day 1</button>` : `<button class="big" id="startBtn" type="button">Start Day 1</button>`}
+        ${best ? `<button class="big" id="contBtn" type="button">Continue at Day ${best + 1}</button><button class="big alt" id="mapBtn" type="button">Map &amp; high scores</button>` : `<button class="big" id="startBtn" type="button">Start Day 1</button>`}
         <button class="big alt" id="shopBtn" type="button">Shop</button>
         <button class="big alt" id="stkTitle" type="button">Stickers ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button>
         <button class="big alt" id="codeTitle" type="button">Save code</button>
@@ -2685,7 +2801,8 @@
         <button class="big alt" id="howTitle" type="button">How to play</button>
       </div>
       <p class="small">Progress saves in this browser.${fl ? '' : ' On a computer, press ? for keyboard shortcuts.'}</p>`);
-    $('#startBtn').onclick = () => start(1);
+    const sb = $('#startBtn'); if (sb) sb.onclick = () => start(1);
+    const mb = $('#mapBtn'); if (mb) mb.onclick = () => mapCard();
     const cb = $('#contBtn'); if (cb) cb.onclick = () => start(best + 1);
     $('#shopBtn').onclick = () => openShop(title);
     $('#stkTitle').onclick = () => stickerBook(title);

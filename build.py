@@ -35,6 +35,7 @@ head = f'''<!doctype html>
   img {{ max-width: 100%; }}
   [hidden] {{ display: none !important; }}
 </style>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js'));</script>
 '''
 # The source starts with <title>/<link>/<style>, which belong in <head>; the
 # markup starts at the game container.
@@ -43,3 +44,8 @@ page = head + src[:split] + '</head>\n<body>\n' + src[split:] + '\n</body>\n</ht
 out = Path(__file__).with_name('docs') / 'index.html'
 out.write_text(page)
 print('wrote', out, len(page), 'bytes')
+# Offline support: stamp the service worker so each publish refreshes saved copies
+import time
+sw = Path(__file__).with_name('sw.template.js').read_text().replace('__VERSION__', time.strftime('%Y%m%d%H%M%S'))
+(Path(__file__).with_name('docs') / 'sw.js').write_text(sw)
+print('wrote docs/sw.js')
