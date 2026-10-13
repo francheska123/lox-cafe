@@ -617,6 +617,11 @@
   .hstab.on { background: #FFD66B; color: #1E1630; }
   .hsoff { color: #EDE6FF; font-size: 13px; margin: 6px 0 0; }
   .hsnew .big { font-size: 15px; padding: 8px 16px; }
+  .hsnote { font-size: 12px; color: #EDE6FF; text-align: center; }
+  .hsform { display: grid; justify-items: center; gap: 8px; width: 100%; }
+  .hsform[hidden] { display: none; }
+  .hsform label { font-size: 12px; color: #EDE6FF; }
+  .daypost { display: grid; justify-items: center; gap: 8px; background: #1E1630; border: 3px solid var(--ink); border-radius: 14px; padding: 10px; margin: -6px 0 14px; }
   .hsmsg { font-size: 12px; color: #EDE6FF; min-height: 1em; }
   .hsboard { background: #1E1630; border: 3px solid var(--ink); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 4px 0 var(--ink); }
   .hstitle { color: #FF8AC8; font-size: 13px; margin-bottom: 10px; text-shadow: 0 0 8px rgba(255,138,200,.6); }
@@ -2691,43 +2696,44 @@
     return data;
   }
 
-  function hsBlock(h, d) {
-    const e = h && hsEntry(h);
-    if (!e) return '';
-    return `<div class="hsnew"><span class="arcade hsflash">${h.rank === 1 ? 'NEW HIGH SCORE!' : `#${h.rank} ON THE BOARD`}</span>
-      <label for="hsName">Your initials for Day ${d}</label>
-      <input id="hsName" class="arcade-in" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(e.n === 'YOU' ? '' : e.n)}" placeholder="AAA">
-      <button class="big" id="hsPost" type="button" ${e.posted ? 'disabled' : ''}>${e.posted ? 'Posted to the world board ✓' : 'Post to the world board'}</button>
-      <span class="hsmsg" id="hsMsg" role="status"></span></div>`;
+  // Initials form, shared by the results card and the day card. Opening it is optional.
+  function postForm(id) {
+    return `<div class="hsform" id="${id}Form" hidden>
+      <label for="${id}Name">Your initials</label>
+      <input id="${id}Name" class="arcade-in" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(SAVE.initials || '')}" placeholder="AAA">
+      <button class="big" id="${id}Post" type="button">Post to the world board</button>
+      <span class="hsmsg" id="${id}Msg" role="status"></span></div>`;
   }
-  function wireHS(h) {
-    const inp = $('#hsName'), btn = $('#hsPost'), msg = $('#hsMsg');
-    if (!inp || !h) return;
-    const sync = () => { const e = hsEntry(h); btn.disabled = !!(e && e.posted) || inp.value.length !== 3; };
-    inp.oninput = () => {
-      const v = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3);
-      inp.value = v;
-      const e = hsEntry(h);
-      if (e && v) { e.n = v; SAVE.initials = v; persist(); }
-      sync();
-    };
+  function wirePostForm(id, key, getEntry) {
+    const open = $(`#${id}Open`), form = $(`#${id}Form`), inp = $(`#${id}Name`), btn = $(`#${id}Post`), msg = $(`#${id}Msg`);
+    if (!open || !form) return;
+    const sync = () => { btn.disabled = inp.value.length !== 3; };
+    open.onclick = () => { open.hidden = true; form.hidden = false; inp.focus(); sync(); };
+    inp.oninput = () => { inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3); sync(); };
     btn.onclick = async () => {
-      const e = hsEntry(h);
+      const e = getEntry();
       if (!e || inp.value.length !== 3) return;
       btn.disabled = true; msg.textContent = 'Posting…';
       try {
-        const res = await worldPost(h.key, e.n, e.s);
-        e.posted = true; persist();
-        btn.textContent = 'Posted to the world board ✓';
-        msg.textContent = res.rank ? `You're #${res.rank} worldwide on this day!` : 'Posted! Not top 10 worldwide yet. Keep going!';
+        const res = await worldPost(key, inp.value, e.s);
+        e.n = inp.value; e.posted = true; SAVE.initials = inp.value; persist();
+        btn.textContent = 'Posted ✓';
+        msg.textContent = res.rank ? `You're #${res.rank} worldwide on this day!` : 'Posted! Not in the world top 10 yet. Keep going!';
         sfx.cash();
       } catch (err) {
-        msg.textContent = err.message === 'Failed to fetch' ? 'No connection. Your score is saved on this phone.' : err.message;
+        msg.textContent = err.message === 'Failed to fetch' ? 'No connection right now. You can post it later from the Map.' : err.message;
         btn.disabled = false;
       }
     };
-    sync();
   }
+  function hsBlock(h, d) {
+    const e = h && hsEntry(h);
+    if (!e) return '';
+    return `<div class="hsnew"><span class="arcade hsflash">${h.rank === 1 ? 'NEW HIGH SCORE!' : `#${h.rank} ON YOUR BOARD`}</span>
+      <span class="hsnote">Saved on this phone. Want it on the world board? That's optional.</span>
+      ${e.posted ? '<span class="hsnote">Posted to the world board ✓</span>' : `<button class="big alt" id="resOpen" type="button">Add my initials (optional)</button>${postForm('res')}`}</div>`;
+  }
+  function wireHS(h) { if (h) wirePostForm('res', h.key, () => hsEntry(h)); }
   function scoreRows(list, count) {
     return Array.from({ length: count }, (_, i) => {
       const e = list[i];
@@ -2773,14 +2779,17 @@
     document.querySelectorAll('.mnode:not([disabled])').forEach(b => b.onclick = () => dayCard(+b.dataset.d, () => mapCard(back)));
     $('#mapBack').onclick = back;
   }
+  const bestLocal = d => ((SAVE.hs || {})[`${SAVE.mode}:${d}`] || [])[0];
   function dayCard(d, back) {
     const fl = SAVE.mode === 'floor', n = (fl ? SAVE.fstars : SAVE.stars)[d] || 0;
     showCard(`
       <h2>${fl ? 'Floor · ' : ''}Day ${d}</h2>
       <div class="stars">${[1, 2, 3].map(i => i <= n ? '<b>★</b>' : '★').join('')}</div>
       ${scoreTable(SAVE.mode, d)}
+      ${bestLocal(d) && !bestLocal(d).posted ? `<div class="daypost"><button class="big alt" id="dayOpen" type="button">Post my best (${money(bestLocal(d).s)}) to the world board</button>${postForm('day')}</div>` : ''}
       <div class="btnrow"><button class="big" id="playDay" type="button">Play Day ${d}</button><button class="big alt" id="dayBack" type="button">Back to map</button></div>`);
     wireScoreTabs(SAVE.mode, d);
+    wirePostForm('day', `${SAVE.mode}:${d}`, () => bestLocal(d));
     $('#playDay').onclick = () => fl ? floorStartDay(d) : startDay(d);
     $('#dayBack').onclick = back;
   }
