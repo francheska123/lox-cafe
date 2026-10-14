@@ -1,6 +1,6 @@
 // Lox Café offline support. build.py copies this to docs/sw.js with a fresh
 // version stamp, so every published update replaces the old saved copy.
-const CACHE = 'lox-cafe-20261013213755';
+const CACHE = 'lox-cafe-20261013213812';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

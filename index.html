@@ -3038,6 +3038,18 @@
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && S && S.running && !S.paused) pause(true); });
 
+  /* ---------- No accidental zooming on phones ---------- */
+  // iPhones can still zoom on a fast double tap in blank areas, or on a pinch.
+  // The game never needs zoom, so swallow both.
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTouchEnd < 350 && !e.target.closest('input, textarea')) e.preventDefault();
+    lastTouchEnd = now;
+  }, { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+  ['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+
   /* ---------- Boot ---------- */
   SAVE = loadSave(); persist();
   applyTheme(SAVE.theme);
