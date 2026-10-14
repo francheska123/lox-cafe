@@ -606,6 +606,51 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  /* ---------- V3 · Kitchen ---------- */
+  .kitchen { display: none; flex-direction: column; gap: 10px; min-height: 0; }
+  .game.kitchen-mode { grid-template-columns: 1fr; max-width: 760px; }
+  .game.kitchen-mode .kitchen { display: flex; }
+  .game.kitchen-mode .shop, .game.kitchen-mode .bar, .game.kitchen-mode .pad, .game.kitchen-mode .floor, .game.kitchen-mode .side,
+  .game.kitchen-mode .hud { display: none !important; }
+  .khead { display: flex; align-items: center; gap: 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 6px 10px; box-shadow: 0 3px 0 var(--ink); }
+  .kname { font-family: var(--display); font-size: 20px; color: var(--espresso); white-space: nowrap; }
+  .kdots { display: flex; gap: 4px; margin-left: auto; }
+  .kdot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--ink); font-size: 11px; font-weight: 800; display: grid; place-items: center; background: #fff; }
+  .kdot.done { background: var(--mint); color: #fff; } .kdot.on { background: var(--butter); }
+  .kstage { position: relative; height: min(52vh, 440px); border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 0 var(--ink); background: #F8EBD8; }
+  #kcanvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .kpanel { display: grid; gap: 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; padding: 12px 14px; box-shadow: 0 4px 0 var(--ink); }
+  .kq { font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .kmuted { color: var(--muted); font-weight: 500; }
+  .kscale { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #1F2A30; color: #B9F6C8; border-radius: 12px; padding: 10px 14px; font-variant-numeric: tabular-nums; }
+  .sread { font: 24px/1.1 "Press Start 2P", ui-monospace, monospace; }
+  .starget { color: #E8F7F0; font-size: 13px; }
+  .kbtn { border: 3px solid var(--ink); background: var(--mint); color: #fff; font-weight: 800; font-size: 20px; border-radius: 14px; padding: 14px; box-shadow: 0 5px 0 var(--ink); -webkit-text-stroke: .4px var(--ink); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
+  .kbtn.on { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); background: #2F8A66; }
+  .kbtn:disabled { opacity: .45; }
+  .kres { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .kres:empty { display: none; }
+  .kres span { flex: 1 1 200px; line-height: 1.35; }
+  .kres .big { font-size: 16px; padding: 8px 18px; }
+  .kteach { margin: 0; padding-top: 8px; border-top: 1.5px dashed #E6DCD4; font-size: 13px; line-height: 1.4; color: var(--muted); }
+  .rhythm { position: relative; height: 28px; border: 3px solid var(--ink); border-radius: 999px; background: #FBE4E4; overflow: hidden; }
+  .rzone { position: absolute; left: 37%; width: 26%; top: 0; bottom: 0; background: #A9E5C7; }
+  .rmark { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 8px; margin-left: -4px; border-radius: 4px; background: var(--ink); }
+  .rcard { text-align: left; background: #FFFDF7 repeating-linear-gradient(transparent 0 27px, rgba(110,191,234,.18) 27px 28px); border: 2px solid #E6DCD4; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+  .rcard h2 { margin-bottom: 2px; }
+  .rchap { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--cherry); }
+  .rmeta { font-size: 13px; color: var(--muted); }
+  .rcard h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin: 14px 0 6px; }
+  .rcard ul, .rcard ol { padding-left: 20px; margin: 0; line-height: 1.5; }
+  .rcard li { margin-bottom: 6px; }
+  .rcard li span { color: var(--muted); font-size: 13px; }
+  .recipes li .big { justify-self: start; font-size: 14px; padding: 6px 14px; margin-top: 4px; }
+  @media (max-width: 600px) {
+    .game.kitchen-mode .kitchen { flex: 1; }
+    .kstage { height: auto; flex: 1; min-height: 220px; }
+    .kbtn { font-size: 18px; padding: 12px; }
+    .sread { font-size: 19px; }
+  }
   .admin { display: grid; gap: 8px; margin-bottom: 14px; text-align: left; }
   .arow { display: flex; align-items: center; gap: 10px; justify-content: space-between; border: 2px solid #E6DCD4; border-radius: 12px; padding: 8px 10px; font-size: 14px; }
   .arow input { width: 70px; font: inherit; font-size: 16px; border: 2.5px solid var(--ink); border-radius: 8px; padding: 4px 6px; user-select: text; }
@@ -799,6 +844,12 @@
         <div class="qmarks" id="qmarks"></div>
       </div>
       <div class="fbar"><span class="hl">Your hands</span><div class="hands" id="hands"></div></div>
+    </section>
+
+    <section class="kitchen" id="kitchen" aria-label="Kitchen">
+      <div class="khead"><span class="kname" id="kname">Kitchen</span><span class="kdots" id="kdots"></span><button class="iconbtn" id="kExit" type="button">Leave</button></div>
+      <div class="kstage"><canvas id="kcanvas" aria-label="Your bake"></canvas></div>
+      <div class="kpanel" id="kpanel"></div>
     </section>
 
     <div class="hint" id="hint" role="status"></div>
@@ -1079,7 +1130,7 @@
     s.owned.theme_mint = true;
     if (!DIFFS[s.diff]) s.diff = 'medium';
     if (s.tutDone === undefined) s.tutDone = s.best > 0; // players who already cleared a day skip it
-    s.mode = s.mode === 'floor' ? 'floor' : 'bar';
+    s.mode = ['floor', 'kitchen'].includes(s.mode) ? s.mode : 'bar';
     s.fbest = s.fbest || 0; s.fstars = s.fstars || {}; s.ftutDone = !!s.ftutDone;
     return s;
   }
@@ -2663,11 +2714,19 @@
 
   /* ---------- Switching modes ---------- */
   function setMode(m) {
-    SAVE.mode = m === 'floor' ? 'floor' : 'bar'; persist();
-    const fl = SAVE.mode === 'floor';
+    // Floor Service (V2) and the Kitchen (V3) are only open with the admin key for now
+    SAVE.mode = SAVE.admin && (m === 'floor' || m === 'kitchen') ? m : 'bar'; persist();
+    const fl = SAVE.mode === 'floor', kt = SAVE.mode === 'kitchen';
     $('#game').classList.toggle('floor-mode', fl);
-    document.querySelector('.logo small').textContent = fl ? 'V2 · Floor Service' : 'V1.6 · Behind the Bar';
-    if (fl) {
+    $('#game').classList.toggle('kitchen-mode', kt);
+    document.querySelector('.logo small').textContent = kt ? 'V3 · Kitchen' : fl ? 'V2 · Floor Service' : 'V1.6 · Behind the Bar';
+    if (kt) {
+      // A fresh-baked loaf behind the title card
+      S = { mode: 'kitchen', running: false, paused: false, c: { dur: 90, goal: 1 }, money: 0, streak: 0, day: 1, task: null };
+      K = { L: BREAD, step: 'bake', st: { out: true }, scores: [], t: 0, d: { bake: 1, slash: [-.55, -.2, .55, -.38], steam: 1, smooth: 1, rise: 1, ball: 1, poke: 0, squish: 0, amounts: {}, window: 0 } };
+      $('#kname').textContent = 'Kitchen'; $('#kdots').innerHTML = ''; $('#kpanel').innerHTML = '<div class="kq">Pick a lesson to start baking.</div>';
+      cancelAnimationFrame(kRAF); kLast = performance.now(); kRAF = requestAnimationFrame(kLoop);
+    } else if (fl) {
       // A live-looking floor behind the title card
       S = fFresh(1);
       const a = fMakeCustomer(FMENU[2]); a.state = 'waiting'; S.tables[0].cust = a;
@@ -2851,7 +2910,7 @@
     $('#adminPass').focus();
     const go = async () => {
       try {
-        if (await sha256($('#adminPass').value.trim().toLowerCase()) === ADMIN_HASH) { SAVE.admin = true; persist(); sfx.cash(); adminCard(); }
+        if (await sha256($('#adminPass').value.trim().toLowerCase()) === ADMIN_HASH) { SAVE.admin = true; persist(); sfx.cash(); adminCard('Unlocked. V2 Floor and V3 Kitchen now show on the title screen.'); }
         else adminLogin('That passcode isn\'t right.');
       } catch (e) { adminLogin('Admin needs the website (https) to unlock.'); }
     };
@@ -2892,7 +2951,576 @@
       persist(); applyTheme(SAVE.theme); renderDecor(); setMode(SAVE.mode); adminCard('Progress reset. Admin stays unlocked.');
     };
     $('#aDone').onclick = () => { setMode(SAVE.mode); title(); };
-    $('#aLock').onclick = () => { SAVE.admin = false; persist(); title(); };
+    $('#aLock').onclick = () => { SAVE.admin = false; setMode('bar'); persist(); title(); };
+  }
+
+  /* =====================================================================
+     V3 · Kitchen. A real cooking school: each lesson is a real recipe,
+     each mini-game is a real step, and you finish with a recipe card you
+     can bake from at home. Food is painted on a canvas with soft shading
+     and texture.
+     ===================================================================== */
+  const BREAD = {
+    id: 'bread', title: 'Simple Crusty Bread', chapter: 'Chapter 1 · Bread',
+    blurb: 'Four ingredients, a little kneading and some patience. Your first real loaf.',
+    yield: '1 round loaf', time: 'Hands-on 30 min · Rising 1½–2¼ hours · Baking 30–35 min',
+    ing: [
+      { k: 'flour', label: 'Bread flour', g: 500, cups: 'about 4 cups', rate: [70, 260] },
+      { k: 'water', label: 'Warm water', g: 325, cups: 'about 1⅓ cups, 95–105°F (35–40°C)', rate: [50, 200] },
+      { k: 'yeast', label: 'Instant yeast', g: 7, cups: '1 packet (2¼ tsp)', rate: [1.5, 4.5] },
+      { k: 'salt', label: 'Salt', g: 10, cups: 'about 1¾ tsp fine salt', rate: [2, 6] },
+    ],
+    steps: ['measure', 'mix', 'knead', 'rise', 'shape', 'bake'],
+    method: [
+      'Weigh 500 g bread flour, 325 g warm water (95–105°F / 35–40°C), 7 g instant yeast and 10 g salt.',
+      'Mix the flour, yeast and salt in a large bowl. Add the water and stir until no dry flour is left. It will look rough and "shaggy."',
+      'Knead on a lightly floured counter for 8–10 minutes: push, fold, turn, repeat, until smooth and stretchy. Windowpane test: stretch a small piece thin. If light shows through without tearing, it\'s ready.',
+      'Put the dough in a lightly oiled bowl, cover, and let it rise somewhere warm for 1–1½ hours, until doubled. Poke test: a floured finger dent should spring back slowly.',
+      'Shape into a tight ball by tucking the edges underneath. Set it on parchment, cover, and let it rise again 30–45 minutes. Meanwhile heat the oven to 450°F (230°C).',
+      'Slash the top about ½ inch (1 cm) deep with a sharp knife or razor.',
+      'Bake 30–35 minutes, until deep golden brown. It\'s done when the inside reads 200–210°F (93–99°C), or the bottom sounds hollow when you tap it.',
+      'Cool on a rack for at least 1 hour before slicing. It keeps cooking inside while it cools.',
+    ],
+    tips: [
+      'Water hotter than about 140°F (60°C) kills yeast. Warm, like a bath, is right.',
+      'Using active dry yeast instead? Stir it into the warm water first and wait 5–10 minutes until foamy.',
+      'All-purpose flour works too. The loaf will be a little softer and less chewy.',
+    ],
+  };
+  const LESSONS = [BREAD, { id: 'cookies', title: 'Chewy Chocolate Chip Cookies', chapter: 'Chapter 2 · Cookies', soon: true }];
+  const STEP_INFO = {
+    measure: { name: 'Measure', teach: 'Bakers weigh ingredients in grams. It\'s far more accurate than cups, which is why bread turns out the same every time.' },
+    mix:     { name: 'Mix', teach: 'Stir until no dry flour is left. A rough, lumpy "shaggy" dough is exactly right at this point.' },
+    knead:   { name: 'Knead', teach: 'Kneading builds gluten, the stretchy web that traps gas so bread can rise. By hand it takes about 8–10 minutes.' },
+    rise:    { name: 'Rise', teach: 'Yeast eats sugars in the flour and makes gas. Let the dough rise somewhere warm until doubled, usually 1–1½ hours.' },
+    shape:   { name: 'Shape', teach: 'A tight ball holds its shape in the oven. The slash on top tells the loaf where to open up as it grows.' },
+    bake:    { name: 'Bake', teach: 'Bake at 450°F (230°C) for 30–35 minutes, until deep golden. The inside should reach 200–210°F (93–99°C).' },
+  };
+
+  let K = null, kRAF = 0, kLast = 0;
+  const kStars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+  /* ---------- Painting helpers: soft shading + grain texture ---------- */
+  let NOISE = null;
+  function noiseCanvas() {
+    if (NOISE) return NOISE;
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const x = c.getContext('2d'), img = x.createImageData(128, 128);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = 185 + Math.random() * 70;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    return (NOISE = c);
+  }
+  function seeded(seed) { let a = seed; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function blobPath(ctx, cx, cy, rx, ry, wob, seed = 1.7) {
+    ctx.beginPath();
+    for (let a = 0; a <= Math.PI * 2 + .001; a += Math.PI / 40) {
+      const n = 1 + wob * (Math.sin(a * 3 + seed) * .5 + Math.sin(a * 7 + seed * 2) * .3 + Math.sin(a * 11 + seed * 3) * .2);
+      const x = cx + Math.cos(a) * rx * n, y = cy + Math.sin(a) * ry * n;
+      a === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+  function grain(ctx, alpha, mode = 'multiply') {
+    ctx.save(); ctx.globalCompositeOperation = mode; ctx.globalAlpha = alpha;
+    ctx.fillStyle = ctx.createPattern(noiseCanvas(), 'repeat'); ctx.fill(); ctx.restore();
+  }
+  function mix(c1, c2, t) {
+    const a = c1.match(/\w\w/g).map(h => parseInt(h, 16)), b = c2.match(/\w\w/g).map(h => parseInt(h, 16));
+    return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0')).join('');
+  }
+  function crust(b) {
+    const stops = [[0, '#F3DEB0'], [.5, '#EAC383'], [.85, '#D48C42'], [1, '#AD6429'], [1.2, '#6B3A1A'], [1.5, '#2B190E']];
+    for (let i = 1; i < stops.length; i++) if (b <= stops[i][0]) { const [a0, c0] = stops[i - 1], [a1, c1] = stops[i]; return mix(c0, c1, (b - a0) / (a1 - a0)); }
+    return stops[stops.length - 1][1];
+  }
+
+  function paintDough(ctx, cx, cy, r, o = {}) {
+    const { smooth = 0, rise = 1, rough = 1, poke = 0, squish = 0, alpha = 1 } = o;
+    const s = Math.sqrt(rise);
+    const rx = r * s * 1.08 * (1 + squish * .12), ry = r * s * .74 * (1 - squish * .14);
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'rgba(70,40,15,.16)'; ctx.beginPath(); ctx.ellipse(cx, cy + ry * .8, rx * 1.02, ry * .3, 0, 0, Math.PI * 2); ctx.fill();
+    blobPath(ctx, cx, cy, rx, ry, .09 * rough * (1 - smooth) + .012);
+    const g = ctx.createRadialGradient(cx - rx * .35, cy - ry * .5, r * .08, cx, cy, rx * 1.15);
+    g.addColorStop(0, '#FFF6E4'); g.addColorStop(.5, '#F3DFB8'); g.addColorStop(1, '#D3B07F');
+    ctx.fillStyle = g; ctx.fill();
+    ctx.save(); ctx.clip();
+    grain(ctx, .3 * (1 - smooth) + .07);
+    const rnd2 = seeded(7);
+    for (let i = 0; i < 26; i++) {               // lumps and dry flour while it's rough
+      const a = rnd2() * Math.PI * 2, d = Math.sqrt(rnd2()), x = cx + Math.cos(a) * rx * d * .85, y = cy + Math.sin(a) * ry * d * .85;
+      ctx.fillStyle = `rgba(175,130,80,${.28 * (1 - smooth)})`; ctx.beginPath(); ctx.ellipse(x, y, r * .09, r * .06, a, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(255,255,255,${.55 * (1 - smooth)})`; ctx.beginPath(); ctx.arc(x + r * .05, y - r * .03, r * .025, 0, Math.PI * 2); ctx.fill();
+    }
+    const hl = ctx.createRadialGradient(cx - rx * .3, cy - ry * .45, 0, cx - rx * .3, cy - ry * .45, rx * .6);
+    hl.addColorStop(0, `rgba(255,255,255,${.25 + .5 * smooth})`); hl.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl; ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
+    if (poke > 0) {
+      const dg = ctx.createRadialGradient(cx, cy - ry * .1, 0, cx, cy - ry * .1, r * .22);
+      dg.addColorStop(0, `rgba(120,80,40,${.55 * poke})`); dg.addColorStop(.7, `rgba(150,100,55,${.25 * poke})`); dg.addColorStop(1, 'rgba(150,100,55,0)');
+      ctx.fillStyle = dg; ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    }
+    ctx.restore();
+    blobPath(ctx, cx, cy, rx, ry, .09 * rough * (1 - smooth) + .012);
+    ctx.strokeStyle = 'rgba(43,26,20,.75)'; ctx.lineWidth = Math.max(2, r * .03); ctx.stroke();
+    ctx.restore();
+  }
+
+  function paintLoaf(ctx, cx, cy, r, o = {}) {
+    const { bake = 0, ball = 1, slash = null, steam = 0, t = 0 } = o;
+    const rx = r * 1.12, ry = r * (.62 + .2 * ball);
+    ctx.save();
+    ctx.fillStyle = 'rgba(40,20,8,.22)'; ctx.beginPath(); ctx.ellipse(cx, cy + ry * .85, rx * 1.03, ry * .3, 0, 0, Math.PI * 2); ctx.fill();
+    blobPath(ctx, cx, cy, rx, ry, .025, 2.4);
+    const base = crust(bake), dark = crust(Math.min(1.5, bake + .22)), light = crust(Math.max(0, bake - .25));
+    const g = ctx.createRadialGradient(cx - rx * .3, cy - ry * .55, r * .1, cx, cy + ry * .2, rx * 1.2);
+    g.addColorStop(0, light); g.addColorStop(.55, base); g.addColorStop(1, dark);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.save(); ctx.clip();
+    grain(ctx, .28);
+    const rr = seeded(11);
+    for (let i = 0; i < 70; i++) {                // flour dusting, fades as it bakes
+      const a = rr() * Math.PI * 2, d = Math.sqrt(rr()) * .9;
+      ctx.fillStyle = `rgba(255,252,245,${(.55 - .3 * Math.min(1, bake)) * rr()})`;
+      ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rx * d, cy - ry * .2 + Math.sin(a) * ry * d * .7, r * .018 + rr() * r * .02, 0, Math.PI * 2); ctx.fill();
+    }
+    if (slash) {                                   // the score opens into an "ear" as it bakes
+      const open = Math.min(1, bake) * .9 + .1;
+      const x1 = cx + slash[0] * r, y1 = cy + slash[1] * r, x2 = cx + slash[2] * r, y2 = cy + slash[3] * r;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = crust(Math.max(0, bake * .55)); ctx.lineWidth = r * (.05 + .12 * open);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 - r * .08, x2, y2); ctx.stroke();
+      ctx.strokeStyle = `rgba(60,30,10,${.25 + .35 * open})`; ctx.lineWidth = r * .025;
+      ctx.beginPath(); ctx.moveTo(x1, y1 + r * .05 * open); ctx.quadraticCurveTo((x1 + x2) / 2, (y1 + y2) / 2 - r * .03, x2, y2 + r * .05 * open); ctx.stroke();
+    }
+    const hl = ctx.createRadialGradient(cx - rx * .35, cy - ry * .5, 0, cx - rx * .35, cy - ry * .5, rx * .55);
+    hl.addColorStop(0, `rgba(255,240,210,${.35 - .15 * Math.min(1, bake)})`); hl.addColorStop(1, 'rgba(255,240,210,0)');
+    ctx.fillStyle = hl; ctx.fillRect(cx - rx, cy - ry, rx * 2, ry * 2);
+    ctx.restore();
+    blobPath(ctx, cx, cy, rx, ry, .025, 2.4);
+    ctx.strokeStyle = 'rgba(43,26,20,.8)'; ctx.lineWidth = Math.max(2, r * .03); ctx.stroke();
+    if (steam > 0) {
+      ctx.strokeStyle = `rgba(255,255,255,${.6 * steam})`; ctx.lineWidth = r * .05; ctx.lineCap = 'round';
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        for (let k = 0; k <= 12; k++) { const yy = cy - ry - k * r * .06, xx = cx + i * r * .4 + Math.sin(k * .7 + t * 3 + i) * r * .07; k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); }
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  function paintBowl(ctx, cx, cy, R, front) {
+    if (!front) {                                   // back rim and inside
+      ctx.fillStyle = '#E9EEF2'; ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .28, 0, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#C9D6E2'; ctx.beginPath(); ctx.ellipse(cx, cy, R * .94, R * .24, 0, 0, Math.PI * 2); ctx.fill();
+      return;
+    }
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .9, 0, 0, Math.PI); ctx.closePath();
+    const g = ctx.createLinearGradient(cx - R, cy, cx + R, cy);
+    g.addColorStop(0, '#2A4D73'); g.addColorStop(.35, '#6EBFEA'); g.addColorStop(.6, '#4C8FC2'); g.addColorStop(1, '#23405F');
+    ctx.fillStyle = g; ctx.fill(); grain(ctx, .12);
+    ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(cx - R * .45, cy + R * .3, R * .08, R * .3, -.3, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#F3F1E6'; ctx.lineWidth = R * .05; ctx.beginPath(); ctx.ellipse(cx, cy, R * .97, R * .26, 0, 0, Math.PI); ctx.stroke();
+    ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(cx, cy, R, R * .28, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function paintKitchenBg(ctx, w, h, oven) {
+    if (oven) {
+      ctx.fillStyle = '#2B1A14'; ctx.fillRect(0, 0, w, h);
+      const pad = Math.min(w, h) * .06;
+      const g = ctx.createRadialGradient(w / 2, h * .95, h * .05, w / 2, h * .7, h * .9);
+      g.addColorStop(0, '#FFB45A'); g.addColorStop(.35, '#C2541F'); g.addColorStop(1, '#3A1A0C');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(pad, pad, w - pad * 2, h - pad * 2, 18); ctx.fill();
+      ctx.strokeStyle = 'rgba(30,15,8,.8)'; ctx.lineWidth = 4;
+      for (let i = 1; i < 6; i++) { const x = pad + (w - pad * 2) * i / 6; ctx.beginPath(); ctx.moveTo(x, h * .72); ctx.lineTo(x, h * .8); ctx.stroke(); }
+      ctx.beginPath(); ctx.moveTo(pad, h * .8); ctx.lineTo(w - pad, h * .8); ctx.stroke();
+      ctx.strokeStyle = '#F3F1E6'; ctx.lineWidth = 3; ctx.beginPath(); ctx.roundRect(pad, pad, w - pad * 2, h - pad * 2, 18); ctx.stroke();
+      return;
+    }
+    const wall = ctx.createLinearGradient(0, 0, 0, h * .62);
+    wall.addColorStop(0, '#F8EBD8'); wall.addColorStop(1, '#EFD9BC');
+    ctx.fillStyle = wall; ctx.fillRect(0, 0, w, h * .62);
+    ctx.strokeStyle = 'rgba(180,140,100,.25)'; ctx.lineWidth = 1;
+    const tile = Math.max(28, w / 12);
+    for (let y = tile; y < h * .62; y += tile) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    for (let x = tile; x < w; x += tile) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h * .62); ctx.stroke(); }
+    const wood = ctx.createLinearGradient(0, h * .62, 0, h);
+    wood.addColorStop(0, '#D49A68'); wood.addColorStop(1, '#A8693E');
+    ctx.fillStyle = wood; ctx.beginPath(); ctx.rect(0, h * .62, w, h * .38); ctx.fill(); grain(ctx, .25);
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(0, h * .62 - 2, w, 4);
+  }
+
+  /* ---------- Lesson flow ---------- */
+  const kc = () => $('#kcanvas');
+  function kitchenIntro(id) {
+    const L = LESSONS.find(l => l.id === id);
+    showCard(`
+      <h2>${L.title}</h2>
+      <p>${L.chapter} · ${L.blurb}</p>
+      <div class="unlock goal"><b>You'll need:</b> ${L.ing.map(i => `${i.g} g ${i.label.toLowerCase()}`).join(' · ')}</div>
+      <ul class="recipes">${L.steps.map((s, i) => `<li><span class="rname">${i + 1}. ${STEP_INFO[s].name}</span><span class="rsteps">${STEP_INFO[s].teach}</span></li>`).join('')}</ul>
+      <div class="btnrow"><button class="big" id="kGo" type="button">Start baking</button><button class="big alt" id="kBack" type="button">Back</button></div>
+      <p class="small">Finish the lesson to add its real recipe card to your Cookbook.</p>`, 'chalk');
+    $('#kGo').onclick = () => kitchenStart(id);
+    $('#kBack').onclick = title;
+  }
+  function kitchenStart(id) {
+    initAudio();
+    const L = LESSONS.find(l => l.id === id);
+    K = { L, i: -1, scores: [], st: {}, t: 0, d: { smooth: 0, rise: 1, shaggy: 0, ball: 0, poke: 0, squish: 0, bake: 0, slash: null, amounts: {}, window: 0, steam: 0 } };
+    $('#overlay').hidden = true;
+    kNext();
+    cancelAnimationFrame(kRAF); kLast = performance.now(); kRAF = requestAnimationFrame(kLoop);
+  }
+  function kLoop(ts) {
+    const dt = Math.min(.1, (ts - kLast) / 1000); kLast = ts;
+    if (!K || SAVE.mode !== 'kitchen') return;
+    K.t += dt;
+    const step = KSTEP[K.step];
+    if (step && step.tick) step.tick(dt);
+    K.d.squish = Math.max(0, K.d.squish - dt * 4);
+    kDraw();
+    kRAF = requestAnimationFrame(kLoop);
+  }
+  function kNext(score) {
+    if (score != null) K.scores.push(score);
+    K.i++;
+    if (K.i >= K.L.steps.length) { kFinish(); return; }
+    K.step = K.L.steps[K.i]; K.st = {};
+    $('#kdots').innerHTML = K.L.steps.map((s, i) => `<span class="kdot${i < K.i ? ' done' : i === K.i ? ' on' : ''}">${i + 1}</span>`).join('');
+    $('#kname').textContent = `${STEP_INFO[K.step].name}`;
+    KSTEP[K.step].start();
+  }
+  const kPanel = html => { $('#kpanel').innerHTML = html; };
+  const kTeach = () => `<p class="kteach">${STEP_INFO[K.step].teach}</p>`;
+  function kResult(text, nextLabel, onNext) {
+    const r = $('#kres');
+    r.innerHTML = `<span>${text}</span><button class="big" id="kNextBtn" type="button">${nextLabel}</button>`;
+    $('#kNextBtn').onclick = onNext;
+  }
+
+  const KSTEP = {
+    measure: {
+      start() { K.st = { idx: 0, amt: 0, pouring: false, held: 0, done: false, sc: [] }; this.render(); },
+      render() {
+        const ing = K.L.ing[K.st.idx];
+        kPanel(`<div class="kq">Weigh the <b>${ing.label.toLowerCase()}</b> <span class="kmuted">(${K.st.idx + 1} of ${K.L.ing.length})</span></div>
+          <div class="kscale"><span class="sread" id="sread">0 g</span><span class="starget">target <b>${ing.g} g</b></span></div>
+          <button class="kbtn" id="pourBtn" type="button">Hold to pour</button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        const b = $('#pourBtn');
+        const down = e => { e.preventDefault(); if (K.st.done) return; K.st.pouring = true; K.st.held = 0; b.textContent = 'Pouring…'; b.classList.add('on'); };
+        const up = () => { if (!K.st.pouring) return; K.st.pouring = false; b.classList.remove('on'); b.textContent = 'Poured'; this.judge(); };
+        b.addEventListener('pointerdown', down); ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => b.addEventListener(t, up));
+      },
+      tick(dt) {
+        const st = K.st, ing = K.L.ing[st.idx];
+        if (!st.pouring) return;
+        st.held += dt;
+        const rate = ing.rate[0] + (ing.rate[1] - ing.rate[0]) * Math.min(1, st.held / 1.6);
+        st.amt += rate * dt;
+        K.d.amounts[ing.k] = st.amt;
+        const el = $('#sread'); if (el) el.textContent = (ing.g < 30 ? st.amt.toFixed(1) : Math.round(st.amt)) + ' g';
+        if (Math.random() < dt * 12) beep(300 + Math.random() * 200, .03, 'triangle', .02);
+      },
+      judge() {
+        const st = K.st, ing = K.L.ing[st.idx], err = Math.abs(st.amt - ing.g) / ing.g;
+        const sc = err <= .02 ? 3 : err <= .06 ? 2 : err <= .12 ? 1 : 0;
+        st.sc.push(sc); st.done = true; $('#pourBtn').disabled = true;
+        const verdict = ['Way off', 'A little off', 'Close!', 'Spot on!'][sc];
+        (sc >= 2 ? sfx.done : sfx.bad)();
+        const last = st.idx === K.L.ing.length - 1;
+        kResult(`${verdict} ${ing.g < 30 ? st.amt.toFixed(1) : Math.round(st.amt)} g of ${ing.g} g. In cups that's ${ing.cups}.`,
+          last ? 'Next: Mix' : 'Next ingredient',
+          () => { if (last) kNext(Math.round(st.sc.reduce((a, b) => a + b, 0) / st.sc.length)); else { st.idx++; st.amt = 0; st.done = false; this.render(); } });
+      },
+    },
+    mix: {
+      start() {
+        K.st = { taps: 0 };
+        kPanel(`<div class="kq">Stir until there's no dry flour left</div>
+          <button class="kbtn" id="stirBtn" type="button">Stir <span id="stirN">0/12</span></button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        $('#stirBtn').onclick = () => {
+          if (K.st.taps >= 12) return;
+          K.st.taps++; K.d.shaggy = K.st.taps / 12; K.d.squish = 1; sfx.click();
+          $('#stirN').textContent = `${K.st.taps}/12`;
+          if (K.st.taps === 12) { $('#stirBtn').disabled = true; sfx.done(); kResult('Shaggy dough! Rough and lumpy is perfect for now.', 'Next: Knead', () => kNext(3)); }
+        };
+      },
+    },
+    knead: {
+      start() {
+        K.st = { ph: 0, pos: 0, hits: 0, miss: 0, speed: 1, done: false };
+        kPanel(`<div class="kq">Tap <b>Knead!</b> when the marker is in the green zone <span class="kmuted" id="kneadN">(0/10)</span></div>
+          <div class="rhythm"><span class="rzone"></span><span class="rmark" id="rmark"></span></div>
+          <button class="kbtn" id="kneadBtn" type="button">Knead!</button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        $('#kneadBtn').onclick = () => {
+          const st = K.st;
+          if (st.done) return;
+          if (Math.abs(st.pos - .5) < .13) {
+            st.hits++; K.d.smooth = st.hits / 10; K.d.squish = 1; st.speed += .07; sfx.done();
+            $('#kneadN').textContent = `(${st.hits}/10)`;
+            if (st.hits >= 10) {
+              st.done = true; K.d.window = 0.01; $('#kneadBtn').disabled = true;
+              const sc = st.miss <= 2 ? 3 : st.miss <= 5 ? 2 : st.miss <= 9 ? 1 : 0;
+              kResult('Smooth and stretchy! <b>Windowpane test:</b> stretch a little piece thin. Light shines through without tearing, so the gluten is ready.', 'Next: Rise', () => kNext(sc));
+            }
+          } else { st.miss++; sfx.bad(); }
+        };
+      },
+      tick(dt) {
+        const st = K.st;
+        if (!st.done) { st.ph += dt * st.speed; st.pos = (Math.sin(st.ph * Math.PI) + 1) / 2; const m = $('#rmark'); if (m) m.style.left = (st.pos * 100) + '%'; }
+        if (K.d.window > 0 && K.d.window < 1) K.d.window = Math.min(1, K.d.window + dt * .8);
+      },
+    },
+    rise: {
+      start() {
+        K.st = { on: true, t: 0, judged: false, poked: false };
+        kPanel(`<div class="kq">Covered, somewhere warm. Stop it when the dough has <b>doubled</b></div>
+          <div class="kscale"><span class="sread" id="riseClock">0 min</span><span class="starget">size <b id="riseX">×1.0</b></span></div>
+          <button class="kbtn" id="riseBtn" type="button">Stop the rise</button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        $('#riseBtn').onclick = () => { if (K.st.on) { K.st.on = false; this.judge(); } };
+      },
+      tick(dt) {
+        const st = K.st;
+        if (st.on) {
+          st.t += dt; K.d.rise = 1 + 1.5 * st.t / 9;
+          if (K.d.rise >= 2.55) { st.on = false; K.d.rise = 1.75; st.collapsed = true; this.judge(); }
+          const c = $('#riseClock'); if (c) c.textContent = Math.round(st.t / 6 * 75) + ' min';
+          const x = $('#riseX'); if (x) x.textContent = '×' + K.d.rise.toFixed(1);
+        }
+        if (st.poked) K.d.poke = Math.max(st.under ? 0 : st.over ? .55 : .25, K.d.poke - dt * (st.under ? 2.5 : st.over ? .05 : .35));
+      },
+      judge() {
+        const st = K.st, r = st.collapsed ? 2.8 : K.d.rise, e = Math.abs(r - 2);
+        st.sc = e <= .1 ? 3 : e <= .25 ? 2 : e <= .45 ? 1 : 0;
+        st.under = r < 1.8; st.over = r > 2.3;
+        $('#riseBtn').disabled = true;
+        (st.sc >= 2 ? sfx.done : sfx.bad)();
+        const msg = st.collapsed ? 'It rose too long and sighed back down. Overproofed!' : st.under ? `Stopped at ×${r.toFixed(1)}: a bit early.` : st.over ? `Stopped at ×${r.toFixed(1)}: a bit late.` : `×${r.toFixed(1)}: doubled. Nice timing!`;
+        kResult(`${msg} Now do the <b>poke test</b>.`, 'Poke it', () => {
+          st.poked = true; K.d.poke = 1; sfx.click();
+          const note = st.under ? 'It springs right back: it needed more time.' : st.over ? 'The dent stays put: overproofed. It\'ll bake a little flatter but still tasty.' : 'It springs back slowly and leaves a small dent: perfectly proofed!';
+          kResult(note, 'Next: Shape', () => { K.d.poke = 0; kNext(st.sc); });
+        });
+      },
+    },
+    shape: {
+      start() {
+        K.st = { tucks: 0, phase: 'tuck' };
+        kPanel(`<div class="kq">Tuck the edges underneath to make a tight ball</div>
+          <button class="kbtn" id="tuckBtn" type="button">Tuck <span id="tuckN">0/5</span></button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        $('#tuckBtn').onclick = () => {
+          if (K.st.tucks >= 5) return;
+          K.st.tucks++; K.d.ball = K.st.tucks / 5; K.d.squish = 1; sfx.click();
+          $('#tuckN').textContent = `${K.st.tucks}/5`;
+          if (K.st.tucks === 5) { $('#tuckBtn').disabled = true; this.scorePhase(); }
+        };
+      },
+      scorePhase() {
+        K.st.phase = 'score';
+        kPanel(`<div class="kq"><b>Score the top:</b> swipe across the loaf with one long, confident slash</div>
+          <div class="kres" id="kres"></div><p class="kteach">Bakers use a razor (called a lame) at a shallow angle, about ½ inch (1 cm) deep.</p>`);
+        const cv = kc();
+        let start = null;
+        const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+        cv.onpointerdown = e => { if (K.st.phase !== 'score') return; start = pt(e); K.st.live = [start, start]; cv.setPointerCapture(e.pointerId); };
+        cv.onpointermove = e => { if (start && K.st.phase === 'score') K.st.live = [start, pt(e)]; };
+        cv.onpointerup = e => {
+          if (!start || K.st.phase !== 'score') return;
+          const [a, b] = [start, pt(e)]; start = null; K.st.live = null;
+          const geo = K.geo, r = geo.r, cx = geo.cx / geo.w, cy = geo.cy / geo.h;
+          // Convert to loaf-relative units (multiples of its radius)
+          const rel = p => [(p[0] - cx) * geo.w / r, (p[1] - cy) * geo.h / r];
+          const A = rel(a), B = rel(b), len = Math.hypot(B[0] - A[0], B[1] - A[1]) / 2.24;
+          const onLoaf = Math.abs((A[1] + B[1]) / 2) < .7;
+          if (len < .2 || !onLoaf) { $('#kres').innerHTML = '<span>Try one longer slash across the top of the loaf.</span>'; sfx.bad(); return; }
+          K.d.slash = [A[0], A[1], B[0], B[1]]; K.st.phase = 'done'; sfx.done();
+          const sc = len >= .6 ? 3 : len >= .4 ? 2 : 1;
+          kResult(sc === 3 ? 'Beautiful slash! That\'s where it\'ll bloom in the oven.' : 'Scored! A longer slash opens up even more.', 'Next: Bake', () => { cv.onpointerdown = cv.onpointermove = cv.onpointerup = null; kNext(sc); });
+        };
+      },
+    },
+    bake: {
+      start() {
+        K.st = { t: 0, out: false };
+        kPanel(`<div class="kq">Oven at <b>450°F (230°C)</b>. Take it out at <b>deep golden</b></div>
+          <div class="kscale"><span class="sread" id="bakeClock">0 min</span><span class="starget">inside <b id="bakeTemp">70°F</b></span></div>
+          <button class="kbtn" id="outBtn" type="button">Take it out</button>
+          <div class="kres" id="kres"></div>${kTeach()}`);
+        $('#outBtn').onclick = () => { if (!K.st.out) this.judge(); };
+      },
+      tick(dt) {
+        const st = K.st;
+        if (!st.out) {
+          st.t += dt; K.d.bake = st.t / 10;
+          const c = $('#bakeClock'); if (c) c.textContent = Math.round(K.d.bake * 33) + ' min';
+          const tp = $('#bakeTemp'); if (tp) tp.textContent = Math.round(Math.min(211, 70 + 140 * K.d.bake)) + '°F';
+          if (K.d.bake >= 1.5) this.judge();
+        } else K.d.steam = Math.min(1, K.d.steam + dt);
+      },
+      judge() {
+        const st = K.st, b = K.d.bake, e = Math.abs(b - 1);
+        st.out = true; $('#outBtn').disabled = true;
+        const sc = e <= .07 ? 3 : e <= .16 ? 2 : e <= .3 ? 1 : 0;
+        (sc >= 2 ? sfx.cash : sfx.bad)();
+        const msg = b < .84 ? 'A bit pale and soft: it needed a few more minutes.' : b > 1.3 ? 'Oops, very dark! Next time pull it sooner.' : b > 1.16 ? 'Extra dark and crackly. Some people love it this way!' : 'Deep golden and crackly. Perfect!';
+        kResult(`${msg} Let it cool on a rack for at least an hour before slicing.`, 'Finish lesson', () => kNext(sc));
+      },
+    },
+  };
+
+  function kDraw() {
+    const cv = kc(); if (!cv || !K) return;
+    const w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const d = K.d, step = K.step, r = Math.min(w * .3, h * .3), cx = w / 2;
+    const oven = step === 'bake';
+    paintKitchenBg(ctx, w, h, oven);
+    K.geo = { w, h, r, cx, cy: h * .6 };
+    if (step === 'measure' || step === 'mix' || step === 'rise') {
+      const R = r * 1.25, cy = h * .58;
+      if (step === 'measure') {                       // digital scale under the bowl
+        ctx.fillStyle = '#3B4A55'; ctx.beginPath(); ctx.roundRect(cx - R * 1.15, cy + R * .7, R * 2.3, R * .32, 10); ctx.fill();
+        ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.fillStyle = '#B9F6C8'; ctx.beginPath(); ctx.roundRect(cx + R * .45, cy + R * .76, R * .6, R * .2, 4); ctx.fill();
+      }
+      paintBowl(ctx, cx, cy, R, false);
+      if (step === 'measure') {
+        const A = d.amounts, f = Math.min(1.3, (A.flour || 0) / 500), wv = Math.min(1.3, (A.water || 0) / 325);
+        if (f > 0) {
+          ctx.save(); ctx.beginPath(); ctx.ellipse(cx, cy - R * .05, R * .8, R * (.15 + .45 * f), 0, Math.PI, 0); ctx.closePath();
+          ctx.fillStyle = mix('#FBF6EC', '#E8D3AE', Math.min(1, wv)); ctx.fill(); grain(ctx, .18, 'multiply'); ctx.restore();
+        }
+        if (wv > 0) { ctx.fillStyle = `rgba(150,200,235,${.35 * Math.min(1, wv) * (1 - Math.min(1, wv) * .6)})`; ctx.beginPath(); ctx.ellipse(cx + R * .2, cy - R * .05, R * .45 * Math.min(1, wv), R * .1, 0, 0, Math.PI * 2); ctx.fill(); }
+        const sp = seeded(3);
+        for (let i = 0; i < Math.min(40, ((A.yeast || 0) + (A.salt || 0)) * 2); i++) { ctx.fillStyle = i % 2 ? '#C9A46A' : '#FFFFFF'; ctx.fillRect(cx - R * .4 + sp() * R * .8, cy - R * (.1 + .4 * f) + sp() * R * .2, 2.5, 2.5); }
+      } else {
+        const rise = step === 'rise' ? d.rise : 1;
+        if (step === 'mix' && d.shaggy < 1) { ctx.save(); ctx.globalAlpha = 1 - d.shaggy; ctx.beginPath(); ctx.ellipse(cx, cy - R * .05, R * .8, R * .55, 0, Math.PI, 0); ctx.closePath(); ctx.fillStyle = '#EBD7B3'; ctx.fill(); ctx.restore(); }
+        paintDough(ctx, cx, cy - R * .12 - (rise - 1) * R * .25, R * .62, { smooth: step === 'rise' ? .9 : 0, rough: 1, rise, poke: d.poke, squish: d.squish, alpha: step === 'mix' ? Math.max(.25, d.shaggy) : 1 });
+        if (step === 'rise') {
+          ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(43,26,20,.55)'; ctx.lineWidth = 2;
+          const tr = R * .62 * Math.SQRT2; ctx.beginPath(); ctx.ellipse(cx, cy - R * .12 - R * .25, tr * 1.08, tr * .74, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(43,26,20,.7)'; ctx.font = `600 ${Math.max(11, r * .1)}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('doubled', cx, cy - R * .12 - R * .25 - tr * .78);
+        }
+      }
+      paintBowl(ctx, cx, cy, R, true);
+    } else if (step === 'knead') {
+      paintDough(ctx, cx, h * .66, r, { smooth: d.smooth, squish: d.squish });
+      if (d.window > 0) {                              // windowpane: a thin sheet with light through it
+        const a = Math.min(1, d.window), wx = cx + r * .9, wy = h * .3;
+        ctx.save(); ctx.globalAlpha = a;
+        const g = ctx.createRadialGradient(wx, wy, 0, wx, wy, r * .55);
+        g.addColorStop(0, 'rgba(255,250,235,.9)'); g.addColorStop(.7, 'rgba(240,215,175,.75)'); g.addColorStop(1, 'rgba(210,175,130,.9)');
+        blobPath(ctx, wx, wy, r * .55, r * .45, .05, 4); ctx.fillStyle = g; ctx.fill();
+        ctx.strokeStyle = 'rgba(43,26,20,.6)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = 'rgba(43,26,20,.75)'; ctx.font = `600 ${Math.max(11, r * .1)}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('light shines through!', wx, wy + r * .65);
+        ctx.restore();
+      }
+    } else if (step === 'shape') {
+      ctx.fillStyle = '#F6EFE2'; ctx.save(); ctx.translate(cx, h * .68); ctx.rotate(-.05); ctx.fillRect(-r * 1.5, -r * .55, r * 3, r * 1.1); ctx.strokeStyle = 'rgba(43,26,20,.35)'; ctx.strokeRect(-r * 1.5, -r * .55, r * 3, r * 1.1); ctx.restore();
+      K.geo.cy = h * .6;
+      if (K.st.phase === 'tuck') paintDough(ctx, cx, h * .6, r * (1 - d.ball * .08), { smooth: .95, rise: 1.2 + d.ball * .2, squish: d.squish });
+      else {
+        paintLoaf(ctx, cx, h * .6, r, { bake: 0, ball: 1, slash: d.slash });
+        const lv = K.st.live;
+        if (lv) { ctx.strokeStyle = 'rgba(43,26,20,.85)'; ctx.lineWidth = 3; ctx.setLineDash([2, 6]); ctx.beginPath(); ctx.moveTo(lv[0][0] * w, lv[0][1] * h); ctx.lineTo(lv[1][0] * w, lv[1][1] * h); ctx.stroke(); ctx.setLineDash([]); }
+      }
+    } else if (step === 'bake' || step === 'done') {
+      if (step === 'done') { /* cooling rack */ }
+      paintLoaf(ctx, cx, h * .6, r, { bake: d.bake, ball: 1, slash: d.slash, steam: d.steam, t: K.t });
+    }
+  }
+
+  function kFinish() {
+    K.step = 'done';
+    const L = K.L, stars = Math.round(K.scores.reduce((a, b) => a + b, 0) / K.scores.length);
+    SAVE.kitchen = SAVE.kitchen || {};
+    const prev = SAVE.kitchen[L.id] || { stars: 0, times: 0 };
+    SAVE.kitchen[L.id] = { stars: Math.max(prev.stars, stars), times: prev.times + 1 };
+    persist();
+    kPanel(`<div class="kq">Lesson complete!</div>`);
+    showCard(`
+      <h2>${L.title}</h2>
+      <div class="stars">${[1, 2, 3].map(i => i <= stars ? '<b>★</b>' : '★').join('')}</div>
+      <div class="results">${L.steps.map((s, i) => `<span>${STEP_INFO[s].name}</span><span>${kStars(K.scores[i])}</span>`).join('')}</div>
+      <div class="unlock goal"><b>Recipe card earned!</b> It's in your Cookbook, with the real amounts and steps to bake this at home.</div>
+      <div class="btnrow"><button class="big" id="kCard" type="button">See recipe card</button><button class="big alt" id="kAgain" type="button">Bake again</button><button class="big alt" id="kHome" type="button">Title</button></div>`);
+    $('#kCard').onclick = () => recipeCard(L.id, () => { $('#overlay').hidden = true; kFinishCardBack(); });
+    $('#kAgain').onclick = () => kitchenStart(L.id);
+    $('#kHome').onclick = title;
+    sfx.bell();
+  }
+  function kFinishCardBack() { title(); }
+
+  function recipeText(L) {
+    return `${L.title}\n${L.yield} · ${L.time}\n\nIngredients\n${L.ing.map(i => `- ${i.g} g ${i.label.toLowerCase()} (${i.cups})`).join('\n')}\n\nMethod\n${L.method.map((m, i) => `${i + 1}. ${m}`).join('\n')}\n\nTips\n${L.tips.map(t => `- ${t}`).join('\n')}\n\nFrom Lox Café · lox-cafe.pages.dev`;
+  }
+  function recipeCard(id, back) {
+    const L = LESSONS.find(l => l.id === id);
+    showCard(`
+      <div class="rcard">
+        <span class="rchap">${L.chapter}</span>
+        <h2>${L.title}</h2>
+        <p class="rmeta">${L.yield} · ${L.time}</p>
+        <h3>Ingredients</h3>
+        <ul>${L.ing.map(i => `<li><b>${i.g} g</b> ${i.label.toLowerCase()} <span>${i.cups}</span></li>`).join('')}</ul>
+        <h3>Method</h3>
+        <ol>${L.method.map(m => `<li>${m}</li>`).join('')}</ol>
+        <h3>Tips</h3>
+        <ul>${L.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+      </div>
+      <div class="btnrow"><button class="big" id="rcCopy" type="button">Copy recipe</button><button class="big alt" id="rcBack" type="button">Back</button></div>`, 'wide');
+    $('#rcCopy').onclick = () => {
+      const t = recipeText(L);
+      const ok = () => { $('#rcCopy').textContent = 'Copied!'; };
+      try { navigator.clipboard.writeText(t).then(ok, () => { $('#rcCopy').textContent = 'Couldn\'t copy here'; }); } catch (e) { $('#rcCopy').textContent = 'Couldn\'t copy here'; }
+    };
+    $('#rcBack').onclick = back;
+  }
+  function cookbookCard(back) {
+    showCard(`
+      <h2>Cookbook</h2>
+      <p>Every lesson you finish adds a real recipe here.</p>
+      <ul class="recipes">${LESSONS.map(L => {
+        const k = (SAVE.kitchen || {})[L.id];
+        return `<li><span class="rname">${L.title}</span><span class="rsteps">${L.soon ? 'Coming soon' : k ? `${kStars(k.stars)} · baked ${k.times}×` : 'Finish the lesson to unlock'}</span>
+          ${k ? `<button class="big alt" data-card="${L.id}" type="button">Open recipe</button>` : ''}</li>`;
+      }).join('')}</ul>
+      <div class="btnrow"><button class="big" id="cbBack" type="button">Back</button></div>`, 'wide');
+    document.querySelectorAll('[data-card]').forEach(b => b.onclick = () => recipeCard(b.dataset.card, () => cookbookCard(back)));
+    $('#cbBack').onclick = back;
+  }
+  function kitchenTitle(picker) {
+    showCard(`
+      <img class="titlelogo" id="titleLogo" src="${LOGO}" alt="" width="120" height="120">
+      <h1>Lox Café</h1>
+      ${picker}
+      <span class="ver">V3 · Kitchen (preview)</span>
+      <p>A real cooking school. Every lesson is a real recipe you can make at home, and each mini-game is a real step. Finish a lesson to earn its recipe card.</p>
+      <ul class="recipes">${LESSONS.map((L, i) => {
+        const k = (SAVE.kitchen || {})[L.id];
+        return `<li><span class="rname">Lesson ${i + 1}: ${L.title}</span><span class="rsteps">${L.soon ? 'Coming soon' : k ? kStars(k.stars) : L.blurb}</span>
+          ${L.soon ? '' : `<button class="big" data-lesson="${L.id}" type="button">${k ? 'Bake again' : 'Start lesson'}</button>`}</li>`;
+      }).join('')}</ul>
+      <div class="btnrow"><button class="big alt" id="cbTitle" type="button">Cookbook</button>${SAVE.admin ? '<button class="big alt" id="adminTitle" type="button">🔑 Admin</button>' : ''}</div>`);
+    document.querySelectorAll('[data-lesson]').forEach(b => b.onclick = () => kitchenIntro(b.dataset.lesson));
+    $('#cbTitle').onclick = () => cookbookCard(title);
   }
 
   /* ---------- Overlays ---------- */
@@ -2907,6 +3535,10 @@
     if (S) { S.running = false; S.paused = false; S.tut = null; }
     $('#coach').hidden = true;
     $('#pauseBtn').textContent = 'Pause';
+    const modes = SAVE.admin ? ['bar', 'floor', 'kitchen'] : ['bar'];
+    const MODE_NAMES = { bar: 'V1 Bar', floor: 'V2 Floor', kitchen: 'V3 Kitchen' };
+    const picker = modes.length > 1 ? `<div class="diffpick modepick" role="group" aria-label="Game mode">${modes.map(m => `<button type="button" class="dp${SAVE.mode === m ? ' on' : ''}" data-mode="${m}" aria-pressed="${SAVE.mode === m}">${MODE_NAMES[m]}</button>`).join('')}</div>${SAVE.admin ? '<p class="small dpnote">V2 and V3 are only visible with your admin key.</p>' : ''}` : '';
+    if (SAVE.mode === 'kitchen') { kitchenTitle(picker); wireTitleCommon(); return; }
     const fl = SAVE.mode === 'floor';
     const best = fl ? SAVE.fbest : SAVE.best;
     const starCount = Object.values(fl ? SAVE.fstars : SAVE.stars).reduce((a, b) => a + b, 0);
@@ -2914,10 +3546,7 @@
     showCard(`
       <img class="titlelogo" id="titleLogo" src="${LOGO}" alt="" width="120" height="120">
       <h1>Lox Café</h1>
-      <div class="diffpick modepick" role="group" aria-label="Game mode">
-        <button type="button" class="dp${fl ? '' : ' on'}" data-mode="bar" aria-pressed="${!fl}">Behind the Bar</button>
-        <button type="button" class="dp${fl ? ' on' : ''}" data-mode="floor" aria-pressed="${fl}">Floor Service<span class="newtag">New</span></button>
-      </div>
+      ${picker}
       <p class="bank">Savings: ${money(SAVE.bank)}${best ? ` · Best: Day ${best} · ${starCount} ★` : ''}</p>
       ${diffPicker()}
       ${fl ? `<ol>
@@ -2950,8 +3579,11 @@
     $('#codeTitle').onclick = () => saveCodeCard();
     const kb = $('#keysTitle'); if (kb) kb.onclick = () => keysCard(title);
     $('#howTitle').onclick = () => { tutForce = true; start(1); };
-    document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { if (SAVE.mode !== b.dataset.mode) { setMode(b.dataset.mode); sfx.click(); } title(); });
     wireDiff(title);
+    wireTitleCommon();
+  }
+  function wireTitleCommon() {
+    document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { if (SAVE.mode !== b.dataset.mode) { setMode(b.dataset.mode); sfx.click(); } title(); });
     const ab = $('#adminTitle'); if (ab) ab.onclick = adminCard;
     // Secret: tap the logo 5 times quickly to unlock admin on this device
     let taps = 0, tapT = 0;
@@ -3038,6 +3670,8 @@
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && S && S.running && !S.paused) pause(true); });
 
+  $('#kExit').addEventListener('click', () => title());
+
   /* ---------- No accidental zooming on phones ---------- */
   // iPhones can still zoom on a fast double tap in blank areas, or on a pinch.
   // The game never needs zoom, so swallow both.
@@ -3054,6 +3688,7 @@
   SAVE = loadSave(); persist();
   applyTheme(SAVE.theme);
   renderDecor();
+  if (!SAVE.admin) SAVE.mode = 'bar';
   setMode(SAVE.mode);
   title();
   requestAnimationFrame(loop);
