@@ -677,6 +677,8 @@
   .kteach { margin: 0; padding-top: 8px; border-top: 1.5px dashed #E6DCD4; font-size: 13px; line-height: 1.4; color: var(--muted); }
   .rhythm { position: relative; height: 28px; border: 3px solid var(--ink); border-radius: 999px; background: #FBE4E4; overflow: hidden; }
   .rzone { position: absolute; left: 37%; width: 26%; top: 0; bottom: 0; background: #A9E5C7; }
+  .kfill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--mint); transition: width .08s; }
+  .kswatch { display: inline-block; width: 26px; height: 26px; border: 3px solid var(--ink); border-radius: 50%; vertical-align: middle; margin-left: 6px; }
   .rmark { position: absolute; top: -2px; bottom: -2px; left: 50%; width: 8px; margin-left: -4px; border-radius: 4px; background: var(--ink); }
   .rcard { text-align: left; background: #FFFDF7 repeating-linear-gradient(transparent 0 27px, rgba(110,191,234,.18) 27px 28px); border: 2px solid #E6DCD4; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
   .rcard h2 { margin-bottom: 2px; }
@@ -3257,7 +3259,7 @@
       { k: 'yeast', label: 'Instant yeast', g: 7, cups: '1 packet (2¼ tsp)', rate: [1.5, 4.5] },
       { k: 'salt', label: 'Salt', g: 10, cups: 'about 1¾ tsp fine salt', rate: [2, 6] },
     ],
-    steps: ['measure', 'mix', 'knead', 'rise', 'shape', 'bake'],
+    steps: ['pour', 'knead', 'rise', 'slash', 'bake'],
     method: [
       'Weigh 500 g bread flour, 325 g warm water (95–105°F / 35–40°C), 7 g instant yeast and 10 g salt.',
       'Mix the flour, yeast and salt in a large bowl. Add the water and stir until no dry flour is left. It will look rough and "shaggy."',
@@ -3275,14 +3277,17 @@
     ],
   };
   const LESSONS = [BREAD, { id: 'cookies', title: 'Chewy Chocolate Chip Cookies', chapter: 'Chapter 2 · Cookies', soon: true }];
+  // Rebuilt 2026-10-14 to feel like the Ratatouille DS game: five quick mini-games,
+  // one gesture each, nothing to memorize. The real recipe card is a bonus at the end.
   const STEP_INFO = {
-    measure: { name: 'Measure', teach: 'Bakers weigh ingredients in grams. It\'s far more accurate than cups, which is why bread turns out the same every time.' },
-    mix:     { name: 'Mix', teach: 'Stir until no dry flour is left. A rough, lumpy "shaggy" dough is exactly right at this point.' },
-    knead:   { name: 'Knead', teach: 'Kneading builds gluten, the stretchy web that traps gas so bread can rise. By hand it takes about 8–10 minutes.' },
-    rise:    { name: 'Rise', teach: 'Yeast eats sugars in the flour and makes gas. Let the dough rise somewhere warm until doubled, usually 1–1½ hours.' },
-    shape:   { name: 'Shape', teach: 'A tight ball holds its shape in the oven. The slash on top tells the loaf where to open up as it grows.' },
-    bake:    { name: 'Bake', teach: 'Bake at 450°F (230°C) for 30–35 minutes, until deep golden. The inside should reach 200–210°F (93–99°C).' },
+    pour:  { name: 'Pour',  how: 'Tap when the marker is in the green to add each ingredient.' },
+    knead: { name: 'Knead', how: 'Tap as fast as you can until the dough is smooth.' },
+    rise:  { name: 'Rise',  how: 'Tap Stop when the dough reaches the dotted line.' },
+    slash: { name: 'Slash', how: 'Swipe one long line across the top of the loaf.' },
+    bake:  { name: 'Bake',  how: 'Tap when the loaf matches the golden color.' },
   };
+  const POUR = [{ k: 'flour', label: 'Flour' }, { k: 'water', label: 'Water' }, { k: 'yeast', label: 'Yeast' }, { k: 'salt', label: 'Salt' }];
+  const KMSG = ['', 'Okay!', 'Nice!', 'Perfect!'];
 
   let K = null, kRAF = 0, kLast = 0;
   const kStars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
@@ -3451,10 +3456,9 @@
     showCard(`
       <h2>${L.title}</h2>
       <p>${L.chapter} · ${L.blurb}</p>
-      <div class="unlock goal"><b>You'll need:</b> ${L.ing.map(i => `${i.g} g ${i.label.toLowerCase()}`).join(' · ')}</div>
-      <ul class="recipes">${L.steps.map((s, i) => `<li><span class="rname">${i + 1}. ${STEP_INFO[s].name}</span><span class="rsteps">${STEP_INFO[s].teach}</span></li>`).join('')}</ul>
+      <ul class="recipes">${L.steps.map((s, i) => `<li><span class="rname">${i + 1}. ${STEP_INFO[s].name}</span><span class="rsteps">${STEP_INFO[s].how}</span></li>`).join('')}</ul>
       <div class="btnrow"><button class="big" id="kGo" type="button">Start baking</button><button class="big alt" id="kBack" type="button">Back</button></div>
-      <p class="small">Finish the lesson to add its real recipe card to your Cookbook.</p>`, 'chalk');
+      <p class="small">Nothing to memorize. Finish to earn stars, plus the real recipe card as a bonus.</p>`, 'chalk');
     $('#kGo').onclick = () => kitchenStart(id);
     $('#kBack').onclick = title;
   }
@@ -3486,140 +3490,96 @@
     KSTEP[K.step].start();
   }
   const kPanel = html => { $('#kpanel').innerHTML = html; };
-  const kTeach = () => `<p class="kteach">${STEP_INFO[K.step].teach}</p>`;
   function kResult(text, nextLabel, onNext) {
     const r = $('#kres');
     r.innerHTML = `<span>${text}</span><button class="big" id="kNextBtn" type="button">${nextLabel}</button>`;
     $('#kNextBtn').onclick = onNext;
   }
 
+  // A marker that sweeps across a bar; returns 0..1
+  const sweep = (ph) => (Math.sin(ph * Math.PI - Math.PI / 2) + 1) / 2;
   const KSTEP = {
-    measure: {
-      start() { K.st = { idx: 0, amt: 0, pouring: false, held: 0, done: false, sc: [] }; this.render(); },
-      render() {
-        const ing = K.L.ing[K.st.idx];
-        kPanel(`<div class="kq">Weigh the <b>${ing.label.toLowerCase()}</b> <span class="kmuted">(${K.st.idx + 1} of ${K.L.ing.length})</span></div>
-          <div class="kscale"><span class="sread" id="sread">0 g</span><span class="starget">target <b>${ing.g} g</b></span></div>
-          <button class="kbtn" id="pourBtn" type="button">Hold to pour</button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        const b = $('#pourBtn');
-        const down = e => { e.preventDefault(); if (K.st.done) return; K.st.pouring = true; K.st.held = 0; b.textContent = 'Pouring…'; b.classList.add('on'); };
-        const up = () => { if (!K.st.pouring) return; K.st.pouring = false; b.classList.remove('on'); b.textContent = 'Poured'; this.judge(); };
-        b.addEventListener('pointerdown', down); ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => b.addEventListener(t, up));
+    pour: {
+      start() {
+        K.st = { idx: 0, ph: 0, sc: [], wait: 0 };
+        kPanel(`<div class="kq">Add the <b id="pourName">flour</b> <span class="kmuted" id="pourN">(1/4)</span></div>
+          <div class="rhythm"><span class="rzone"></span><span class="rmark" id="rmark"></span></div>
+          <button class="kbtn" id="pourBtn" type="button">Pour!</button>
+          <div class="kres" id="kres"></div>`);
+        onPress($('#pourBtn'), () => this.hit());
       },
       tick(dt) {
-        const st = K.st, ing = K.L.ing[st.idx];
-        if (!st.pouring) return;
-        st.held += dt;
-        const rate = ing.rate[0] + (ing.rate[1] - ing.rate[0]) * Math.min(1, st.held / 1.6);
-        st.amt += rate * dt;
-        K.d.amounts[ing.k] = st.amt;
-        const el = $('#sread'); if (el) el.textContent = (ing.g < 30 ? st.amt.toFixed(1) : Math.round(st.amt)) + ' g';
-        if (Math.random() < dt * 12) beep(300 + Math.random() * 200, .03, 'triangle', .02);
+        const st = K.st;
+        if (st.wait > 0) { st.wait -= dt; if (st.wait <= 0) this.nextIng(); return; }
+        st.ph += dt * (.8 + .2 * st.idx);
+        const m = $('#rmark'); if (m) m.style.left = (sweep(st.ph) * 100) + '%';
       },
-      judge() {
-        const st = K.st, ing = K.L.ing[st.idx], err = Math.abs(st.amt - ing.g) / ing.g;
-        const sc = err <= .02 ? 3 : err <= .06 ? 2 : err <= .12 ? 1 : 0;
-        st.sc.push(sc); st.done = true; $('#pourBtn').disabled = true;
-        const verdict = ['Way off', 'A little off', 'Close!', 'Spot on!'][sc];
+      hit() {
+        const st = K.st; if (st.wait > 0 || st.idx >= POUR.length) return;
+        const e = Math.abs(sweep(st.ph) - .5), sc = e < .05 ? 3 : e < .13 ? 2 : 1;
+        st.sc.push(sc); K.d.amounts[POUR[st.idx].k] = 1; K.d.squish = 1;
         (sc >= 2 ? sfx.done : sfx.bad)();
-        const last = st.idx === K.L.ing.length - 1;
-        kResult(`${verdict} ${ing.g < 30 ? st.amt.toFixed(1) : Math.round(st.amt)} g of ${ing.g} g. In cups that's ${ing.cups}.`,
-          last ? 'Next: Mix' : 'Next ingredient',
-          () => { if (last) kNext(Math.round(st.sc.reduce((a, b) => a + b, 0) / st.sc.length)); else { st.idx++; st.amt = 0; st.done = false; this.render(); } });
+        $('#kres').innerHTML = `<span><b>${KMSG[sc]}</b></span>`;
+        st.wait = .6;
       },
-    },
-    mix: {
-      start() {
-        K.st = { taps: 0 };
-        kPanel(`<div class="kq">Stir until there's no dry flour left</div>
-          <button class="kbtn" id="stirBtn" type="button">Stir <span id="stirN">0/12</span></button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        $('#stirBtn').onclick = () => {
-          if (K.st.taps >= 12) return;
-          K.st.taps++; K.d.shaggy = K.st.taps / 12; K.d.squish = 1; sfx.click();
-          $('#stirN').textContent = `${K.st.taps}/12`;
-          if (K.st.taps === 12) { $('#stirBtn').disabled = true; sfx.done(); kResult('Shaggy dough! Rough and lumpy is perfect for now.', 'Next: Knead', () => kNext(3)); }
-        };
+      nextIng() {
+        const st = K.st; st.idx++;
+        if (st.idx >= POUR.length) { kNext(Math.round(st.sc.reduce((a, b) => a + b, 0) / st.sc.length)); return; }
+        st.ph = 0; $('#pourName').textContent = POUR[st.idx].label.toLowerCase(); $('#pourN').textContent = `(${st.idx + 1}/4)`; $('#kres').innerHTML = '';
       },
     },
     knead: {
       start() {
-        K.st = { ph: 0, pos: 0, hits: 0, miss: 0, speed: 1, done: false };
-        kPanel(`<div class="kq">Tap <b>Knead!</b> when the marker is in the green zone <span class="kmuted" id="kneadN">(0/10)</span></div>
-          <div class="rhythm"><span class="rzone"></span><span class="rmark" id="rmark"></span></div>
+        K.st = { taps: 0, t: 0, going: false, done: false, goal: 20, time: 5 };
+        kPanel(`<div class="kq">Tap fast! <span class="kmuted" id="kneadT">5.0s</span></div>
+          <div class="rhythm"><span class="kfill" id="kfill"></span></div>
           <button class="kbtn" id="kneadBtn" type="button">Knead!</button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        $('#kneadBtn').onclick = () => {
-          const st = K.st;
-          if (st.done) return;
-          if (Math.abs(st.pos - .5) < .13) {
-            st.hits++; K.d.smooth = st.hits / 10; K.d.squish = 1; st.speed += .07; sfx.done();
-            $('#kneadN').textContent = `(${st.hits}/10)`;
-            if (st.hits >= 10) {
-              st.done = true; K.d.window = 0.01; $('#kneadBtn').disabled = true;
-              const sc = st.miss <= 2 ? 3 : st.miss <= 5 ? 2 : st.miss <= 9 ? 1 : 0;
-              kResult('Smooth and stretchy! <b>Windowpane test:</b> stretch a little piece thin. Light shines through without tearing, so the gluten is ready.', 'Next: Rise', () => kNext(sc));
-            }
-          } else { st.miss++; sfx.bad(); }
-        };
+          <div class="kres" id="kres"></div>`);
+        onPress($('#kneadBtn'), () => {
+          const st = K.st; if (st.done) return;
+          st.going = true; st.taps++; K.d.smooth = Math.min(1, st.taps / st.goal); K.d.squish = 1; sfx.click();
+          $('#kfill').style.width = (K.d.smooth * 100) + '%';
+          if (st.taps >= st.goal) this.end();
+        });
       },
       tick(dt) {
-        const st = K.st;
-        if (!st.done) { st.ph += dt * st.speed; st.pos = (Math.sin(st.ph * Math.PI) + 1) / 2; const m = $('#rmark'); if (m) m.style.left = (st.pos * 100) + '%'; }
-        if (K.d.window > 0 && K.d.window < 1) K.d.window = Math.min(1, K.d.window + dt * .8);
+        const st = K.st; if (!st.going || st.done) return;
+        st.t += dt; const left = Math.max(0, st.time - st.t);
+        const el = $('#kneadT'); if (el) el.textContent = left.toFixed(1) + 's';
+        if (left <= 0) this.end();
+      },
+      end() {
+        const st = K.st; st.done = true; $('#kneadBtn').disabled = true;
+        const sc = st.taps >= st.goal ? 3 : st.taps >= st.goal * .7 ? 2 : 1;
+        (sc >= 2 ? sfx.done : sfx.bad)();
+        kResult(`<b>${KMSG[sc]}</b> ${sc === 3 ? 'Smooth and stretchy.' : 'A little lumpy, still bread!'}`, 'Next', () => kNext(sc));
       },
     },
     rise: {
       start() {
-        K.st = { on: true, t: 0, judged: false, poked: false };
-        kPanel(`<div class="kq">Covered, somewhere warm. Stop it when the dough has <b>doubled</b></div>
-          <div class="kscale"><span class="sread" id="riseClock">0 min</span><span class="starget">size <b id="riseX">×1.0</b></span></div>
-          <button class="kbtn" id="riseBtn" type="button">Stop the rise</button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        $('#riseBtn').onclick = () => { if (K.st.on) { K.st.on = false; this.judge(); } };
+        K.st = { on: true, t: 0 };
+        K.d.rise = 1;
+        kPanel(`<div class="kq">Stop when it touches the dotted line</div>
+          <button class="kbtn" id="riseBtn" type="button">Stop!</button>
+          <div class="kres" id="kres"></div>`);
+        onPress($('#riseBtn'), () => { if (K.st.on) this.judge(); });
       },
       tick(dt) {
-        const st = K.st;
-        if (st.on) {
-          st.t += dt; K.d.rise = 1 + 1.5 * st.t / 9;
-          if (K.d.rise >= 2.55) { st.on = false; K.d.rise = 1.75; st.collapsed = true; this.judge(); }
-          const c = $('#riseClock'); if (c) c.textContent = Math.round(st.t / 6 * 75) + ' min';
-          const x = $('#riseX'); if (x) x.textContent = '×' + K.d.rise.toFixed(1);
-        }
-        if (st.poked) K.d.poke = Math.max(st.under ? 0 : st.over ? .55 : .25, K.d.poke - dt * (st.under ? 2.5 : st.over ? .05 : .35));
+        const st = K.st; if (!st.on) return;
+        st.t += dt; K.d.rise = 1 + st.t / 4;           // reaches double at 4 s
+        if (K.d.rise >= 2.6) { K.d.rise = 1.8; st.flop = true; this.judge(); }
       },
       judge() {
-        const st = K.st, r = st.collapsed ? 2.8 : K.d.rise, e = Math.abs(r - 2);
-        st.sc = e <= .1 ? 3 : e <= .25 ? 2 : e <= .45 ? 1 : 0;
-        st.under = r < 1.8; st.over = r > 2.3;
-        $('#riseBtn').disabled = true;
-        (st.sc >= 2 ? sfx.done : sfx.bad)();
-        const msg = st.collapsed ? 'It rose too long and sighed back down. Overproofed!' : st.under ? `Stopped at ×${r.toFixed(1)}: a bit early.` : st.over ? `Stopped at ×${r.toFixed(1)}: a bit late.` : `×${r.toFixed(1)}: doubled. Nice timing!`;
-        kResult(`${msg} Now do the <b>poke test</b>.`, 'Poke it', () => {
-          st.poked = true; K.d.poke = 1; sfx.click();
-          const note = st.under ? 'It springs right back: it needed more time.' : st.over ? 'The dent stays put: overproofed. It\'ll bake a little flatter but still tasty.' : 'It springs back slowly and leaves a small dent: perfectly proofed!';
-          kResult(note, 'Next: Shape', () => { K.d.poke = 0; kNext(st.sc); });
-        });
+        const st = K.st; st.on = false; $('#riseBtn').disabled = true;
+        const e = st.flop ? 1 : Math.abs(K.d.rise - 2), sc = e <= .08 ? 3 : e <= .2 ? 2 : 1;
+        (sc >= 2 ? sfx.done : sfx.bad)();
+        kResult(`<b>${KMSG[sc]}</b> ${st.flop ? 'It puffed too far and sank a little.' : sc === 3 ? 'Right on the line!' : K.d.rise < 2 ? 'A touch early.' : 'A touch late.'}`, 'Next', () => kNext(sc));
       },
     },
-    shape: {
+    slash: {
       start() {
-        K.st = { tucks: 0, phase: 'tuck' };
-        kPanel(`<div class="kq">Tuck the edges underneath to make a tight ball</div>
-          <button class="kbtn" id="tuckBtn" type="button">Tuck <span id="tuckN">0/5</span></button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        $('#tuckBtn').onclick = () => {
-          if (K.st.tucks >= 5) return;
-          K.st.tucks++; K.d.ball = K.st.tucks / 5; K.d.squish = 1; sfx.click();
-          $('#tuckN').textContent = `${K.st.tucks}/5`;
-          if (K.st.tucks === 5) { $('#tuckBtn').disabled = true; this.scorePhase(); }
-        };
-      },
-      scorePhase() {
-        K.st.phase = 'score';
-        kPanel(`<div class="kq"><b>Score the top:</b> swipe across the loaf with one long, confident slash</div>
-          <div class="kres" id="kres"></div><p class="kteach">Bakers use a razor (called a lame) at a shallow angle, about ½ inch (1 cm) deep.</p>`);
+        K.st = { phase: 'score' };
+        kPanel(`<div class="kq">Swipe one long line across the loaf</div><div class="kres" id="kres"></div>`);
         const cv = kc();
         let start = null;
         const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
@@ -3627,44 +3587,37 @@
         cv.onpointermove = e => { if (start && K.st.phase === 'score') K.st.live = [start, pt(e)]; };
         cv.onpointerup = e => {
           if (!start || K.st.phase !== 'score') return;
-          const [a, b] = [start, pt(e)]; start = null; K.st.live = null;
+          const a = start, b = pt(e); start = null; K.st.live = null;
           const geo = K.geo, r = geo.r, cx = geo.cx / geo.w, cy = geo.cy / geo.h;
-          // Convert to loaf-relative units (multiples of its radius)
-          const rel = p => [(p[0] - cx) * geo.w / r, (p[1] - cy) * geo.h / r];
+          const rel = q => [(q[0] - cx) * geo.w / r, (q[1] - cy) * geo.h / r];
           const A = rel(a), B = rel(b), len = Math.hypot(B[0] - A[0], B[1] - A[1]) / 2.24;
-          const onLoaf = Math.abs((A[1] + B[1]) / 2) < .7;
-          if (len < .2 || !onLoaf) { $('#kres').innerHTML = '<span>Try one longer slash across the top of the loaf.</span>'; sfx.bad(); return; }
-          K.d.slash = [A[0], A[1], B[0], B[1]]; K.st.phase = 'done'; sfx.done();
+          if (len < .2 || Math.abs((A[1] + B[1]) / 2) > .7) { $('#kres').innerHTML = '<span>Try one longer swipe across the top.</span>'; sfx.bad(); return; }
+          K.d.slash = [A[0], A[1], B[0], B[1]]; K.st.phase = 'done';
           const sc = len >= .6 ? 3 : len >= .4 ? 2 : 1;
-          kResult(sc === 3 ? 'Beautiful slash! That\'s where it\'ll bloom in the oven.' : 'Scored! A longer slash opens up even more.', 'Next: Bake', () => { cv.onpointerdown = cv.onpointermove = cv.onpointerup = null; kNext(sc); });
+          (sc >= 2 ? sfx.done : sfx.bad)();
+          kResult(`<b>${KMSG[sc]}</b> ${sc === 3 ? 'That\'s where it\'ll bloom.' : 'Longer slashes open up more.'}`, 'Next', () => { cv.onpointerdown = cv.onpointermove = cv.onpointerup = null; kNext(sc); });
         };
       },
     },
     bake: {
       start() {
         K.st = { t: 0, out: false };
-        kPanel(`<div class="kq">Oven at <b>450°F (230°C)</b>. Take it out at <b>deep golden</b></div>
-          <div class="kscale"><span class="sread" id="bakeClock">0 min</span><span class="starget">inside <b id="bakeTemp">70°F</b></span></div>
-          <button class="kbtn" id="outBtn" type="button">Take it out</button>
-          <div class="kres" id="kres"></div>${kTeach()}`);
-        $('#outBtn').onclick = () => { if (!K.st.out) this.judge(); };
+        kPanel(`<div class="kq">Take it out at this color <span class="kswatch" style="background:${crust(1)}"></span></div>
+          <button class="kbtn" id="outBtn" type="button">Take it out!</button>
+          <div class="kres" id="kres"></div>`);
+        onPress($('#outBtn'), () => { if (!K.st.out) this.judge(); });
       },
       tick(dt) {
         const st = K.st;
-        if (!st.out) {
-          st.t += dt; K.d.bake = st.t / 10;
-          const c = $('#bakeClock'); if (c) c.textContent = Math.round(K.d.bake * 33) + ' min';
-          const tp = $('#bakeTemp'); if (tp) tp.textContent = Math.round(Math.min(211, 70 + 140 * K.d.bake)) + '°F';
-          if (K.d.bake >= 1.5) this.judge();
-        } else K.d.steam = Math.min(1, K.d.steam + dt);
+        if (!st.out) { st.t += dt; K.d.bake = st.t / 5; if (K.d.bake >= 1.5) this.judge(); }
+        else K.d.steam = Math.min(1, K.d.steam + dt);
       },
       judge() {
         const st = K.st, b = K.d.bake, e = Math.abs(b - 1);
         st.out = true; $('#outBtn').disabled = true;
-        const sc = e <= .07 ? 3 : e <= .16 ? 2 : e <= .3 ? 1 : 0;
+        const sc = e <= .08 ? 3 : e <= .18 ? 2 : 1;
         (sc >= 2 ? sfx.cash : sfx.bad)();
-        const msg = b < .84 ? 'A bit pale and soft: it needed a few more minutes.' : b > 1.3 ? 'Oops, very dark! Next time pull it sooner.' : b > 1.16 ? 'Extra dark and crackly. Some people love it this way!' : 'Deep golden and crackly. Perfect!';
-        kResult(`${msg} Let it cool on a rack for at least an hour before slicing.`, 'Finish lesson', () => kNext(sc));
+        kResult(`<b>${KMSG[sc]}</b> ${b < .9 ? 'A little pale.' : b > 1.2 ? 'Extra dark and crunchy!' : 'Golden and crackly.'}`, 'Finish', () => kNext(sc));
       },
     },
   };
@@ -3679,31 +3632,25 @@
     const oven = step === 'bake';
     paintKitchenBg(ctx, w, h, oven);
     K.geo = { w, h, r, cx, cy: h * .6 };
-    if (step === 'measure' || step === 'mix' || step === 'rise') {
+    if (step === 'pour' || step === 'rise') {
       const R = r * 1.25, cy = h * .58;
-      if (step === 'measure') {                       // digital scale under the bowl
-        ctx.fillStyle = '#3B4A55'; ctx.beginPath(); ctx.roundRect(cx - R * 1.15, cy + R * .7, R * 2.3, R * .32, 10); ctx.fill();
-        ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 3; ctx.stroke();
-        ctx.fillStyle = '#B9F6C8'; ctx.beginPath(); ctx.roundRect(cx + R * .45, cy + R * .76, R * .6, R * .2, 4); ctx.fill();
-      }
       paintBowl(ctx, cx, cy, R, false);
-      if (step === 'measure') {
-        const A = d.amounts, f = Math.min(1.3, (A.flour || 0) / 500), wv = Math.min(1.3, (A.water || 0) / 325);
+      if (step === 'pour') {
+        const A = d.amounts, f = A.flour || 0, wv = A.water || 0;
         if (f > 0) {
           ctx.save(); ctx.beginPath(); ctx.ellipse(cx, cy - R * .05, R * .8, R * (.15 + .45 * f), 0, Math.PI, 0); ctx.closePath();
           ctx.fillStyle = mix('#FBF6EC', '#E8D3AE', Math.min(1, wv)); ctx.fill(); grain(ctx, .18, 'multiply'); ctx.restore();
         }
         if (wv > 0) { ctx.fillStyle = `rgba(150,200,235,${.35 * Math.min(1, wv) * (1 - Math.min(1, wv) * .6)})`; ctx.beginPath(); ctx.ellipse(cx + R * .2, cy - R * .05, R * .45 * Math.min(1, wv), R * .1, 0, 0, Math.PI * 2); ctx.fill(); }
         const sp = seeded(3);
-        for (let i = 0; i < Math.min(40, ((A.yeast || 0) + (A.salt || 0)) * 2); i++) { ctx.fillStyle = i % 2 ? '#C9A46A' : '#FFFFFF'; ctx.fillRect(cx - R * .4 + sp() * R * .8, cy - R * (.1 + .4 * f) + sp() * R * .2, 2.5, 2.5); }
+        for (let i = 0; i < ((A.yeast || 0) + (A.salt || 0)) * 18; i++) { ctx.fillStyle = i % 2 ? '#C9A46A' : '#FFFFFF'; ctx.fillRect(cx - R * .4 + sp() * R * .8, cy - R * (.1 + .4 * f) + sp() * R * .2, 2.5, 2.5); }
       } else {
         const rise = step === 'rise' ? d.rise : 1;
-        if (step === 'mix' && d.shaggy < 1) { ctx.save(); ctx.globalAlpha = 1 - d.shaggy; ctx.beginPath(); ctx.ellipse(cx, cy - R * .05, R * .8, R * .55, 0, Math.PI, 0); ctx.closePath(); ctx.fillStyle = '#EBD7B3'; ctx.fill(); ctx.restore(); }
-        paintDough(ctx, cx, cy - R * .12 - (rise - 1) * R * .25, R * .62, { smooth: step === 'rise' ? .9 : 0, rough: 1, rise, poke: d.poke, squish: d.squish, alpha: step === 'mix' ? Math.max(.25, d.shaggy) : 1 });
+        paintDough(ctx, cx, cy - R * .12 - (rise - 1) * R * .25, R * .62, { smooth: .9, rough: 1, rise, squish: d.squish });
         if (step === 'rise') {
           ctx.setLineDash([6, 6]); ctx.strokeStyle = 'rgba(43,26,20,.55)'; ctx.lineWidth = 2;
           const tr = R * .62 * Math.SQRT2; ctx.beginPath(); ctx.ellipse(cx, cy - R * .12 - R * .25, tr * 1.08, tr * .74, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke(); ctx.setLineDash([]);
-          ctx.fillStyle = 'rgba(43,26,20,.7)'; ctx.font = `600 ${Math.max(11, r * .1)}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('doubled', cx, cy - R * .12 - R * .25 - tr * .78);
+          ctx.fillStyle = 'rgba(43,26,20,.7)'; ctx.font = `600 ${Math.max(11, r * .1)}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('stop here', cx, cy - R * .12 - R * .25 - tr * .78);
         }
       }
       paintBowl(ctx, cx, cy, R, true);
@@ -3719,15 +3666,12 @@
         ctx.fillStyle = 'rgba(43,26,20,.75)'; ctx.font = `600 ${Math.max(11, r * .1)}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('light shines through!', wx, wy + r * .65);
         ctx.restore();
       }
-    } else if (step === 'shape') {
+    } else if (step === 'slash') {
       ctx.fillStyle = '#F6EFE2'; ctx.save(); ctx.translate(cx, h * .68); ctx.rotate(-.05); ctx.fillRect(-r * 1.5, -r * .55, r * 3, r * 1.1); ctx.strokeStyle = 'rgba(43,26,20,.35)'; ctx.strokeRect(-r * 1.5, -r * .55, r * 3, r * 1.1); ctx.restore();
       K.geo.cy = h * .6;
-      if (K.st.phase === 'tuck') paintDough(ctx, cx, h * .6, r * (1 - d.ball * .08), { smooth: .95, rise: 1.2 + d.ball * .2, squish: d.squish });
-      else {
-        paintLoaf(ctx, cx, h * .6, r, { bake: 0, ball: 1, slash: d.slash });
-        const lv = K.st.live;
-        if (lv) { ctx.strokeStyle = 'rgba(43,26,20,.85)'; ctx.lineWidth = 3; ctx.setLineDash([2, 6]); ctx.beginPath(); ctx.moveTo(lv[0][0] * w, lv[0][1] * h); ctx.lineTo(lv[1][0] * w, lv[1][1] * h); ctx.stroke(); ctx.setLineDash([]); }
-      }
+      paintLoaf(ctx, cx, h * .6, r, { bake: 0, ball: 1, slash: d.slash });
+      const lv = K.st.live;
+      if (lv) { ctx.strokeStyle = 'rgba(43,26,20,.85)'; ctx.lineWidth = 3; ctx.setLineDash([2, 6]); ctx.beginPath(); ctx.moveTo(lv[0][0] * w, lv[0][1] * h); ctx.lineTo(lv[1][0] * w, lv[1][1] * h); ctx.stroke(); ctx.setLineDash([]); }
     } else if (step === 'bake' || step === 'done') {
       if (step === 'done') { /* cooling rack */ }
       paintLoaf(ctx, cx, h * .6, r, { bake: d.bake, ball: 1, slash: d.slash, steam: d.steam, t: K.t });
@@ -3746,7 +3690,7 @@
       <h2>${L.title}</h2>
       <div class="stars">${[1, 2, 3].map(i => i <= stars ? '<b>★</b>' : '★').join('')}</div>
       <div class="results">${L.steps.map((s, i) => `<span>${STEP_INFO[s].name}</span><span>${kStars(K.scores[i])}</span>`).join('')}</div>
-      <div class="unlock goal"><b>Recipe card earned!</b> It's in your Cookbook, with the real amounts and steps to bake this at home.</div>
+      <div class="unlock goal"><b>Bonus:</b> the real recipe card is in your Cookbook, if you ever want to bake it at home.</div>
       <div class="btnrow"><button class="big" id="kCard" type="button">See recipe card</button><button class="big alt" id="kAgain" type="button">Bake again</button><button class="big alt" id="kHome" type="button">Title</button></div>`);
     $('#kCard').onclick = () => recipeCard(L.id, () => { $('#overlay').hidden = true; kFinishCardBack(); });
     $('#kAgain').onclick = () => kitchenStart(L.id);
@@ -3799,7 +3743,7 @@
       <h1>Lox Café</h1>
       ${picker}
       <span class="ver">V3 · Kitchen (preview)</span>
-      <p>A real cooking school. Every lesson is a real recipe you can make at home, and each mini-game is a real step. Finish a lesson to earn its recipe card.</p>
+      <p>Quick cooking mini-games. Tap, swipe and time it right to bake. Nothing to memorize; each dish you finish adds a real recipe card to your Cookbook as a bonus.</p>
       <ul class="recipes">${LESSONS.map((L, i) => {
         const k = (SAVE.kitchen || {})[L.id];
         return `<li><span class="rname">Lesson ${i + 1}: ${L.title}</span><span class="rsteps">${L.soon ? 'Coming soon' : k ? kStars(k.stars) : L.blurb}</span>
