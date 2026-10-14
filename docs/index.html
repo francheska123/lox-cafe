@@ -468,7 +468,7 @@
   .hand.empty { background: rgba(255,255,255,.5); border-style: dashed; box-shadow: none; color: var(--muted); font-weight: 500; cursor: default; }
   .hand.stale { opacity: .6; }
   .modepick .newtag { margin-left: 4px; }
-  @media (max-width: 600px) {
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) {
     .floor { flex: 1; gap: 6px; }
     .fscene { flex: 1; min-height: 0; border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
     .fcounter { min-height: 90px; padding: 6px 6px 0; gap: 5px; }
@@ -632,6 +632,17 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .fstage { position: relative; height: min(70vh, 620px); border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; box-shadow: 0 4px 0 var(--ink); background: var(--tile); }
+  #fcanvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: manipulation; image-rendering: pixelated; }
+  .fbar { flex-wrap: wrap; }
+  .ftickets { font-size: 12px; font-weight: 700; color: var(--cherry); }
+  .ftickets:empty { display: none; }
+  .ftickets span { color: var(--muted); font-weight: 500; }
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) {
+    .fstage { flex: 1; height: auto; min-height: 0; border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
+    .fbar { gap: 6px; }
+    .fbar .hl { display: none; }
+  }
   /* ---------- V3 · Kitchen ---------- */
   .kitchen { display: none; flex-direction: column; gap: 10px; min-height: 0; }
   .game.kitchen-mode { grid-template-columns: 1fr; max-width: 760px; }
@@ -639,7 +650,7 @@
   .game.kitchen-mode .shop, .game.kitchen-mode .bar, .game.kitchen-mode .pad, .game.kitchen-mode .floor, .game.kitchen-mode .side,
   .game.kitchen-mode .hud { display: none !important; }
   .khead { display: flex; align-items: center; gap: 10px; background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 6px 10px; box-shadow: 0 3px 0 var(--ink); }
-  .kname { font-family: var(--display); font-size: 20px; color: var(--espresso); }
+  .kname { font-family: var(--display); font-size: 20px; color: var(--espresso); white-space: nowrap; }
   .kdots { display: flex; gap: 4px; margin-left: auto; }
   .kdot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--ink); font-size: 11px; font-weight: 800; display: grid; place-items: center; background: #fff; }
   .kdot.done { background: var(--mint); color: #fff; } .kdot.on { background: var(--butter); }
@@ -671,7 +682,7 @@
   .rcard li { margin-bottom: 6px; }
   .rcard li span { color: var(--muted); font-size: 13px; }
   .recipes li .big { justify-self: start; font-size: 14px; padding: 6px 14px; margin-top: 4px; }
-  @media (max-width: 600px) {
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) {
     .game.kitchen-mode .kitchen { flex: 1; }
     .kstage { height: auto; flex: 1; min-height: 220px; }
     .kbtn { font-size: 18px; padding: 12px; }
@@ -714,7 +725,7 @@
   .mnode.next { background: var(--butter); animation: seatpulse .8s ease-in-out infinite alternate; }
   .mnode.locked { background: #EEE6E0; color: #B5A79E; box-shadow: none; border-color: #CDBFB6; cursor: not-allowed; }
   .mnode.locked .mstars { font-size: 12px; }
-  @media (max-width: 600px) { .mnode { width: 58px; height: 58px; } .mnode .mday { font-size: 17px; } }
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) { .mnode { width: 58px; height: 58px; } .mnode .mday { font-size: 17px; } }
   .arrange { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 16px; }
   .arr { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px; min-height: 70px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; font-weight: 700; font-size: 13px; box-shadow: 0 3px 0 var(--ink); }
   .arr .ic { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--c); }
@@ -739,7 +750,7 @@
   .krow { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 5px; }
   .kcap { min-width: 26px; text-align: center; font-weight: 700; font-size: 12px; border: 2px solid var(--ink); border-bottom-width: 3.5px; border-radius: 6px; padding: 1px 6px; background: #fff; white-space: nowrap; }
   .titlelogo { display: block; width: 120px; height: 120px; margin: -8px auto 2px; }
-  @media (max-width: 600px) { .titlelogo { width: 92px; height: 92px; } }
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) { .titlelogo { width: 92px; height: 92px; } }
   .field textarea.code { font: 12px/1.35 ui-monospace, Menlo, monospace; width: 100%; border: 2.5px solid var(--ink); border-radius: 10px; padding: 7px 9px; background: #fff; resize: vertical; user-select: text; -webkit-user-select: text; word-break: break-all; }
   .field textarea#pasteCode { font-size: 16px; }
   .codemsg { color: var(--cherry); font-weight: 600; }
@@ -748,7 +759,7 @@
   .dumpbtn { display: none; }
   .lbl-m { display: none; }
   .pad { display: flex; flex-direction: column; gap: 14px; }
-  @media (max-width: 600px) {
+  @media (max-width: 600px), (orientation: landscape) and (max-height: 520px) {
     body { padding-block: 6px; }
     .game { height: 100%; display: flex; flex-direction: column; gap: 6px; }
     .side { display: none; }
@@ -760,19 +771,19 @@
     #menuBtn { margin-left: auto; }
     .iconbtn { padding: 5px 8px; font-size: 12px; box-shadow: 0 2px 0 var(--ink); }
     .main { flex: 1; min-height: 0; gap: 6px; }
-    .shop { flex: 1; min-height: 150px; display: flex; flex-direction: column; border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
-    .spots { flex: 1; min-height: 0; padding: 18px 2px 0; gap: 2px; }
+    .shop { flex: none; display: flex; flex-direction: column; border-radius: 14px; box-shadow: 0 3px 0 var(--ink); background: linear-gradient(var(--tile) 0 34%, var(--wall-2) 34%); }
+    .spots { flex: none; height: clamp(195px, 29vh, 250px); padding: 14px 2px 0; gap: 2px; }
     .spot { height: auto; }
     .counter { flex: none; height: 26px; margin-top: -12px; padding: 9px 6px 0; box-shadow: inset 0 5px 0 var(--wood-hi); }
     .pat { height: 7px; border-width: 1.5px; }
-    .ticket { font-size: 14.5px; padding: 4px 4px; min-width: 0; width: 100%; border-width: 2px; border-radius: 9px; margin-bottom: 7px; box-shadow: 0 2px 0 var(--ink); }
+    .ticket { font-size: 15.5px; padding: 4px 4px; min-width: 0; width: 100%; border-width: 2px; border-radius: 9px; margin-bottom: 7px; box-shadow: 0 2px 0 var(--ink); }
     .ticket::after { width: 9px; height: 9px; bottom: -6px; border-width: 2px; }
     .part.p, .part.p.solo { font-size: 12px; }
     .who { font-size: 8px; letter-spacing: .03em; }
     .chips { gap: 1px; margin-top: 2px; }
     .chip { font-size: 10px; padding: 1px 3px; border-width: 1.5px; border-radius: 4px; }
     .mod { font-size: 8.5px; padding: 0 3px; }
-    .person, .person.kid { transform: none; zoom: 1; }
+    .person, .person.kid { transform: none; zoom: 1.12; }
     .person.kid { zoom: .62; }
     .decor { top: 22px; height: 26px; zoom: .8; }
     .lights { top: 16px; }
@@ -793,7 +804,7 @@
     .hint { position: fixed; left: 50%; top: 38%; transform: translateX(-50%); z-index: 30; pointer-events: none; min-height: 0; white-space: nowrap; box-shadow: 0 3px 0 var(--ink); }
     .hint:empty { display: none; }
 
-    .pad { flex: none; display: grid; grid-template-columns: repeat(var(--cols, 5), 1fr); gap: 6px; padding: 6px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
+    .pad { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: repeat(var(--cols, 5), 1fr); grid-auto-rows: minmax(56px, 1fr); gap: 6px; padding: 6px; background: var(--bar); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); }
     .pad > .stations:not([hidden]) { display: contents; }
     .case .station:not(:disabled) { background: #FBEBD9; }
     .station { padding: 7px 0 6px; font-size: min(12.5px, 3.2vw); letter-spacing: -.01em; white-space: nowrap; gap: 4px; border-width: 2.5px; border-radius: 11px; min-height: 62px; box-shadow: 0 2px 0 rgba(0,0,0,.45); }
@@ -811,6 +822,28 @@
     .card { padding: 18px 14px 16px; }
     .card h1 { font-size: 40px; }
     .card h2 { font-size: 27px; }
+  }
+
+  @media (orientation: landscape) and (max-height: 520px) {
+    body { padding-inline: max(12px, env(safe-area-inset-left, 0px)) max(12px, env(safe-area-inset-right, 0px)); padding-block: 4px; }
+    .game { max-width: none; }
+    .hud { padding: 3px 8px; }
+    .stat .v { font-size: 14px; }
+    .main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 6px; }
+    .shop { grid-area: 1 / 1; min-height: 0; }
+    .spots { height: auto; flex: 1; min-height: 0; padding-top: 14px; }
+    .person, .person.kid { zoom: .85; }
+    .person.kid { zoom: .6; }
+    .ticket { font-size: 13px; }
+    .bar { grid-area: 2 / 1; }
+    .cupwrap { height: 40px; }
+    .pad { grid-area: 1 / 2 / 3 / 3; grid-template-columns: repeat(var(--lcols, 5), 1fr); grid-auto-rows: minmax(44px, 1fr); }
+    .station { min-height: 44px; padding: 4px 0; }
+    .floor { grid-area: 1 / 1 / 3 / 3; }
+    .game.kitchen-mode .kitchen { grid-area: 1 / 1 / 3 / 3; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    .khead { grid-column: 1 / -1; }
+    .kstage { height: auto; min-height: 0; }
+    .kpanel { overflow: auto; align-content: start; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -852,26 +885,8 @@
       <button class="trash" id="trash" type="button"><span class="bin"></span><span>Dump<br><small>selected</small></span><span class="kbd">⌫</span></button>
     </section>
     <section class="floor" id="floor" aria-label="Café floor">
-      <div class="fscene" id="fscene">
-        <div class="fcounter">
-          <div class="barista" id="barista">
-            <span class="bname">Bea · barista</span>
-            <span class="bsprite" id="bsprite"></span>
-            <span class="bprog"><i id="bprog"></i></span>
-            <span class="bnow" id="bnow">Ready</span>
-            <span class="bq" id="bq"></span>
-          </div>
-          <div class="pickups" id="pickups" aria-label="Pickup counter"></div>
-        </div>
-        <div class="froom">
-          <div class="door" id="door"><span class="dl">Door</span><div class="fqueue" id="fqueue"></div></div>
-          <div class="ftables" id="ftables"></div>
-        </div>
-        <div class="fshelf" id="fshelf" hidden><div class="supplies" id="supplies"></div></div>
-        <div class="server" id="server"><span class="carry" id="carry"></span><span class="srvbody"></span><span class="apron"></span></div>
-        <div class="qmarks" id="qmarks"></div>
-      </div>
-      <div class="fbar"><span class="hl">Your hands</span><div class="hands" id="hands"></div></div>
+      <div class="fstage"><canvas id="fcanvas" aria-label="Café floor. Tap groups, tables, the ticket spike, trays and the bus tub."></canvas></div>
+      <div class="fbar"><span class="hl">Hands</span><div class="hands" id="hands"></div><div class="ftickets" id="ftickets" role="status"></div></div>
     </section>
 
     <section class="kitchen" id="kitchen" aria-label="Kitchen">
@@ -1400,8 +1415,9 @@
     });
     $('#oven').hidden = !S.oven.length;
     const shown = document.querySelectorAll('.pad .station:not(:disabled)').length;
-    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : shown <= 20 ? 5 : 6);
-    document.querySelector('.pad').classList.toggle('dense', shown > 20);
+    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : shown <= 25 ? 5 : 6);
+    document.querySelector('.pad').style.setProperty('--lcols', shown <= 15 ? 4 : shown <= 24 ? 5 : 6);
+    document.querySelector('.pad').classList.toggle('dense', shown > 25);
   }
 
   function renderMenu() {
@@ -1708,6 +1724,7 @@
   function loop(ts) {
     const dt = Math.min(.1, (ts - last) / 1000); last = ts;
     if (S && S.running && !S.paused) (S.mode === 'floor' ? floorUpdate : update)(dt);
+    if (S && S.mode === 'floor') fDraw();
     requestAnimationFrame(loop);
   }
 
@@ -2207,358 +2224,500 @@
   addEventListener('resize', () => { if (S && S.tut) placeCoach(); });
 
   /* =====================================================================
-     V2 · Floor Service. You're the server: seat customers, take orders,
-     bring each numbered order to the matching customer, handle extra
-     requests and changed orders, then collect and clear. Bea makes drinks.
+     V2 · Floor Service (redo). Diner Dash on a top-down café floor with
+     pixel-art chibi people: seat groups at matching tables, take the
+     order, bring the ticket to Bea's spike, pick up the tray, serve,
+     collect the check, then clear the dishes to the bus tub.
      ===================================================================== */
   const FMENU = [
-    { name: 'Espresso',            cup: 'hot',  price: 3.25, day: 1,  steps: 1 },
-    { name: 'Americano',           cup: 'hot',  price: 3.75, day: 1,  steps: 2 },
-    { name: 'Latte',               cup: 'hot',  price: 5.25, day: 1,  steps: 2 },
-    { name: 'Cappuccino',          cup: 'hot',  price: 5.25, day: 2,  steps: 3 },
-    { name: 'Iced Latte',          cup: 'iced', price: 5.75, day: 2,  steps: 2 },
-    { name: 'Vanilla Latte',       cup: 'hot',  price: 5.95, day: 4,  steps: 3 },
-    { name: 'Iced Caramel Latte',  cup: 'iced', price: 6.25, day: 4,  steps: 3 },
-    { name: 'Croissant',           pastry: 'croissant', price: 4.25, day: 6, steps: 2 },
-    { name: 'Blueberry Muffin',    pastry: 'muffin',    price: 3.95, day: 6, steps: 2 },
-    { name: 'Mocha',               cup: 'hot',  price: 6.25, day: 8,  steps: 4 },
-    { name: 'Chai Latte',          cup: 'hot',  price: 5.45, day: 10, steps: 2 },
-    { name: 'Iced Matcha',         cup: 'iced', price: 6.25, day: 12, steps: 2 },
-    { name: 'Cookie',              pastry: 'cookie', price: 3.25, day: 12, steps: 1 },
-    { name: 'Pumpkin Spice Latte', cup: 'hot',  price: 6.75, day: 14, steps: 4 },
+    { name: 'Espresso',            cup: 'hot',  price: 3.25, day: 1 },
+    { name: 'Americano',           cup: 'hot',  price: 3.75, day: 1 },
+    { name: 'Latte',               cup: 'hot',  price: 5.25, day: 1 },
+    { name: 'Cappuccino',          cup: 'hot',  price: 5.25, day: 2 },
+    { name: 'Iced Latte',          cup: 'iced', price: 5.75, day: 2 },
+    { name: 'Vanilla Latte',       cup: 'hot',  price: 5.95, day: 5 },
+    { name: 'Iced Caramel Latte',  cup: 'iced', price: 6.25, day: 5 },
+    { name: 'Croissant',           pastry: 'croissant', price: 4.25, day: 6 },
+    { name: 'Blueberry Muffin',    pastry: 'muffin',    price: 3.95, day: 6 },
+    { name: 'Mocha',               cup: 'hot',  price: 6.25, day: 8 },
+    { name: 'Chai Latte',          cup: 'hot',  price: 5.45, day: 10 },
+    { name: 'Classic Milk Tea',    cup: 'iced', price: 5.75, day: 11 },
+    { name: 'Strawberry Lemonade', cup: 'iced', price: 5.75, day: 12 },
+    { name: 'Cookie',              pastry: 'cookie', price: 3.25, day: 12 },
   ];
-  const SUPPLIES = { napkins: { label: 'Napkins', day: 3 }, sugar: { label: 'Sugar', day: 3 }, straw: { label: 'Straw', day: 4 }, water: { label: 'Water', day: 4 } };
-  const F_REQ_DAY = 3, F_CHANGE_DAY = 5, F_REG_DAY = 7, F_CRITIC_DAY = 9;
+  const SUPPLIES = { napkins: { label: 'Napkins', day: 4 }, sugar: { label: 'Sugar', day: 4 }, straw: { label: 'Straw', day: 5 }, water: { label: 'Water', day: 5 } };
+  const F_COLOR_DAY = 3, F_REQ_DAY = 4, F_REG_DAY = 7, F_CRITIC_DAY = 9;
+  const PARTY_COLORS = { red: '#E8505B', blue: '#4F8FE0', yellow: '#F2C14E', green: '#4CB782' };
   const FNEWS = {
-    2: { title: 'A fourth table', text: 'Table D opens. More seats, more customers.' },
-    3: { title: 'Extra requests', text: 'Mid-visit, customers may ask for napkins or sugar. Tap the supply shelf to grab it, then tap their table.' },
-    4: { title: 'Straws and water', text: 'Two more things people ask for. Same idea: grab from the shelf, bring it to the table.' },
-    5: { title: 'Order changes', text: 'Sometimes a customer changes their mind after ordering. Tap their table to take the new order. The old drink goes in the bin.' },
-    6: { title: 'Pastries', text: 'Bea plates pastries too. They come up on the counter with a number, just like drinks.' },
-    7: { title: 'Regulars', text: 'Your regulars from the bar come by. The more you serve them, the more they tip.' },
+    2: { title: 'Groups and big tables', text: 'Groups of up to 4 arrive. Two-seat tables fit 1–2 people; four-seat tables fit up to 4.' },
+    3: { title: 'Color match', text: 'Seat a group at a table the same color as their shirts for a tip bonus.' },
+    4: { title: 'Extra requests', text: 'While they eat, guests may ask for napkins or sugar. Grab it from the supply shelf and bring it over.' },
+    5: { title: 'Straws and water', text: 'Two more things guests ask for. Same shelf, same idea.' },
+    6: { title: 'Pastries', text: 'Bea plates pastries too. They come out on the same trays.' },
+    7: { title: 'Regulars', text: 'Your regulars from the bar drop by. The more you serve them, the more they tip.' },
     8: { title: 'Longer shifts', text: 'Shifts grow by 10 seconds a day from here.' },
     9: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but a happy critic leaves a $10 review bonus.' },
   };
   const fcfg = d => {
     const D = dur(d), M = difficulty();
     return {
-      dur: D, tables: d >= 2 ? 4 : 3,
-      spawn: Math.max(5.5, 11 - 0.6 * (d - 1)) * M.spawn,
-      patience: Math.max(20, 32 - (d - 1)) * M.patience,
-      goal: Math.round((14 + 4 * (d - 1)) * D / 90 * M.goal),
+      dur: D,
+      spawn: Math.max(8, 15 - .8 * (d - 1)) * M.spawn,
+      patience: Math.max(24, 36 - (d - 1)) * M.patience,
+      // Calibrated with a bot: a great shift earns ~1.7-2x the goal on every day
+      goal: Math.round((16 + 6 * Math.min(d - 1, 3) + 1.5 * Math.max(0, d - 4)) * D / 90 * M.goal),
     };
   };
   const handCap = () => own('tray') ? 3 : 2;
-  const walkSpeed = () => 300 * (1 + .15 * lv('sneakers'));
-  const fItemIcon = it => it.pastry ? pastryHTML(PASTRY_BASE[it.pastry].look, 'mini') : `<span class="mcup ${it.cup}"></span>`;
-  const supplyIcon = k => `<span class="sicon ${k}"></span>`;
-  const fShort = n => n.replace('Pumpkin Spice Latte', 'PSL').replace('Iced Caramel Latte', 'Iced Caramel').replace('Blueberry Muffin', 'Muffin');
-  const fAll = () => [...S.queue, ...S.tables.map(t => t.cust).filter(Boolean)];
-  const fTableEl = i => document.querySelector(`#ftables .ftable[data-t="${i}"]`);
-  const fPerson = L => `<span class="pwrap" style="--skin:${L.skin};--hair:${L.hair};--shirt:${L.shirt}">${personHTML(L)}</span>`;
-  const SERVER_LOOK = { skin: '#C98D63', hair: '#2B1A14', shirt: '#2A4D73', style: 1, acc: 'none' };
-  const BEA_LOOK = { skin: '#E8B48F', hair: '#B23A2F', shirt: '#3FA37D', style: 2, acc: 'none' };
+  const walkSpeed = () => 150 * (1 + .15 * lv('sneakers'));
+  const fShort = n => n.replace('Pumpkin Spice Latte', 'PSL').replace('Iced Caramel Latte', 'Iced Caramel').replace('Blueberry Muffin', 'Muffin').replace('Strawberry Lemonade', 'Berry Lemonade').replace('Classic Milk Tea', 'Milk Tea');
 
+  /* ---------- Pixel chibi sprites (12×16, drawn 3 px per pixel) ---------- */
+  const SPR = [
+    '....kkkk....', '..kkhhhhkk..', '.khhhhhhhhk.', '.khhhhhhhhk.', 'khhhsssshhhk', 'khsssssssshk',
+    'kssessssessk', 'ksbssssssbsk', '.ksssmmsssk.', '..kkkkkkkk..', '.kcccccccck.', 'kcccccccccck',
+    'ksccccccccsk', '.kcccccccck.', '..kppkkppk..', '..kffk.kffk.',
+  ];
+  function spriteRows(style, apron) {
+    const r = SPR.slice();
+    if (style === 1) { [4, 5, 6, 7].forEach(i => { r[i] = 'h' + r[i].slice(1, 11) + 'h'; }); r[8] = 'hksssmmssskh'; r[9] = 'hhkkkkkkkkhh'; }   // long hair
+    if (style === 2) { r[0] = '...khhhhk...'; r.unshift('....khhk....'); }                                                                  // bun
+    if (style === 3) { r[1] = '..kkccccckk.'; r[2] = '.kcccccccck.'; r[3] = 'kcccccccccck'; r[4] = 'kkkkhsshkkkk'; }                       // cap
+    if (apron) { const n = r.length; r[n - 5] = r[n - 5].slice(0, 4) + 'aaaa' + r[n - 5].slice(8); r[n - 4] = r[n - 4].slice(0, 4) + 'aaaa' + r[n - 4].slice(8); r[n - 3] = r[n - 3].slice(0, 4) + 'aaaa' + r[n - 3].slice(8); }
+    return r;
+  }
+  function drawSprite(ctx, x, y, look, o = {}) {
+    // x, y = the sprite's feet (or seat line when seated)
+    const px = o.px || 3, rows = spriteRows(look.style || 0, o.apron), n = o.seated ? rows.length - 5 : rows.length;
+    const pal = { k: '#2B1A14', e: '#2B1A14', m: '#2B1A14', f: '#2B1A14', h: look.hair, s: look.skin, c: look.shirt, b: '#F58E8E', p: '#3D4A6B', a: '#FFFFFF' };
+    const ox = Math.round(x - 6 * px), oy = Math.round(y - n * px + (o.bob || 0));
+    for (let r = 0; r < n; r++) for (let c = 0; c < 12; c++) {
+      const ch = rows[r][c];
+      if (ch === '.') continue;
+      ctx.fillStyle = pal[ch] || '#000'; ctx.fillRect(ox + c * px, oy + r * px, px, px);
+    }
+    if (look.acc === 'critic') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(ox + 2 * px, oy + 6 * px, 8 * px, px); ctx.fillStyle = '#3A2E5C'; ctx.fillRect(ox + px, oy - px, 10 * px, 2 * px); }
+  }
+  const HEART = ['.k.k.', 'krkrk', 'krrrk', '.krk.', '..k..'];
+  function drawHearts(ctx, x, y, p) {
+    const full = Math.max(0, Math.ceil(p * 4));
+    for (let i = 0; i < 4; i++) {
+      const hx = x - 26 + i * 13;
+      HEART.forEach((row, r) => [...row].forEach((ch, c) => {
+        if (ch === '.') return;
+        ctx.fillStyle = ch === 'k' ? '#2B1A14' : (i < full ? (p > .3 ? '#F2545B' : '#FF9A3C') : '#E6DCD4');
+        ctx.fillRect(hx + c * 2, y + r * 2, 2, 2);
+      }));
+    }
+  }
+  function pxText(ctx, t, x, y, size = 8, color = '#2B1A14', align = 'center') {
+    ctx.font = `${size}px "Press Start 2P", ui-monospace, monospace`; ctx.textAlign = align; ctx.textBaseline = 'middle';
+    ctx.fillStyle = color; ctx.fillText(t, x, y);
+  }
+  function bubble(ctx, x, y, w, h, fill = '#FFFDF7') {
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(x - w / 2 - 2, y - h / 2 - 2, w + 4, h + 4);
+    ctx.fillStyle = fill; ctx.fillRect(x - w / 2, y - h / 2, w, h);
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(x - 3, y + h / 2 + 2, 6, 3); ctx.fillStyle = fill; ctx.fillRect(x - 1, y + h / 2, 2, 3);
+  }
+  function drawCup(ctx, x, y, cup = 'hot') {
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(x - 5, y - 6, 10, 12);
+    ctx.fillStyle = cup === 'iced' ? '#CFEFFF' : '#FFFFFF'; ctx.fillRect(x - 3, y - 4, 6, 8);
+    ctx.fillStyle = '#8A5A3A'; ctx.fillRect(x - 3, y - 4, 6, 2);
+  }
+  function drawSupply(ctx, k, x, y) {
+    const c = { napkins: '#FFFFFF', sugar: '#F7A1C4', straw: '#F2545B', water: '#9AD4F5' }[k];
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(x - 7, y - 7, 14, 14); ctx.fillStyle = c; ctx.fillRect(x - 5, y - 5, 10, 10);
+    if (k === 'straw') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x - 1, y - 5, 2, 10); }
+  }
+
+  /* ---------- State ---------- */
+  function fTables(d) {
+    const t = d >= 2 ? [[2, 'red'], [2, 'blue'], [4, 'yellow'], [4, 'green']] : [[2, 'red'], [2, 'blue'], [2, 'yellow']];
+    return t.map(([seats, color], i) => ({ id: 'ABCD'[i], seats, color, party: null, dirty: false }));
+  }
   function fFresh(d) {
     const c = fcfg(d);
     return {
       mode: 'floor', day: d, c, t: 0, money: 0, streak: 0, bestStreak: 0,
-      stats: { served: 0, missed: 0, wrong: 0, sales: 0, tips: 0, regulars: 0, critics: 0, requests: 0 },
+      stats: { served: 0, people: 0, missed: 0, wrong: 0, sales: 0, tips: 0, regulars: 0, critics: 0, requests: 0, bussed: 0 },
       running: false, paused: false, task: null, inRush: false,
-      tables: 'ABCD'.slice(0, c.tables).split('').map(id => ({ id, cust: null, dirty: null })),
-      queue: [], selQ: null, nextNum: 0, barQ: [], making: null, pickups: [null, null, null, null], hands: [],
-      srv: { x: 0, y: 0, queue: [], cur: null, doing: 0, placed: false }, nextSpawn: 1.5,
+      tables: fTables(d), parties: [], sel: null, pid: 0, nextNum: 0,
+      spike: [], making: null, pickups: [null, null, null], floaters: [],
+      srv: { x: 0, y: 0, queue: [], cur: null, doing: 0, placed: false, tickets: [], hands: [] },
+      chain: { type: null, n: 0 }, bestChain: 0, nextSpawn: 1.5, view: { W: 360, H: 540 },
     };
   }
-
-  function fMakeCustomer(item) {
+  const fAll = () => S.parties.filter(p => p.state !== 'gone');
+  const fQueue = () => S.parties.filter(p => p.state === 'door');
+  function fMakeParty(forced = {}) {
     const d = S.day, menu = FMENU.filter(x => x.day <= d);
-    let kind = 'normal', who = null, look = randomLook();
-    if (!item && d >= F_REG_DAY && Math.random() < .12) {
-      const here = fAll().map(c => c.who);
-      const regs = REGULARS.filter(g => !here.includes(g.name));
-      if (regs.length) { const g = rnd(regs); kind = 'regular'; who = g.name; look = { ...g.look }; }
+    const size = forced.size || (d < 2 ? (Math.random() < .6 ? 1 : 2) : rnd([1, 2, 2, 3, 4, 4]));
+    const colors = S.tables.map(t => t.color);
+    const color = forced.color || rnd(colors);
+    let kind = 'normal', who = null;
+    const looks = Array.from({ length: size }, () => ({ skin: rnd(SKIN), hair: rnd(HAIR), shirt: PARTY_COLORS[color], style: Math.floor(Math.random() * 4), acc: 'none' }));
+    if (size === 1 && !forced.size) {
+      const here = fAll().map(p => p.who);
+      const regs = d >= F_REG_DAY ? REGULARS.filter(g => !here.includes(g.name)) : [];
+      if (regs.length && Math.random() < .15) { const g = rnd(regs); kind = 'regular'; who = g.name; looks[0] = { ...g.look, shirt: PARTY_COLORS[color], style: Math.min(3, g.look.style), acc: 'none' }; }
+      else if (d >= F_CRITIC_DAY && Math.random() < .08) { kind = 'critic'; looks[0].acc = 'critic'; }
     }
-    if (!item && kind === 'normal' && d >= F_CRITIC_DAY && Math.random() < .07) { kind = 'critic'; look.acc = 'critic'; }
-    const it = item || rnd(menu.flatMap(x => x.day === d && d > 1 ? [x, x] : [x]));
+    const items = looks.map(() => forced.item || rnd(menu));
     const pat = S.c.patience * patienceMult() * (kind === 'critic' ? .7 : kind === 'regular' ? 1.2 : 1);
-    return { num: ++S.nextNum, kind, who, look, item: it, next: null, state: 'queue', p: 1, pat, timer: 0, req: null, reqT: 0, reqAt: null, reqs: 0, changeAt: null };
+    const door = fL().door;
+    return { id: ++S.pid, num: ++S.nextNum, size, color, looks, items, kind, who, state: 'door', p: 1, pat, timer: 0,
+      req: null, reqT: 0, reqAt: null, reqs: 0, match: false, table: null, x: door.x, y: door.y };
   }
 
-  /* ---------- Drawing ---------- */
-  function fTableHTML(T, i) {
-    const c = T.cust;
-    let inner;
-    if (c) {
-      const who = c.kind === 'regular' ? `<span class="who">${esc(c.who)} ${'♥'.repeat(hearts(c.who))}</span>` : c.kind === 'critic' ? '<span class="who">Food critic ★</span>' : '';
-      let b;
-      if (c.state === 'reading') b = `<span class="fb">${who}Reading the menu…</span>`;
-      else if (c.state === 'ready') b = `<span class="fb hot">${who}✋ Ready to order!</span>`;
-      else if (c.state === 'waiting') b = `<span class="fb">${who}${fItemIcon(c.item)} ${esc(fShort(c.item.name))}</span>`;
-      else if (c.state === 'changed') b = `<span class="fb hot">${who}Wait! Make it ${esc(fShort(c.next.name))}</span>`;
-      else if (c.req) b = `<span class="fb hot">${who}${supplyIcon(c.req)} ${SUPPLIES[c.req].label}, please!</span>`;
-      else b = `<span class="fb">${who}Mmm ♥</span>`;
-      inner = `${b}${fPerson(c.look)}<span class="fpat"><i data-pat="${c.num}"></i></span>`;
-    } else if (T.dirty) {
-      inner = `<span class="fb money">Tap to collect ${money(T.dirty.sale + T.dirty.tip)}</span><span class="fdirty"><span class="mcup hot"></span><span class="coin">$</span></span>`;
-    } else inner = `<span class="fopen">${S.selQ != null ? 'Seat here' : 'Open'}</span>`;
-    const seatable = S.selQ != null && !c && !T.dirty;
-    return `<button class="ftable${seatable ? ' seatable' : ''}" type="button" data-t="${i}" aria-label="Table ${T.id}${c ? `, customer ${c.num}` : T.dirty ? ', money to collect' : ', open'}"><span class="fseat">${c ? `<span class="fnum tnum">#${c.num}</span>` : ''}${inner}</span><span class="ftop"><span class="fplaque">Table ${T.id}</span></span></button>`;
-  }
-
-  function fRender() {
-    if (!S || S.mode !== 'floor') return;
-    $('#fqueue').innerHTML = S.queue.map(c => `<button class="qc${S.selQ === c.num ? ' sel' : ''}" type="button" data-n="${c.num}" aria-label="Customer ${c.num} at the door. Tap, then tap a table."><span class="fnum">#${c.num}</span>${fPerson(c.look)}<span class="fpat"><i data-pat="${c.num}"></i></span></button>`).join('') || '<span class="fempty">Nobody yet</span>';
-    $('#ftables').innerHTML = S.tables.map(fTableHTML).join('');
-    $('#pickups').innerHTML = S.pickups.map((p, i) => p
-      ? `<button class="pickup${p.stale ? ' stale' : ''}" type="button" data-i="${i}" aria-label="Order ${p.num}, ${p.item.name}">${fItemIcon(p.item)}<b>#${p.num}</b><span>${esc(fShort(p.item.name))}</span></button>`
-      : `<button class="pickup empty" type="button" data-i="${i}" tabindex="-1" aria-hidden="true"></button>`).join('');
-    const sup = Object.entries(SUPPLIES).filter(([, v]) => v.day <= S.day);
-    $('#fshelf').hidden = !sup.length;
-    $('#supplies').innerHTML = '<span class="sl">Supply shelf</span>' + sup.map(([k, v]) => `<button class="supply" type="button" data-k="${k}">${supplyIcon(k)}${v.label}</button>`).join('');
-    $('#hands').innerHTML = Array.from({ length: handCap() }, (_, i) => {
-      const h = S.hands[i];
-      if (!h) return `<button class="hand empty" type="button" data-h="${i}" tabindex="-1">Empty hand</button>`;
-      if (h.type === 'supply') return `<button class="hand" type="button" data-h="${i}" aria-label="Carrying ${SUPPLIES[h.k].label}. Tap to put it back.">${supplyIcon(h.k)}${SUPPLIES[h.k].label}</button>`;
-      return `<button class="hand${h.stale ? ' stale' : ''}" type="button" data-h="${i}" aria-label="Carrying order ${h.num}. Tap to drop it.">${fItemIcon(h.item)}<b>#${h.num}</b>${esc(fShort(h.item.name))}</button>`;
-    }).join('');
-    $('#carry').textContent = S.hands.map(h => h.type === 'supply' ? SUPPLIES[h.k].label : '#' + h.num).join(' · ');
-    $('#bnow').textContent = S.making ? `Making #${S.making.num}` : S.barQ.length ? 'Counter full!' : 'Ready';
-    $('#bq').textContent = S.barQ.length ? `+${S.barQ.length} in line` : '';
-  }
-
-  function fPlaceServer() {
-    const sc = $('#fscene').getBoundingClientRect();
-    if (!sc.width) return;
-    S.srv.x = sc.width * .62; S.srv.y = sc.height * .82; S.srv.placed = true;
-  }
-  function fEl(a) {
-    if (a.type === 'table') return fTableEl(a.t);
-    if (a.type === 'pickup') return document.querySelector(`#pickups .pickup[data-i="${a.i}"]`);
-    if (a.type === 'supply') return document.querySelector(`#supplies .supply[data-k="${a.k}"]`);
-    return null;
+  /* ---------- Layout (logical units; the canvas scales to fit) ---------- */
+  function fL() {
+    const { W, H } = S.view, land = W > H * 1.2, ch = 78;
+    const qStep = Math.min(78, (H - ch - 60) / 3.3);
+    const oneRow = land && H < 380;
+    const tx0 = oneRow ? 150 : 84, tx1 = land ? W - 64 : W - 8, ty0 = ch + 34, ty1 = H - (land ? 18 : 52);
+    const nT = S.tables.length, cols = [tx0 + (tx1 - tx0) * .27, tx0 + (tx1 - tx0) * .75], rows = [ty0 + (ty1 - ty0) * .28, ty0 + (ty1 - ty0) * .8];
+    const tables = S.tables.map((t, i) => {
+      const cx = oneRow ? tx0 + (tx1 - tx0) * (i + .5) / nT : nT === 3 && i === 2 ? (cols[0] + cols[1]) / 2 : cols[i % 2];
+      const cy = oneRow ? (ty0 + ty1) / 2 + 16 : rows[Math.floor(i / 2)];
+      const tw = t.seats === 4 ? 92 : 64, th = t.seats === 4 ? 46 : 38;
+      return { cx, cy, tw, th, hit: { x: cx - tw / 2 - 20, y: cy - th / 2 - 46, w: tw + 40, h: th + 62 }, stand: { x: cx, y: cy + th / 2 + 34 } };
+    });
+    const pickW = Math.min(52, (W - 220) / 3.4);
+    const pick = [0, 1, 2].map(i => ({ x: 118 + i * (pickW + 8), y: ch - 44, w: pickW, h: 38 }));
+    const sup = Object.keys(SUPPLIES).filter(k => SUPPLIES[k].day <= S.day);
+    const supplies = sup.map((k, i) => land
+      ? { k, x: W - 46, y: ch + 24 + i * 46, w: 40, h: 40 }
+      : { k, x: W - 46 - (sup.length - 1 - i) * 46, y: H - 46, w: 40, h: 40 });
+    return {
+      W, H, land, ch, tables, pick, supplies,
+      bea: { x: 36, y: ch - 20 }, spike: { x: 68, y: ch - 50, w: 36, h: 46 },
+      bus: { x: W - 66, y: ch - 44, w: 58, h: 38 },
+      door: { x: 34, y: H - 6 },
+      queue: i => oneRow ? { x: 32 + (i % 2) * 58, y: H - 28 - Math.floor(i / 2) * 64 } : { x: 34, y: H - 36 - i * qStep },
+    };
   }
   function fPoint(a) {
-    const el = fEl(a);
-    if (!el) return null;
-    const sc = $('#fscene').getBoundingClientRect(), r = el.getBoundingClientRect();
-    const x = r.left - sc.left + r.width / 2;
-    if (a.type === 'pickup') return { x, y: r.bottom - sc.top + 56 };   // stand in front of the counter
-    if (a.type === 'supply') return { x, y: r.top - sc.top - 2 };
-    return { x: x + r.width * .3, y: r.bottom - sc.top - 4 };          // beside the table
+    const L = fL();
+    if (a.type === 'table') return L.tables[a.i].stand;
+    if (a.type === 'spike') return { x: L.spike.x + L.spike.w / 2, y: L.ch + 40 };
+    if (a.type === 'pickup') { const p = L.pick[a.i]; return { x: p.x + p.w / 2, y: L.ch + 40 }; }
+    if (a.type === 'bus') return { x: L.bus.x + L.bus.w / 2, y: L.ch + 40 };
+    if (a.type === 'supply') { const s2 = L.supplies.find(x => x.k === a.k); return s2 ? (L.land ? { x: s2.x - 18, y: s2.y + s2.h } : { x: s2.x + s2.w / 2, y: s2.y - 4 }) : null; }
+    return null;
   }
+  const seatSpots = (t, T) => T.seats === 4
+    ? [{ x: t.cx - 22, y: t.cy - t.th / 2 }, { x: t.cx + 22, y: t.cy - t.th / 2 }, { x: t.cx - t.tw / 2 - 12, y: t.cy + 6 }, { x: t.cx + t.tw / 2 + 12, y: t.cy + 6 }]
+    : [{ x: t.cx - 15, y: t.cy - t.th / 2 }, { x: t.cx + 15, y: t.cy - t.th / 2 }];
 
-  function fFrame() {
-    fAll().forEach(c => {
-      const el = document.querySelector(`[data-pat="${c.num}"]`);
-      if (el) { el.style.width = Math.max(0, c.p * 100) + '%'; el.className = c.p > .6 ? '' : c.p > .3 ? 'meh' : 'mad'; }
+  /* ---------- Drawing ---------- */
+  let FCOL = null;
+  function fColors() {
+    const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
+    FCOL = { tile: v('--tile') || '#F4FBF7', tile2: v('--wall-2') || '#A8DCC6', wood: v('--wood') || '#B8683D', woodDk: v('--wood-dk') || '#8C4A28', wall: v('--wall') || '#BFE6D5' };
+  }
+  function fDraw() {
+    const cv = $('#fcanvas'); if (!cv || !S || S.mode !== 'floor') return;
+    const cw = cv.clientWidth, chh = cv.clientHeight; if (!cw || !chh) return;
+    const land = cw > chh * 1.2;
+    const W = land ? Math.max(520, Math.min(820, 300 * cw / chh)) : 360;
+    S.view = { W, H: W * chh / cw };
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(chh * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(chh * dpr); }
+    const ctx = cv.getContext('2d'), k = cw / W * dpr;
+    ctx.setTransform(k, 0, 0, k, 0, 0); ctx.imageSmoothingEnabled = false;
+    if (!FCOL) fColors();
+    const L = fL(), { H } = S.view, t = S.t;
+    // Floor tiles
+    for (let iy = 0, y = L.ch; y < H; iy++, y += 24) for (let ix = 0, x = 0; x < W; ix++, x += 24) { ctx.fillStyle = (ix + iy) % 2 ? FCOL.tile : mix(FCOL.tile.replace('#', '').length === 6 ? FCOL.tile : '#F4FBF7', FCOL.tile2.length === 7 ? FCOL.tile2 : '#A8DCC6', .35); ctx.fillRect(x, y, 24, 24); }
+    // Counter wall + counter
+    ctx.fillStyle = FCOL.wall; ctx.fillRect(0, 0, W, L.ch - 26);
+    drawSprite(ctx, L.bea.x, L.ch - 20, { skin: '#E8B48F', hair: '#B23A2F', shirt: '#3FA37D', style: 2 }, { apron: true, seated: true });
+    ctx.fillStyle = FCOL.wood; ctx.fillRect(0, L.ch - 26, W, 26); ctx.fillStyle = FCOL.woodDk; ctx.fillRect(0, L.ch - 4, W, 4);
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(0, L.ch - 28, W, 2);
+    pxText(ctx, 'BEA', L.bea.x, L.ch - 12, 7, '#FFFDF7');
+    // Bea's progress
+    if (S.making) { ctx.fillStyle = '#2B1A14'; ctx.fillRect(L.bea.x - 16, 6, 32, 6); ctx.fillStyle = '#FFD66B'; ctx.fillRect(L.bea.x - 15, 7, 30 * Math.min(1, S.making.t / S.making.dur), 4); }
+    // Ticket spike
+    const sp = L.spike;
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(sp.x + 16, sp.y + 4, 4, sp.h - 10); ctx.fillRect(sp.x + 8, sp.y + sp.h - 8, 20, 4);
+    S.spike.slice(0, 4).forEach((tk, i) => { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sp.x + 9, sp.y + 8 + i * 7, 18, 6); ctx.fillStyle = '#2B1A14'; ctx.fillRect(sp.x + 9, sp.y + 13 + i * 7, 18, 1); });
+    pxText(ctx, 'TICKETS', sp.x + 18, sp.y - 2, 5, '#2B1A14');
+    // Pickup trays
+    L.pick.forEach((p, i) => {
+      ctx.fillStyle = 'rgba(43,26,20,.25)'; ctx.fillRect(p.x, p.y + p.h - 8, p.w, 6);
+      const tr = S.pickups[i];
+      if (!tr) return;
+      ctx.fillStyle = '#2B1A14'; ctx.fillRect(p.x, p.y + 10, p.w, p.h - 12); ctx.fillStyle = '#C9CED6'; ctx.fillRect(p.x + 2, p.y + 12, p.w - 4, p.h - 16);
+      tr.items.slice(0, 4).forEach((it, j) => drawCup(ctx, p.x + 8 + j * ((p.w - 14) / Math.max(1, Math.min(4, tr.items.length) - 1 || 1)), p.y + 20, it.cup || 'hot'));
+      ctx.fillStyle = PARTY_COLORS[tr.color]; ctx.fillRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12); ctx.fillStyle = '#2B1A14'; ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 2; ctx.strokeRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12);
+      pxText(ctx, '#' + tr.num, p.x + p.w / 2, p.y + 4, 7, '#FFFDF7');
     });
-    $('#bprog').style.width = S.making ? Math.min(1, S.making.t / S.making.dur) * 100 + '%' : '0%';
+    // Bus tub
+    const b = L.bus;
+    ctx.fillStyle = '#2B1A14'; ctx.fillRect(b.x, b.y + 8, b.w, b.h - 10); ctx.fillStyle = '#8FA3B5'; ctx.fillRect(b.x + 2, b.y + 10, b.w - 4, b.h - 14);
+    pxText(ctx, 'BUS TUB', b.x + b.w / 2, b.y + 2, 5, '#2B1A14');
+    // Supply shelf
+    L.supplies.forEach(s2 => { ctx.fillStyle = FCOL.woodDk; ctx.fillRect(s2.x, s2.y, s2.w, s2.h); ctx.fillStyle = '#2B1A14'; ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 2; ctx.strokeRect(s2.x, s2.y, s2.w, s2.h); drawSupply(ctx, s2.k, s2.x + s2.w / 2, s2.y + s2.h / 2); });
+    // Door mat
+    ctx.fillStyle = '#8C4A28'; ctx.fillRect(4, H - 12, 60, 10); pxText(ctx, 'DOOR', 34, H - 7, 5, '#FFFDF7');
+    // Tables (and seated groups)
+    S.tables.forEach((T, i) => {
+      const g = L.tables[i], seats = seatSpots(g, T), P = T.party && ['reading', 'ready', 'ordered', 'eating', 'check'].includes(T.party.state) ? T.party : null;
+      // chairs
+      seats.forEach(s2 => { ctx.fillStyle = '#2B1A14'; ctx.fillRect(s2.x - 9, s2.y - 9, 18, 14); ctx.fillStyle = FCOL.wood; ctx.fillRect(s2.x - 7, s2.y - 7, 14, 10); });
+      if (P) P.looks.slice(0, 2).forEach((lk, j) => drawSprite(ctx, seats[j].x, seats[j].y - 3, lk, { seated: true, px: 2.5 }));
+      // table top
+      ctx.fillStyle = '#2B1A14'; ctx.fillRect(g.cx - g.tw / 2 - 2, g.cy - g.th / 2 - 2, g.tw + 4, g.th + 4);
+      ctx.fillStyle = PARTY_COLORS[T.color]; ctx.fillRect(g.cx - g.tw / 2, g.cy - g.th / 2, g.tw, g.th);
+      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(g.cx - g.tw / 2 + 4, g.cy - g.th / 2 + 4, g.tw - 8, 4);
+      if (P) P.looks.slice(2).forEach((lk, j) => drawSprite(ctx, seats[2 + j].x, seats[2 + j].y + 12, lk, { seated: true, px: 2.5 }));
+      if (P && (P.state === 'eating' || P.state === 'check')) P.items.forEach((it, j) => drawCup(ctx, g.cx - (P.items.length - 1) * 8 + j * 16, g.cy + 2, it.cup || 'hot'));
+      if (T.dirty) { for (let j = 0; j < 3; j++) { ctx.fillStyle = '#2B1A14'; ctx.fillRect(g.cx - 16 + j * 12, g.cy - 2, 9, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(g.cx - 15 + j * 12, g.cy - 1, 7, 6); } }
+      pxText(ctx, T.id + (T.seats === 4 ? ' ·4' : ' ·2'), g.cx, g.cy + g.th / 2 - 7, 6, '#2B1A14');
+      if (S.sel != null && !T.party && !T.dirty) {
+        const pp = S.parties.find(x => x.id === S.sel);
+        if (pp && pp.size <= T.seats) { ctx.strokeStyle = (Math.floor(t * 4) % 2) ? '#FFD66B' : '#FFFDF7'; ctx.lineWidth = 3; ctx.strokeRect(g.cx - g.tw / 2 - 6, g.cy - g.th / 2 - 6, g.tw + 12, g.th + 12); }
+      }
+      // bubble + hearts
+      const by = g.cy - g.th / 2 - 40;
+      if (P) {
+        drawHearts(ctx, g.cx, by - 20, P.p);
+        if (P.state === 'reading') { bubble(ctx, g.cx, by, 26, 16); pxText(ctx, '...', g.cx, by + 1, 7); }
+        else if (P.state === 'ready') { bubble(ctx, g.cx, by, 26, 16, '#FFF3C2'); pxText(ctx, '!', g.cx, by + 1, 9, '#F2545B'); }
+        else if (P.state === 'ordered') { bubble(ctx, g.cx, by, 30, 16); pxText(ctx, '#' + P.num, g.cx, by + 1, 7); }
+        else if (P.state === 'eating' && P.req) { bubble(ctx, g.cx, by, 26, 18, '#FFF3C2'); drawSupply(ctx, P.req, g.cx, by); }
+        else if (P.state === 'check') { bubble(ctx, g.cx, by, 26, 16, '#E8F7F0'); pxText(ctx, '$', g.cx, by + 1, 9, '#3FA37D'); }
+      } else if (T.dirty) { bubble(ctx, g.cx, by + 10, 34, 14); pxText(ctx, 'CLEAR', g.cx, by + 11, 5); }
+    });
+    // Parties at the door and walking
+    const q = fQueue();
+    q.forEach((P, i) => {
+      const pos = L.queue(i);
+      P.x += (pos.x - P.x) * .2; P.y += (pos.y - P.y) * .2;
+      if (S.sel === P.id) { ctx.fillStyle = '#FFD66B'; ctx.fillRect(P.x - 30, P.y - 52, 60, 56); }
+      P.looks.forEach((lk, j) => drawSprite(ctx, P.x - (P.size - 1) * 7 + j * 14, P.y + (j % 2) * 3, lk, { px: 2.2 }));
+      drawHearts(ctx, P.x, P.y - 60, P.p);
+      pxText(ctx, '#' + P.num, P.x + 24, P.y - 40, 6, '#2B1A14');
+    });
+    S.parties.filter(P => P.state === 'walking' || P.state === 'leaving').forEach(P => {
+      P.looks.forEach((lk, j) => drawSprite(ctx, P.x - (P.size - 1) * 7 + j * 14, P.y, lk, { px: 2.2, bob: Math.floor(t * 8 + j) % 2 }));
+    });
+    // Server
+    const sv = S.srv, moving = sv.cur && !sv.doing;
+    drawSprite(ctx, sv.x, sv.y, { skin: '#C98D63', hair: '#2B1A14', shirt: '#2A4D73', style: 1 }, { apron: true, bob: moving ? Math.floor(t * 10) % 2 : 0 });
+    sv.hands.forEach((h, i) => {
+      const hx = sv.x - 14 + i * 16, hy = sv.y - 56;
+      if (h.type === 'tray') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(hx - 8, hy, 16, 6); ctx.fillStyle = PARTY_COLORS[h.color]; ctx.fillRect(hx - 7, hy + 1, 14, 4); }
+      else if (h.type === 'dishes') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(hx - 7, hy - 2, 14, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(hx - 6, hy - 1, 12, 6); }
+      else drawSupply(ctx, h.k, hx, hy + 2);
+    });
+    if (sv.tickets.length) { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sv.x + 10, sv.y - 40, 10, 12); ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 1.5; ctx.strokeRect(sv.x + 10, sv.y - 40, 10, 12); }
+    // Lined-up taps
+    (sv.cur ? [sv.cur] : []).concat(sv.queue).forEach((a, i) => { const pt = fPoint(a); if (!pt) return; ctx.fillStyle = '#2B1A14'; ctx.fillRect(pt.x - 8, pt.y - 72, 16, 16); ctx.fillStyle = '#F2545B'; ctx.fillRect(pt.x - 7, pt.y - 71, 14, 14); pxText(ctx, String(i + 1), pt.x, pt.y - 63, 7, '#FFFDF7'); });
+    // Floaters
+    S.floaters = S.floaters.filter(f => t - f.t0 < 1.2);
+    S.floaters.forEach(f => { const a = (t - f.t0) / 1.2; ctx.globalAlpha = 1 - a; pxText(ctx, f.text, f.x, f.y - a * 26, 7, f.color); ctx.globalAlpha = 1; });
+  }
+  function fFloat(x, y, text, color = '#2F8A66') { S.floaters.push({ x, y, text, color, t0: S.t }); }
+
+  /* ---------- Hands bar (DOM) ---------- */
+  function fRender() {
+    if (!S || S.mode !== 'floor') return;
     const sv = S.srv;
-    if (!sv.placed) fPlaceServer();
-    const el = $('#server');
-    el.style.left = sv.x + 'px'; el.style.top = sv.y + 'px';
-    const acts = (sv.cur ? [sv.cur] : []).concat(sv.queue);
-    $('#qmarks').innerHTML = acts.map((a, i) => { const pt = fPoint(a); return pt ? `<span class="qm" style="left:${pt.x}px;top:${pt.y - 70}px">${i + 1}</span>` : ''; }).join('');
+    $('#hands').innerHTML = Array.from({ length: handCap() }, (_, i) => {
+      const h = sv.hands[i];
+      if (!h) return `<button class="hand empty" type="button" data-h="${i}" tabindex="-1">Empty hand</button>`;
+      if (h.type === 'tray') return `<button class="hand" type="button" data-h="${i}"><b>#${h.num}</b>Tray ×${h.items.length}</button>`;
+      if (h.type === 'dishes') return `<button class="hand" type="button" data-h="${i}">Dirty dishes</button>`;
+      return `<button class="hand" type="button" data-h="${i}">${SUPPLIES[h.k].label}</button>`;
+    }).join('');
+    $('#ftickets').innerHTML = sv.tickets.length ? `Tickets: ${sv.tickets.map(n => '#' + n).join(' ')} <span>→ take to Bea</span>` : '';
   }
 
-  /* ---------- Server: walks to each tapped target, then acts ---------- */
-  const ACT_TIME = { table: .45, pickup: .15, supply: .2 };
+  /* ---------- Taps ---------- */
+  function fHit(e) {
+    const cv = $('#fcanvas'), r = cv.getBoundingClientRect(), k = S.view.W / r.width;
+    const x = (e.clientX - r.left) * k, y = (e.clientY - r.top) * k, L = fL();
+    const inR = q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h;
+    const qi = fQueue().findIndex((P, i) => { const p = L.queue(i); return inR({ x: p.x - 32, y: p.y - 64, w: 64, h: 66 }); });
+    if (qi >= 0) return { type: 'party', id: fQueue()[qi].id };
+    const ti = L.tables.findIndex(g => inR(g.hit)); if (ti >= 0) return { type: 'table', i: ti };
+    if (inR(L.spike)) return { type: 'spike' };
+    const pi = L.pick.findIndex(inR); if (pi >= 0) return { type: 'pickup', i: pi };
+    if (inR(L.bus)) return { type: 'bus' };
+    const su = L.supplies.find(inR); if (su) return { type: 'supply', k: su.k };
+    return null;
+  }
+  function fTap(e) {
+    if (!S || S.mode !== 'floor' || !S.running || S.paused) return;
+    const h = fHit(e); if (!h) return;
+    if (h.type === 'party') { S.sel = S.sel === h.id ? null : h.id; sfx.click(); setTimeout(tutPoke, 0); return; }
+    if (h.type === 'table' && S.sel != null) {
+      const T = S.tables[h.i], P = S.parties.find(x => x.id === S.sel);
+      if (!P || P.state !== 'door') { S.sel = null; return; }
+      if (T.party || T.dirty) { hint(`Table ${T.id} isn't free yet.`); return; }
+      if (P.size > T.seats) { hint(`Table ${T.id} only seats ${T.seats}. This group has ${P.size}.`); return; }
+      const g = fL().tables[h.i];
+      P.state = 'walking'; P.table = h.i; P.tx = g.cx; P.ty = g.cy - 10; T.party = P; S.sel = null;
+      P.match = S.day >= F_COLOR_DAY && P.color === T.color;
+      if (P.match) { fFloat(g.cx, g.cy - 50, 'COLOR MATCH!', '#D9A93A'); sfx.cash(); } else sfx.done();
+      setTimeout(tutPoke, 0); return;
+    }
+    fQueueAct(h); setTimeout(tutPoke, 0);
+  }
+  function fQueueAct(a) {
+    const sv = S.srv;
+    if (sv.queue.length + (sv.cur ? 1 : 0) >= 5) { hint('Your server already has 5 things lined up!'); return; }
+    sv.queue.push(a); sfx.click();
+  }
+
+  /* ---------- Server ---------- */
+  const ACT_TIME = { table: .45, spike: .25, pickup: .15, bus: .25, supply: .2 };
   function fServerTick(dt) {
     const sv = S.srv;
-    if (!sv.placed) fPlaceServer();
-    if (sv.doing > 0) {
-      sv.doing -= dt;
-      if (sv.doing <= 0) { sv.doing = 0; const a = sv.cur; sv.cur = null; fResolve(a); }
-      return;
-    }
+    if (!sv.placed) { sv.x = S.view.W * .55; sv.y = S.view.H * .62; sv.placed = true; }
+    if (sv.doing > 0) { sv.doing -= dt; if (sv.doing <= 0) { sv.doing = 0; const a = sv.cur; sv.cur = null; fResolve(a); } return; }
     if (!sv.cur) { sv.cur = sv.queue.shift() || null; if (!sv.cur) return; }
-    const pt = fPoint(sv.cur);
-    if (!pt) { sv.cur = null; return; }
+    const pt = fPoint(sv.cur); if (!pt) { sv.cur = null; return; }
     const dx = pt.x - sv.x, dy = pt.y - sv.y, dist = Math.hypot(dx, dy), step = walkSpeed() * dt;
     if (dist <= step) { sv.x = pt.x; sv.y = pt.y; sv.doing = ACT_TIME[sv.cur.type]; }
     else { sv.x += dx / dist * step; sv.y += dy / dist * step; }
   }
-  function fQueue(a) {
-    if (!S || S.mode !== 'floor' || !S.running || S.paused) return;
-    const sv = S.srv;
-    if (sv.queue.length + (sv.cur ? 1 : 0) >= 5) { hint('Your server already has 5 things lined up. Let them catch up!'); return; }
-    sv.queue.push(a); sfx.click();
+  function fChain(type) {
+    const ch = S.chain;
+    ch.n = ch.type === type ? ch.n + 1 : 1; ch.type = type;
+    S.bestChain = Math.max(S.bestChain, ch.n);
+    if (ch.n >= 2) {
+      const bonus = .25 * (ch.n - 1);
+      S.money += bonus; S.stats.tips += bonus;
+      fFloat(S.srv.x, S.srv.y - 80, `CHAIN x${ch.n} +${money(bonus)}`, '#D9A93A');
+    }
   }
-
   function fResolve(a) {
     if (!a) return;
+    const sv = S.srv, L = fL(), cap = handCap();
+    if (a.type === 'spike') {
+      if (!sv.tickets.length) { hint('No order tickets to drop off. Take an order first.'); return; }
+      sv.tickets.forEach(n => { const P = S.parties.find(x => x.num === n && x.state === 'ordered'); if (P) S.spike.push({ num: n, items: P.items, color: P.color }); });
+      sv.tickets = []; fChain('ticket'); sfx.done(); fRender(); return;
+    }
     if (a.type === 'pickup') {
-      const pk = S.pickups[a.i];
-      if (!pk || pk.num !== a.num) { hint(`Order #${a.num} isn't on the counter anymore.`); return; }
-      if (S.hands.length >= handCap()) { hint('Your hands are full! Deliver something first, or tap an item in your hands to drop it.'); return; }
-      S.hands.push({ type: 'item', num: pk.num, item: pk.item, stale: pk.stale }); S.pickups[a.i] = null;
-      sfx.click(); fRender(); return;
+      const tr = S.pickups[a.i];
+      if (!tr) { hint('Nothing on that part of the counter.'); return; }
+      if (sv.hands.length >= cap) { hint('Your hands are full! Deliver something first.'); return; }
+      sv.hands.push({ type: 'tray', ...tr }); S.pickups[a.i] = null; fChain('pickup'); sfx.click(); fRender(); return;
+    }
+    if (a.type === 'bus') {
+      const n = sv.hands.filter(h => h.type === 'dishes').length;
+      if (!n) { hint('Bring dirty dishes here after you clear a table.'); return; }
+      sv.hands = sv.hands.filter(h => h.type !== 'dishes'); S.stats.bussed += n; fChain('bus'); sfx.done(); fRender(); return;
     }
     if (a.type === 'supply') {
-      if (S.hands.length >= handCap()) { hint('Your hands are full! Deliver something first.'); return; }
-      S.hands.push({ type: 'supply', k: a.k }); sfx.click(); fRender(); return;
+      if (sv.hands.length >= cap) { hint('Your hands are full!'); return; }
+      sv.hands.push({ type: 'supply', k: a.k }); sfx.click(); fRender(); return;
     }
-    const T = S.tables[a.t];
-    if (!T) return;
-    if (T.dirty) { fCollect(a.t); return; }
-    const c = T.cust;
-    if (!c) { hint(`Table ${T.id} is empty. Tap a customer at the door, then this table, to seat them.`); return; }
-    if (c.state === 'ready') { fTakeOrder(c); return; }
-    if (c.state === 'changed') { fUpdateOrder(c); return; }
-    if (c.state === 'waiting') {
-      const hi = S.hands.findIndex(h => h.type === 'item' && h.num === c.num && !h.stale);
-      if (hi >= 0) { fDeliver(a.t, hi); return; }
-      const other = S.hands.find(h => h.type === 'item');
-      if (other) { fReject(a.t, other.num === c.num ? "That's my old order!" : `I'm #${c.num}, that's #${other.num}!`); return; }
-      hint(`#${c.num} is waiting on their ${c.item.name.toLowerCase()}. Grab #${c.num} from the counter when it's up.`); return;
+    const T = S.tables[a.i], g = L.tables[a.i], P = T.party;
+    if (T.dirty) {
+      if (sv.hands.length >= cap) { hint('Free a hand to clear the dishes.'); return; }
+      T.dirty = false; sv.hands.push({ type: 'dishes' }); fChain('clear'); sfx.click(); fRender(); return;
     }
-    if (c.state === 'enjoying') {
-      if (c.req) {
-        const hi = S.hands.findIndex(h => h.type === 'supply' && h.k === c.req);
-        if (hi >= 0) {
-          S.hands.splice(hi, 1); c.req = null; c.reqs++; S.stats.requests++; c.p = Math.min(1, c.p + .2);
-          floater(fTableEl(a.t), 'Thank you!', 'combo'); sfx.done(); fRender(); return;
-        }
-        hint(`They asked for ${SUPPLIES[c.req].label.toLowerCase()}. Grab it from the supply shelf.`); return;
+    if (!P) { hint(`Table ${T.id} is empty. Tap a group at the door, then a table, to seat them.`); return; }
+    if (P.state === 'ready') { P.state = 'ordered'; P.p = Math.min(1, P.p + .1); sv.tickets.push(P.num); fChain('order'); sfx.click(); fRender(); return; }
+    if (P.state === 'ordered') {
+      const hi = sv.hands.findIndex(h => h.type === 'tray' && h.num === P.num);
+      if (hi >= 0) {
+        sv.hands.splice(hi, 1); P.state = 'eating'; P.timer = S.tut ? 3 : 7 + Math.random() * 2; P.p = Math.min(1, P.p + .15);
+        S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak);
+        if (!S.tut && S.day >= F_REQ_DAY && Math.random() < .45) P.reqAt = P.timer - (1.5 + Math.random() * 2);
+        fChain('serve'); fFloat(g.cx, g.cy - 50, 'RIGHT ORDER!'); sfx.done(); fRender(); return;
       }
-      hint(`#${c.num} is enjoying their ${c.item.name.toLowerCase()}.`); return;
+      const other = sv.hands.find(h => h.type === 'tray');
+      if (other) { P.p = Math.max(.02, P.p - .25); S.streak = 0; S.stats.wrong++; fFloat(g.cx, g.cy - 50, `WE'RE #${P.num}!`, '#F2545B'); sfx.bad(); return; }
+      hint(sv.tickets.includes(P.num) ? `You still have #${P.num}'s ticket. Take it to Bea's ticket spike.` : `#${P.num}'s order is being made. Grab the #${P.num} tray when it's up.`); return;
     }
-    if (c.state === 'reading') hint(`#${c.num} is still reading the menu.`);
+    if (P.state === 'eating') {
+      if (P.req) {
+        const hi = sv.hands.findIndex(h => h.type === 'supply' && h.k === P.req);
+        if (hi >= 0) { sv.hands.splice(hi, 1); P.req = null; P.reqs++; S.stats.requests++; P.p = Math.min(1, P.p + .2); fFloat(g.cx, g.cy - 50, 'THANK YOU!'); sfx.done(); fRender(); return; }
+        hint(`They asked for ${SUPPLIES[P.req].label.toLowerCase()}. Grab it from the supply shelf.`); return;
+      }
+      hint(`#${P.num} is enjoying their order.`); return;
+    }
+    if (P.state === 'check') { fCollect(a.i); return; }
+    // Still deciding: wait at the table instead of wasting the trip
+    if (P.state === 'reading' || P.state === 'walking') { sv.cur = a; sv.doing = .25; }
   }
-
-  function fTakeOrder(c) {
-    c.state = 'waiting'; c.p = Math.min(1, c.p + .1);
-    S.barQ.push({ num: c.num, item: c.item, stale: false });
-    if (!S.tut && S.day >= F_CHANGE_DAY && Math.random() < .25) c.changeAt = S.t + 2 + Math.random() * 3;
-    sfx.click(); fRender();
-  }
-  function fChange(c) {
-    c.next = rnd(FMENU.filter(x => x.day <= S.day && x.name !== c.item.name));
-    c.state = 'changed'; c.changeAt = null;
-    // Anything already made for this number is now the old order
-    S.barQ.forEach(t => { if (t.num === c.num) t.stale = true; });
-    if (S.making && S.making.num === c.num) S.making.stale = true;
-    S.pickups.forEach(pk => { if (pk && pk.num === c.num) pk.stale = true; });
-    S.hands.forEach(h => { if (h.num === c.num) h.stale = true; });
-    beep(700, .1, 'triangle', .05, 200);
-  }
-  function fUpdateOrder(c) {
-    c.item = c.next; c.next = null; c.state = 'waiting'; c.p = Math.min(1, c.p + .1);
-    S.barQ = S.barQ.filter(t => t.num !== c.num);
-    S.pickups = S.pickups.map(pk => pk && pk.num === c.num ? null : pk);
-    S.hands = S.hands.filter(h => h.num !== c.num);
-    S.barQ.push({ num: c.num, item: c.item, stale: false });
-    hint(`Updated #${c.num} to ${c.item.name}. The old one went in the bin.`, true);
-    sfx.click(); fRender();
-  }
-  function fDeliver(ti, hi) {
-    const c = S.tables[ti].cust;
-    S.hands.splice(hi, 1);
-    c.state = 'enjoying'; c.timer = S.tut ? 4 : 7 + Math.random() * 2; c.p = Math.min(1, c.p + .15);
-    S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak);
-    if (!S.tut && S.day >= F_REQ_DAY && Math.random() < .45) c.reqAt = c.timer - (1.5 + Math.random() * 2);
-    floater(fTableEl(ti), S.streak >= 2 ? `✓ Combo ×${S.streak}` : '✓ Right order!', 'combo');
-    sfx.done(); fRender(); renderHUD();
-  }
-  function fReject(ti, msg) {
-    const c = S.tables[ti].cust;
-    c.p = Math.max(.02, c.p - .25); S.streak = 0; S.stats.wrong++;
-    const el = fTableEl(ti);
-    if (el) { el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong'); floater(el, msg, 'bad'); }
-    sfx.bad(); renderHUD();
-  }
-  function fLeave(ti) {
-    const T = S.tables[ti], c = T.cust;
-    const sale = c.item.price;
-    let rate = 0.05 + 0.20 * Math.max(0, c.p) + 0.03 * c.reqs + 0.01 * Math.min(Math.max(S.streak - 1, 0), 5);
-    if (c.kind === 'regular') rate += 0.03 * hearts(c.who);
+  function fCollect(i) {
+    const T = S.tables[i], P = T.party, g = fL().tables[i];
+    const sale = Math.round(P.items.reduce((s2, it) => s2 + it.price, 0) * 100) / 100;
+    let rate = .05 + .2 * Math.max(0, P.p) + .03 * P.reqs + (P.match ? .05 : 0);
+    if (P.kind === 'regular') rate += .03 * hearts(P.who);
     let tip = sale * rate * tipMult() * difficulty().pay;
-    if (c.kind === 'critic') { tip += 10; S.stats.critics++; }
-    if (c.kind === 'regular') { S.stats.regulars++; SAVE.regs[c.who] = (SAVE.regs[c.who] || 0) + 1; }
-    T.dirty = { sale: Math.round(sale * 100) / 100, tip: Math.round(tip * 100) / 100 };
-    T.cust = null; S.stats.served++;
-    fRender();
+    if (P.kind === 'critic') { tip += 10; S.stats.critics++; }
+    if (P.kind === 'regular') { S.stats.regulars++; SAVE.regs[P.who] = (SAVE.regs[P.who] || 0) + 1; }
+    tip = Math.round(tip * 100) / 100;
+    S.money += sale + tip; S.stats.sales += sale; S.stats.tips += tip; S.stats.served++; S.stats.people += P.size;
+    fFloat(g.cx, g.cy - 56, '+' + money(sale + tip)); fFloat(g.cx, g.cy - 40, money(tip) + ' TIP', '#D9A93A');
+    fChain('check'); sfx.cash();
+    T.party = null; T.dirty = true; P.state = 'leaving'; P.x = g.cx; P.y = g.cy + 20;
+    renderHUD();
   }
-  function fCollect(ti) {
-    const T = S.tables[ti], { sale, tip } = T.dirty;
-    T.dirty = null;
-    S.money += sale + tip; S.stats.sales += sale; S.stats.tips += tip;
-    fRender();
-    const el = fTableEl(ti);
-    floater(el, '+' + money(sale + tip)); floater(el, `${money(tip)} tip`, 'combo', 22);
-    sfx.cash(); renderHUD();
-  }
-  function fWalkout(c, fromQueue) {
+  function fWalkout(P) {
     S.stats.missed++; S.streak = 0;
-    if (fromQueue) {
-      S.queue = S.queue.filter(x => x !== c);
-      if (S.selQ === c.num) S.selQ = null;
-      floater($('#door'), `#${c.num} left`, 'bad');
-    } else {
-      const ti = S.tables.findIndex(t => t.cust === c);
-      const el = fTableEl(ti);
-      if (el) floater(el, c.kind === 'critic' ? 'Bad review…' : 'Walked out', 'bad');
-      S.tables[ti].cust = null;
-    }
-    S.barQ = S.barQ.filter(t => t.num !== c.num);
-    if (S.making && S.making.num === c.num) S.making.stale = true;
-    S.pickups = S.pickups.map(pk => pk && pk.num === c.num ? null : pk);
-    S.hands = S.hands.filter(h => h.num !== c.num);
-    sfx.walk(); fRender(); renderHUD();
+    if (P.table != null && S.tables[P.table].party === P) {
+      const T = S.tables[P.table], g = fL().tables[P.table];
+      fFloat(g.cx, g.cy - 50, P.kind === 'critic' ? 'BAD REVIEW...' : 'WALKED OUT', '#F2545B');
+      T.party = null; if (P.state === 'eating') T.dirty = true;
+      P.x = g.cx; P.y = g.cy + 20;
+    } else fFloat(P.x, P.y - 70, 'LEFT...', '#F2545B');
+    if (S.sel === P.id) S.sel = null;
+    S.srv.tickets = S.srv.tickets.filter(n => n !== P.num);
+    S.spike = S.spike.filter(tk => tk.num !== P.num);
+    S.pickups = S.pickups.map(tr => tr && tr.num === P.num ? null : tr);
+    S.srv.hands = S.srv.hands.filter(h => h.num !== P.num);
+    P.state = 'leaving'; sfx.walk(); fRender(); renderHUD();
   }
 
   /* ---------- Loop ---------- */
   function floorUpdate(dt) {
     S.t += dt;
-    const left = S.c.dur - S.t;
-    let changed = false;
-    if (!S.tut) {
-      if (left > 15 && S.t >= S.nextSpawn) {
-        if (S.queue.length < 3) { S.queue.push(fMakeCustomer()); changed = true; sfx.click(); S.nextSpawn = S.t + S.c.spawn * (0.75 + Math.random() * .5); }
-        else S.nextSpawn = S.t + 1;
-      }
-      for (const c of [...S.queue]) { c.p -= dt / (c.pat * 1.4); if (c.p <= 0) fWalkout(c, true); }
+    const left = S.c.dur - S.t, L = fL();
+    if (!S.tut && left > 18 && S.t >= S.nextSpawn) {
+      if (fQueue().length < 4) { S.parties.push(fMakeParty()); sfx.click(); S.nextSpawn = S.t + S.c.spawn * (.75 + Math.random() * .5); }
+      else S.nextSpawn = S.t + 1;
     }
-    S.tables.forEach((T, i) => {
-      const c = T.cust;
-      if (!c) return;
-      if (c.state === 'reading') {
-        c.timer -= dt;
-        if (c.timer <= 0) { c.state = 'ready'; changed = true; beep(1046, .08, 'sine', .04); }
-      } else if (c.state === 'enjoying') {
-        c.timer -= dt;
-        if (c.reqAt != null && !c.req && c.timer <= c.reqAt) {
-          c.req = rnd(Object.keys(SUPPLIES).filter(k => SUPPLIES[k].day <= S.day)); c.reqT = 12; c.reqAt = null; changed = true;
-          beep(880, .06, 'triangle', .04);
-        }
-        if (c.req && !S.tut) {
-          c.reqT -= dt;
-          if (c.reqT <= 0) { c.req = null; c.p = Math.max(.02, c.p - .3); floater(fTableEl(i), 'Never mind…', 'bad'); changed = true; }
-        }
-        if (c.timer <= 0 && !c.req) { fLeave(i); return; }
+    S.parties.forEach(P => {
+      if (P.state === 'walking') {
+        const dx = P.tx - P.x, dy = P.ty - P.y, d = Math.hypot(dx, dy), st = 120 * dt;
+        if (d <= st) { P.state = 'reading'; P.timer = S.tut ? 2.5 : 2.5 + Math.random() * 2; } else { P.x += dx / d * st; P.y += dy / d * st; }
+        return;
+      }
+      if (P.state === 'leaving') {
+        const dx = L.door.x - P.x, dy = L.door.y - P.y, d = Math.hypot(dx, dy), st = 130 * dt;
+        if (d <= st) P.state = 'gone'; else { P.x += dx / d * st; P.y += dy / d * st; }
+        return;
+      }
+      if (P.state === 'reading') { P.timer -= dt; if (P.timer <= 0) { P.state = 'ready'; beep(1046, .08, 'sine', .04); } }
+      if (P.state === 'eating') {
+        P.timer -= dt;
+        if (P.reqAt != null && !P.req && P.timer <= P.reqAt) { P.req = rnd(Object.keys(SUPPLIES).filter(k => SUPPLIES[k].day <= S.day)); P.reqT = 12; P.reqAt = null; beep(880, .06, 'triangle', .04); }
+        if (P.req && !S.tut) { P.reqT -= dt; if (P.reqT <= 0) { P.req = null; P.p = Math.max(.02, P.p - .3); } }
+        if (P.timer <= 0 && !P.req) { P.state = 'check'; beep(1318, .08, 'sine', .04); }
       }
       if (S.tut) return;
-      if (c.state === 'waiting' && c.changeAt != null && S.t >= c.changeAt) { fChange(c); changed = true; }
-      const drain = (c.state === 'ready' || c.state === 'changed') ? 1 : c.state === 'waiting' ? .7 : (c.state === 'enjoying' && c.req) ? .8 : 0;
-      if (drain) { c.p -= dt * drain / c.pat; if (c.p <= 0) fWalkout(c, false); }
+      const drain = P.state === 'door' ? 1 / 1.6 : P.state === 'ready' || P.state === 'check' ? 1 : P.state === 'ordered' ? .6 : P.state === 'eating' && P.req ? .8 : 0;
+      if (drain) { P.p -= dt * drain / P.pat; if (P.p <= 0) fWalkout(P); }
     });
-    // Bea the barista makes one order at a time while there's room on the counter
-    if (!S.making && S.barQ.length && S.pickups.some(x => !x)) {
-      const t = S.barQ.shift();
-      S.making = { ...t, t: 0, dur: 1.6 + .55 * t.item.steps }; changed = true;
-    }
+    S.parties = S.parties.filter(P => P.state !== 'gone');
+    if (!S.making && S.spike.length && S.pickups.some(x => !x)) { const tk = S.spike.shift(); S.making = { ...tk, t: 0, dur: 1.8 + .6 * tk.items.length }; }
     if (S.making) {
       S.making.t += dt;
       if (S.making.t >= S.making.dur) {
         const m = S.making; S.making = null;
-        if (!m.stale && fAll().some(c => c.num === m.num)) { S.pickups[S.pickups.findIndex(x => !x)] = { num: m.num, item: m.item, stale: false }; sfx.done(); }
-        changed = true;
+        if (S.parties.some(P => P.num === m.num && P.state === 'ordered')) { S.pickups[S.pickups.findIndex(x => !x)] = { num: m.num, items: m.items, color: m.color }; sfx.done(); }
       }
     }
     fServerTick(dt);
-    if (changed) fRender();
-    fFrame();
     if (S.tut) { tutTick(); return; }
     const sec = Math.ceil(left);
     if (sec !== lastSec) { lastSec = sec; renderHUD(); if (sec <= 5 && sec > 0) beep(660, .05, 'square', .03); }
@@ -2567,31 +2726,30 @@
 
   /* ---------- Days ---------- */
   function floorMenuHTML(d, collapse = false) {
-    const items = FMENU.filter(x => x.day <= d);
-    const isNew = x => x.day === d && d > 1;
-    const li = x => `<li class="${isNew(x) ? 'isnew' : ''}"><span class="rname">${fItemIcon(x)} ${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}</span><span class="rsteps"><span class="rstep">${money(x.price)}</span></span></li>`;
+    const items = FMENU.filter(x => x.day <= d), isNew = x => x.day === d && d > 1;
+    const li = x => `<li class="${isNew(x) ? 'isnew' : ''}"><span class="rname">${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}</span><span class="rsteps"><span class="rstep">${money(x.price)}</span></span></li>`;
     const all = `<ul class="recipes">${items.map(li).join('')}</ul>`;
     if (!collapse) return all;
     const fresh = items.filter(isNew);
     return `${fresh.length ? `<ul class="recipes">${fresh.map(li).join('')}</ul>` : ''}<details class="fullmenu"><summary>Full menu (${items.length} items)</summary>${all}</details>`;
   }
   function renderFloorBoard() {
-    $('#menu').innerHTML = FMENU.filter(x => x.day <= S.day).map(x => `<li><div class="row"><span>${esc(x.name)}${x.day === S.day && S.day > 1 ? '<span class="new">new!</span>' : ''}</span><span class="price">${x.price.toFixed(2)}</span></div></li>`).join('');
+    $('#menu').innerHTML = FMENU.filter(x => x.day <= S.day).map(x => `<li><div class="row"><span>${esc(x.name)}</span><span class="price">${x.price.toFixed(2)}</span></div></li>`).join('');
     $('#pastryBoard').innerHTML = '';
-    $('#boardfoot').innerHTML = 'Bea makes every order.<br>Always match the numbers!';
+    $('#boardfoot').innerHTML = 'Seat → order → ticket to Bea → serve → check → clear.';
   }
   function floorStartDay(d) {
     initAudio();
-    S = fFresh(d); lastSec = -1;
+    S = fFresh(d); lastSec = -1; fColors();
     $('#coach').hidden = true;
     fRender(); renderHUD(); renderFloorBoard();
     showCard(`
       <h2>Floor · Day ${d}</h2>
-      <p>${d === 1 ? 'Run the floor while Bea makes the drinks.' : FNEWS[d] ? 'Something new today, see below.' : 'Same floor, busier crowd.'}
+      <p>${d === 1 ? 'Run the floor while Bea makes the orders.' : FNEWS[d] ? 'Something new today, see below.' : 'Same floor, busier crowd.'}
         Goal: <b>${money(S.c.goal)}</b> in <b>${S.c.dur} seconds</b>.</p>
       ${diffPicker()}
       ${FNEWS[d] ? `<div class="unlock"><b>New: ${FNEWS[d].title}.</b> ${FNEWS[d].text}</div>` : ''}
-      <div class="unlock goal"><b>The job:</b> seat a customer · take their order when they wave · bring the <b>matching number</b> from the counter · collect the money.</div>
+      <div class="unlock goal"><b>The job:</b> seat a group · take their order · drop the ticket at Bea's spike · bring the tray with their number · collect the check · clear the dishes to the bus tub.</div>
       ${floorMenuHTML(d, d >= 3)}
       <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>`, 'chalk');
     wireDiff(() => floorStartDay(d));
@@ -2604,23 +2762,22 @@
   }
   function floorEndDay() {
     S.running = false; S.srv.queue = []; S.srv.cur = null;
-    // Money left on tables gets collected at closing
-    S.tables.forEach(T => { if (T.dirty) { S.money += T.dirty.sale + T.dirty.tip; S.stats.sales += T.dirty.sale; S.stats.tips += T.dirty.tip; T.dirty = null; } });
-    S.queue = []; S.tables.forEach(T => { T.cust = null; }); S.hands = []; S.pickups = [null, null, null, null]; S.barQ = []; S.making = null;
-    fRender(); fFrame(); renderHUD();
+    // Groups that already ate pay on the way out
+    S.tables.forEach((T, i) => { if (T.party && T.party.state === 'check') fCollect(i); });
+    S.parties = []; S.tables.forEach(T => { T.party = null; T.dirty = false; }); S.srv.hands = []; S.srv.tickets = []; S.pickups = [null, null, null]; S.spike = []; S.making = null;
+    fRender(); renderHUD();
     const ratio = S.money / S.c.goal, pass = ratio >= 1;
     const stars = pass ? (ratio >= 1.6 ? 3 : ratio >= 1.3 ? 2 : 1) : 0;
     SAVE.bank = Math.round((SAVE.bank + S.money) * 100) / 100;
     if (pass && S.day > SAVE.fbest) SAVE.fbest = S.day;
     if (pass) SAVE.fstars[S.day] = Math.max(SAVE.fstars[S.day] || 0, stars);
     const T = SAVE.tot;
-    T.shifts++; T.served += S.stats.served; T.critics += S.stats.critics; T.requests += S.stats.requests;
+    T.shifts++; T.served += S.stats.people; T.critics += S.stats.critics; T.requests += S.stats.requests;
     T.bestCombo = Math.max(T.bestCombo, S.bestStreak);
     if (S.stats.served > 0 && !S.stats.missed && !S.stats.wrong) T.perfect++;
     const stickers = checkStickers();
-    persist();
     const hs = recordScore('floor', S.day, S.money); persist();
-    showFloorResults({ hs, day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, stickers: stickers.map(x => ({ name: x.name, reward: x.reward })) });
+    showFloorResults({ hs, day: S.day, pass, stars, money: S.money, goal: S.c.goal, stats: { ...S.stats }, bestStreak: S.bestStreak, bestChain: S.bestChain, stickers: stickers.map(x => ({ name: x.name, reward: x.reward })) });
     sfx.bell();
   }
   function showFloorResults(R) {
@@ -2633,16 +2790,16 @@
         <span>Tips</span><span>${money(R.stats.tips)}</span>
         <span><b>Earned today</b></span><span>${money(R.money)}</span>
         <span>Day goal</span><span>${money(R.goal)}</span>
-        <span>Customers served</span><span>${R.stats.served}</span>
+        <span>Groups served</span><span>${R.stats.served} (${R.stats.people} people)</span>
         ${R.stats.requests ? `<span>Requests handled</span><span>${R.stats.requests}</span>` : ''}
-        <span>Wrong deliveries</span><span>${R.stats.wrong}</span>
+        <span>Wrong trays</span><span>${R.stats.wrong}</span>
         <span>Walkouts</span><span>${R.stats.missed}</span>
-        <span>Best combo</span><span>×${R.bestStreak}</span>
+        <span>Best chain</span><span>×${R.bestChain || 0}</span>
       </div>
       <p class="bank">Savings: ${money(SAVE.bank)} <span class="small">(+${money(R.money)})</span></p>
       ${R.stickers.length ? `<div class="unlock goal"><b>New sticker${R.stickers.length > 1 ? 's' : ''}!</b> ${R.stickers.map(x => `${x.name} (+${money(x.reward)})`).join(', ')}</div>` : ''}
       ${news ? `<div class="unlock"><b>Day ${next} unlocks:</b> ${news.title.toLowerCase()}</div>` : ''}
-      ${R.pass ? '' : `<p>You needed ${money(R.goal - R.money)} more. You still keep what you earned. Tip: line up several taps in a row so your server never stands still.</p>`}
+      ${R.pass ? '' : `<p>You needed ${money(R.goal - R.money)} more. You still keep what you earned. Tip: line up taps in a row and chain the same action for bonus cash.</p>`}
       ${hsBlock(R.hs, R.day)}
       <div class="btnrow">
         ${R.pass ? `<button class="big" id="nextBtn" type="button">Open Day ${next}</button><button class="big alt" id="retryBtn" type="button">Replay Day ${R.day}</button>` : `<button class="big" id="retryBtn" type="button">Retry Day ${R.day}</button>`}
@@ -2658,85 +2815,50 @@
   }
 
   /* ---------- Floor tutorial ---------- */
-  const T0 = () => S.tables[0];
+  const fRect = fn => ({ getBoundingClientRect() {
+    const c = $('#fcanvas').getBoundingClientRect(), k = c.width / S.view.W, r = fn();
+    return { left: c.left + r.x * k, top: c.top + r.y * k, right: c.left + (r.x + r.w) * k, bottom: c.top + (r.y + r.h) * k, width: r.w * k, height: r.h * k };
+  } });
+  const P1 = () => S.parties[0];
   const TUT2 = [
-    { el: () => document.querySelector('#fqueue .qc'), done: () => S.selQ != null || !!T0().cust,
-      text: 'Customer <b>#1</b> just walked in. Every customer gets a number. <b>Tap them</b> to bring them in.' },
-    { el: () => fTableEl(0), done: () => !!T0().cust,
-      text: 'Now <b>tap Table A</b> to seat them.' },
-    { el: () => fTableEl(0), done: () => T0().cust && ['waiting', 'enjoying'].includes(T0().cust.state),
-      text: () => T0().cust && T0().cust.state === 'ready' ? 'They\'re ready! <b>Tap Table A</b>. Your server walks over and takes the order.' : 'They\'re reading the menu. Wait for them to wave…' },
-    { el: () => $('#barista'), done: () => S.pickups.some(Boolean) || S.hands.length > 0,
-      text: 'Bea the barista is making order <b>#1</b>. It comes out on the counter with the customer\'s number.' },
-    { el: () => document.querySelector('#pickups .pickup:not(.empty)'), done: () => S.hands.length > 0 || (T0().cust && T0().cust.state === 'enjoying'),
-      text: 'Order <b>#1</b> is up! <b>Tap it</b> to pick it up.' },
-    { el: () => fTableEl(0), done: () => (T0().cust && T0().cust.state === 'enjoying') || !!T0().dirty,
-      text: 'Bring it to customer <b>#1</b>: <b>tap Table A</b>. Always match the numbers!' },
-    { el: () => fTableEl(0), done: () => S.stats.served >= 1 && !T0().dirty,
-      text: () => T0().dirty ? 'They left money on the table. <b>Tap Table A</b> to collect it and clean up.' : 'They\'re enjoying their drink…' },
+    { el: () => fRect(() => { const p = fL().queue(0); return { x: p.x - 32, y: p.y - 64, w: 64, h: 66 }; }), done: () => S.sel != null || (P1() && P1().table != null),
+      text: 'Group <b>#1</b> is at the door. <b>Tap them</b> to pick them up.' },
+    { el: () => fRect(() => fL().tables[0].hit), done: () => P1() && P1().table != null,
+      text: 'Now <b>tap Table A</b> to seat them. Later, matching their shirt color to the table earns bonus tips!' },
+    { el: () => fRect(() => fL().tables[0].hit), done: () => P1() && ['ordered', 'eating', 'check'].includes(P1().state),
+      text: () => P1() && P1().state === 'ready' ? 'The <b>!</b> means they\'re ready. <b>Tap Table A</b> to take their order.' : 'They\'re reading the menu…' },
+    { el: () => fRect(() => fL().spike), done: () => S.spike.length > 0 || !!S.making || S.pickups.some(Boolean) || S.srv.hands.length > 0,
+      text: 'You\'re holding their order ticket. <b>Tap the ticket spike</b> to give it to Bea.' },
+    { el: () => fRect(() => fL().pick[0]), done: () => S.srv.hands.some(h => h.type === 'tray') || (P1() && ['eating', 'check'].includes(P1().state)),
+      text: () => S.pickups.some(Boolean) ? 'Tray <b>#1</b> is up! <b>Tap it</b> to pick it up.' : 'Bea is making order #1…' },
+    { el: () => fRect(() => fL().tables[0].hit), done: () => P1() && ['eating', 'check'].includes(P1().state) || S.money > 0,
+      text: 'Bring it to <b>Table A</b>. Always match the number on the tray!' },
+    { el: () => fRect(() => fL().tables[0].hit), done: () => S.money > 0,
+      text: () => P1() && P1().state === 'check' ? 'The <b>$</b> means they want the check. <b>Tap Table A</b> to collect.' : 'They\'re enjoying it…' },
+    { el: () => fRect(() => fL().tables[0].hit), done: () => S.srv.hands.some(h => h.type === 'dishes') || S.stats.bussed > 0,
+      text: 'Dirty dishes! <b>Tap Table A</b> to clear them so the next group can sit.' },
+    { el: () => fRect(() => fL().bus), done: () => S.stats.bussed > 0,
+      text: '<b>Tap the bus tub</b> to drop off the dishes.' },
     { el: () => $('#hands'), next: 'Start my shift!',
-      text: 'That\'s the job: <b>seat → take order → bring the matching number → collect</b>. What you\'re carrying shows here. Tip: tap several things in a row and your server does them in order.' },
+      text: 'That\'s the job: <b>seat → order → ticket to Bea → serve → check → clear</b>. Doing the same action back to back earns <b>chain bonuses</b>!' },
   ];
   const tutSteps = () => S.mode === 'floor' ? TUT2 : TUT;
   function fStartTut() {
     S.tut = { i: 0 };
-    const look = randomLook(); look.acc = 'none';
-    const c = fMakeCustomer(FMENU.find(x => x.name === 'Latte'));
-    c.look = look;
-    S.queue.push(c);
-    fRender();
+    S.parties.push(fMakeParty({ size: 2, color: 'red', item: FMENU.find(x => x.name === 'Latte') }));
     $('#coach').hidden = false;
     showTutStep();
   }
-
-  /* ---------- Floor taps ---------- */
-  const floorOn = () => S && S.mode === 'floor' && S.running && !S.paused;
-  $('#fqueue').addEventListener('click', e => {
-    const b = e.target.closest('.qc');
-    if (!b || !floorOn()) return;
-    const n = +b.dataset.n;
-    S.selQ = S.selQ === n ? null : n;
-    sfx.click(); fRender(); setTimeout(tutPoke, 0);
-  });
-  $('#ftables').addEventListener('click', e => {
-    const b = e.target.closest('.ftable');
-    if (!b || !floorOn()) return;
-    const i = +b.dataset.t, T = S.tables[i];
-    if (S.selQ != null) {
-      if (T.cust) { hint(`Table ${T.id} is taken. Pick an open table.`); return; }
-      if (T.dirty) { hint(`Collect Table ${T.id} first. Tap a customer again to unselect, then tap the table.`); return; }
-      const qi = S.queue.findIndex(c => c.num === S.selQ);
-      if (qi < 0) { S.selQ = null; fRender(); return; }
-      const c = S.queue.splice(qi, 1)[0];
-      c.state = 'reading'; c.timer = S.tut ? 2.5 : 2.5 + Math.random() * 1.5;
-      T.cust = c; S.selQ = null;
-      sfx.done(); fRender(); setTimeout(tutPoke, 0);
-      return;
-    }
-    fQueue({ type: 'table', t: i }); setTimeout(tutPoke, 0);
-  });
-  $('#pickups').addEventListener('click', e => {
-    const b = e.target.closest('.pickup:not(.empty)');
-    if (!b || !floorOn()) return;
-    const pk = S.pickups[+b.dataset.i];
-    if (pk) fQueue({ type: 'pickup', i: +b.dataset.i, num: pk.num });
-  });
-  $('#supplies').addEventListener('click', e => {
-    const b = e.target.closest('.supply');
-    if (b && floorOn()) fQueue({ type: 'supply', k: b.dataset.k });
-  });
+  $('#fcanvas').addEventListener('pointerdown', fTap);
   $('#hands').addEventListener('click', e => {
     const b = e.target.closest('.hand:not(.empty)');
-    if (!b || !floorOn()) return;
-    const h = S.hands.splice(+b.dataset.h, 1)[0];
+    if (!b || !S || S.mode !== 'floor' || !S.running || S.paused) return;
+    const i = +b.dataset.h, h = S.srv.hands[i];
     if (!h) return;
-    if (h.type === 'supply') hint(`Put the ${SUPPLIES[h.k].label.toLowerCase()} back.`);
-    else {
-      // If that customer is still waiting, Bea remakes it
-      const c = fAll().find(x => x.num === h.num && x.state === 'waiting');
-      if (c && !h.stale) { S.barQ.push({ num: h.num, item: h.item, stale: false }); hint(`Dropped #${h.num}. Bea will make it again.`); }
-      else hint(`Dropped #${h.num}.`);
-    }
+    if (h.type === 'dishes') { hint('Dishes go in the bus tub, not on the floor!'); return; }
+    S.srv.hands.splice(i, 1);
+    if (h.type === 'tray' && S.parties.some(P => P.num === h.num && P.state === 'ordered')) { S.spike.push({ num: h.num, items: h.items, color: h.color }); hint(`Dropped #${h.num}. Bea will make it again.`); }
+    else hint(h.type === 'tray' ? `Dropped #${h.num}.` : `Put the ${SUPPLIES[h.k].label.toLowerCase()} back.`);
     beep(220, .12, 'triangle', .06, -80); fRender();
   });
 
@@ -2756,21 +2878,19 @@
       cancelAnimationFrame(kRAF); kLast = performance.now(); kRAF = requestAnimationFrame(kLoop);
     } else if (fl) {
       // A live-looking floor behind the title card
-      S = fFresh(1);
-      const a = fMakeCustomer(FMENU[2]); a.state = 'waiting'; S.tables[0].cust = a;
-      S.pickups[0] = { num: a.num, item: a.item, stale: false };
-      const b = fMakeCustomer(FMENU[0]); b.state = 'ready'; S.tables[2].cust = b;
-      S.queue.push(fMakeCustomer(FMENU[1]));
+      S = fFresh(1); fColors();
+      const a = fMakeParty({ size: 2, color: 'red' }); a.state = 'ordered'; a.table = 0; S.tables[0].party = a;
+      S.pickups[0] = { num: a.num, items: a.items, color: a.color };
+      const b2 = fMakeParty({ size: 1, color: 'blue' }); b2.state = 'ready'; b2.table = 1; S.tables[1].party = b2;
+      S.parties.push(a, b2, fMakeParty({ size: 2, color: 'yellow' }));
+      S.tables[2].dirty = true;
       fRender(); renderFloorBoard(); renderHUD();
-      requestAnimationFrame(() => { S.srv.placed = false; fFrame(); });
     } else {
       S = freshState(1);
       S.cups[0] = { base: 'hot', items: ['shot', 'milk'], busy: null };
       buildStations(); renderMenu(); renderCups(); renderOven(); renderHUD();
     }
   }
-  $('#bsprite').innerHTML = fPerson(BEA_LOOK);
-  document.querySelector('#server .srvbody').innerHTML = fPerson(SERVER_LOOK);
 
   /* ---------- Arrange stations: tap two to swap ---------- */
   function stationOrder() {
@@ -3021,7 +3141,7 @@
     mix:     { name: 'Mix', teach: 'Stir until no dry flour is left. A rough, lumpy "shaggy" dough is exactly right at this point.' },
     knead:   { name: 'Knead', teach: 'Kneading builds gluten, the stretchy web that traps gas so bread can rise. By hand it takes about 8–10 minutes.' },
     rise:    { name: 'Rise', teach: 'Yeast eats sugars in the flour and makes gas. Let the dough rise somewhere warm until doubled, usually 1–1½ hours.' },
-    shape:   { name: 'Shape & score', teach: 'A tight ball holds its shape in the oven. The slash on top tells the loaf where to open up as it grows.' },
+    shape:   { name: 'Shape', teach: 'A tight ball holds its shape in the oven. The slash on top tells the loaf where to open up as it grows.' },
     bake:    { name: 'Bake', teach: 'Bake at 450°F (230°C) for 30–35 minutes, until deep golden. The inside should reach 200–210°F (93–99°C).' },
   };
 
