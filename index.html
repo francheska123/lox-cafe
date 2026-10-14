@@ -244,7 +244,7 @@
   .cupholder { position: relative; }
   .cupholder.hot::after { content: ""; position: absolute; right: -13px; top: 12px; width: 12px; height: 22px; border: 3px solid var(--ink); border-left: 0; border-radius: 0 12px 12px 0; }
   .layer { display: block; width: 100%; flex: 0 0 auto; height: 13%; background: var(--c); }
-  .layer.top { height: 16%; border-radius: 12px 12px 0 0; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }
+  .layer.top { height: 26%; border-radius: 14px 14px 0 0; border-top: 2.5px solid var(--ink); box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }
   .emptycup { width: 48px; height: 58px; border: 3px dashed #BDAEA5; border-radius: 6px 6px 16px 16px; display: grid; place-items: center; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.1; }
 
   .oven { flex: 1 1 190px; background: #3B2E2A; border: 3px solid var(--ink); border-radius: 16px; padding: 6px 8px 8px; box-shadow: 0 4px 0 var(--ink); display: flex; flex-direction: column; gap: 5px; min-width: 0; }
@@ -606,6 +606,11 @@
   .stk.have .badge { background: var(--c); color: #fff; border-color: var(--ink); -webkit-text-stroke: .5px var(--ink); transform: rotate(-8deg); }
   .stk .sp { font-size: 12px; font-variant-numeric: tabular-nums; }
   .hint.good:not(:empty) { color: var(--mint); }
+  .admin { display: grid; gap: 8px; margin-bottom: 14px; text-align: left; }
+  .arow { display: flex; align-items: center; gap: 10px; justify-content: space-between; border: 2px solid #E6DCD4; border-radius: 12px; padding: 8px 10px; font-size: 14px; }
+  .arow input { width: 70px; font: inherit; font-size: 16px; border: 2.5px solid var(--ink); border-radius: 8px; padding: 4px 6px; user-select: text; }
+  .arow .big { font-size: 14px; padding: 6px 12px; white-space: nowrap; }
+  .big.danger { color: var(--cherry); border-color: var(--cherry); }
   .arcade { font-family: "Press Start 2P", ui-monospace, Menlo, monospace; }
   .hsnew { display: grid; justify-items: center; gap: 6px; background: #1E1630; color: #FFD66B; border: 3px solid var(--ink); border-radius: 14px; padding: 12px; margin-bottom: 14px; }
   .hsnew label { font-size: 12px; color: #EDE6FF; }
@@ -722,6 +727,9 @@
     .case .station:not(:disabled) { background: #FBEBD9; }
     .station { padding: 7px 0 6px; font-size: min(12.5px, 3.2vw); letter-spacing: -.01em; white-space: nowrap; gap: 4px; border-width: 2.5px; border-radius: 11px; min-height: 62px; box-shadow: 0 2px 0 rgba(0,0,0,.45); }
     .station .ic { width: 27px; height: 27px; border-width: 2.5px; }
+    .pad.dense .station { font-size: min(10.5px, 2.7vw); letter-spacing: -.02em; min-height: 58px; }
+    .pad.dense .station .ic { width: 23px; height: 23px; }
+    .pad.dense .station .pz.mini { zoom: .6; }
     .station .t, .case .cl { display: none; }
     .station:disabled { display: none; }
     .station .pz.mini { transform: none; zoom: .72; margin: 0; }
@@ -844,19 +852,29 @@
     hot:     { label: 'Hot cup', m: 'Hot',       short: 'Hot',     c: '#FFFFFF', cup: true, day: 1 },
     iced:    { label: 'Iced cup', m: 'Iced',      short: 'Iced',    c: '#CFEFFF', cup: true, day: 3 },
     shot:    { label: 'Espresso',      short: 'Esp',     c: '#4A2A1A', day: 1, dark: true, station: 'machine', note: 'espresso machine' },
-    water:   { label: 'Water',         short: 'Water',   c: '#C9A27E', day: 1 },
+    water:   { label: 'Water',         short: 'Water',   c: '#A9DCF7', day: 1 },
     milk:    { label: 'Milk',          short: 'Milk',    c: '#FFF3DC', tag: '#CFE6FF', ib: 'linear-gradient(#FFFFFF 0 46%, #8EC5F2 46%)', day: 1, station: 'steamer', time: 1.0, note: 'steam wand' },
     oat:     { label: 'Oat milk', m: 'Oat',      short: 'Oat',     c: '#EAD7A8', day: 7, station: 'steamer', time: 1.0, note: 'steam wand' },
-    foam:    { label: 'Foam',          short: 'Foam',    c: '#FFFFFF', tag: '#F1E4CF', ib: 'radial-gradient(circle at 30% 34%, #C2A98B 0 2.5px, transparent 3px), radial-gradient(circle at 66% 54%, #C2A98B 0 3px, transparent 3.5px), radial-gradient(circle at 38% 74%, #C2A98B 0 2px, transparent 2.5px), #FFFDF5', day: 2, top: true },
+    foam:    { label: 'Foam',          short: 'Foam',    c: '#FFFFFF', tag: '#F1E4CF', lb: 'radial-gradient(circle at 25% 40%, #E8D9C2 0 3px, transparent 3.5px), radial-gradient(circle at 60% 60%, #E8D9C2 0 4px, transparent 4.5px), radial-gradient(circle at 80% 30%, #E8D9C2 0 2.5px, transparent 3px), #FFFDF5', ib: 'radial-gradient(circle at 30% 34%, #C2A98B 0 2.5px, transparent 3px), radial-gradient(circle at 66% 54%, #C2A98B 0 3px, transparent 3.5px), radial-gradient(circle at 38% 74%, #C2A98B 0 2px, transparent 2.5px), #FFFDF5', day: 2, top: true },
     vanilla: { label: 'Vanilla',       short: 'Van',     c: '#FBE7A1', day: 4 },
     caramel: { label: 'Caramel',       short: 'Caramel', c: '#D98B2B', day: 5 },
     choc:    { label: 'Chocolate', m: 'Choc',     short: 'Choc',    c: '#6B3B24', day: 6, dark: true },
     chai:    { label: 'Chai',          short: 'Chai',    c: '#C68A52', day: 11 },
     matcha:  { label: 'Matcha',        short: 'Matcha',  c: '#8DBF5A', day: 13 },
     pumpkin: { label: 'Pumpkin spice', m: 'Pumpkin', short: 'Pumpkin', c: '#E8833A', day: 16 },
-    whip:    { label: 'Whip',          short: 'Whip',    c: '#FFFFFF', tag: '#FFD3E5', ib: 'repeating-linear-gradient(135deg, #FFFFFF 0 3px, #F7A1C4 3px 5px)', day: 6, top: true },
+    whip:    { label: 'Whip',          short: 'Whip',    c: '#FFFFFF', tag: '#FFD3E5', ib: 'repeating-linear-gradient(135deg, #FFFFFF 0 3px, #F7A1C4 3px 5px)', lb: 'repeating-linear-gradient(135deg, #FFFFFF 0 5px, #FFC0D9 5px 8px)', day: 6, top: true },
   };
-  const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip'];
+  const EXTRA_ING = {
+    tea:        { label: 'Black tea',    m: 'Tea',      short: 'Tea',      c: '#B5651D', day: 21, dark: true },
+    boba:       { label: 'Boba pearls',  m: 'Boba',     short: 'Boba',     c: '#3A2418', day: 21, tag: '#E8D2B8', ib: 'radial-gradient(circle at 30% 35%, #3A2418 0 3px, transparent 3.5px), radial-gradient(circle at 66% 42%, #3A2418 0 3px, transparent 3.5px), radial-gradient(circle at 46% 72%, #3A2418 0 3px, transparent 3.5px), #F3E3D0', lb: 'radial-gradient(circle at 20% 50%, #3A2418 0 3.5px, transparent 4px), radial-gradient(circle at 50% 40%, #3A2418 0 3.5px, transparent 4px), radial-gradient(circle at 80% 55%, #3A2418 0 3.5px, transparent 4px), #E9D9C4' },
+    taro:       { label: 'Taro',         short: 'Taro',     c: '#B9A0D8', day: 22 },
+    brownsugar: { label: 'Brown sugar',  m: 'Br. sugar', short: 'Br. sugar', c: '#7A3E12', day: 23, dark: true },
+    strawberry: { label: 'Strawberry',   m: 'Berry',    short: 'Berry',    c: '#F25C7A', day: 24, dark: true },
+    lemonade:   { label: 'Lemonade',     short: 'Lemonade', c: '#FFF27A', day: 25 },
+    mango:      { label: 'Mango',        short: 'Mango',    c: '#FFB03B', day: 26 },
+  };
+  Object.assign(ING, EXTRA_ING);
+  const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip','tea','boba','taro','brownsugar','strawberry','lemonade','mango'];
 
   // One new idea per day. Days 10+ keep adding recipes so later days stay fresh.
   const DRINKS = [
@@ -876,6 +894,15 @@
     { name: 'Pumpkin Spice Latte', cup: 'hot',  items: ['shot','pumpkin','milk','whip'],  price: 6.75, day: 16 },
     { name: 'Iced Chai',           cup: 'iced', items: ['chai','milk'],                   price: 5.75, day: 18 },
     { name: 'Iced Matcha',         cup: 'iced', items: ['matcha','milk'],                 price: 6.25, day: 19 },
+    { name: 'Classic Milk Tea',    cup: 'iced', items: ['tea','milk','boba'],             price: 5.75, day: 21 },
+    { name: 'Taro Milk Tea',       cup: 'iced', items: ['taro','milk','boba'],            price: 6.25, day: 22 },
+    { name: 'Brown Sugar Boba',    cup: 'iced', items: ['brownsugar','milk','boba'],      price: 6.50, day: 23 },
+    { name: 'Strawberry Refresher', cup: 'iced', items: ['strawberry','water'],           price: 5.25, day: 24 },
+    { name: 'Strawberry Lemonade', cup: 'iced', items: ['strawberry','lemonade'],         price: 5.75, day: 25 },
+    { name: 'Mango Refresher',     cup: 'iced', items: ['mango','water'],                 price: 5.25, day: 26 },
+    { name: 'Mango Lemonade',      cup: 'iced', items: ['mango','lemonade'],              price: 5.75, day: 27 },
+    { name: 'Matcha Milk Tea',     cup: 'iced', items: ['matcha','milk','boba'],          price: 6.50, day: 28 },
+    { name: 'Iced Tea Lemonade',   cup: 'iced', items: ['tea','lemonade'],                price: 4.75, day: 29 },
   ];
 
   const PASTRY_BASE = {
@@ -898,6 +925,9 @@
     15: { title: 'The food critic', text: 'Beret and sunglasses. Short on patience, but a happy critic leaves a $10 review bonus.' },
     18: { title: 'Extra pumps', text: 'Customers start asking for 2 pumps of syrup. Add the vanilla or caramel twice.' },
     19: { title: 'No whip', text: 'Some customers want their drink without whipped cream. Leave the Whip off.' },
+    21: { title: 'Boba!', text: 'Bubble tea arrives: black tea, milk and chewy boba pearls, served iced.' },
+    24: { title: 'Refreshers', text: 'Fruity iced refreshers: a fruit base plus water.' },
+    25: { title: 'Lemonade', text: 'Refreshers can come with lemonade instead of water. Read the ticket: water or lemonade?' },
     20: { title: 'Add a syrup', text: 'Custom lattes! "+Vanilla" or "+Caramel" means add one pump of that syrup.' },
     17: { title: 'Daily specials', text: 'One drink a day is the special (★). It costs 20% more and gets ordered more.' },
   };
@@ -921,7 +951,8 @@
   ];
   // Upgrades with levels: [price, what that level does]
   const TIERS = [
-    { id: 'grinder',   name: 'Grinder',         levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s']] },
+    { id: 'grinder',   name: 'Grinder',         levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s'], [260, 'Espresso pulls in 0.45s'], [400, 'Espresso pulls in 0.3s (5× faster)']] },
+    { id: 'wand',      name: 'Steam wand pressure', levels: [[45, 'Milk steams in 0.8s'], [100, 'Milk steams in 0.6s'], [180, 'Milk steams in 0.4s'], [300, 'Milk steams in 0.2s (5× faster)']] },
     { id: 'chairs',    name: 'Comfy seating',   levels: [[50, 'Customers wait 10% longer'], [110, 'Customers wait 20% longer'], [200, 'Customers wait 30% longer']] },
     { id: 'tipsign',   name: 'Tip jar',         levels: [[75, 'Customers tip 10% more'], [150, 'Customers tip 20% more'], [260, 'Customers tip 30% more']] },
     { id: 'sneakers',  name: 'Comfy sneakers (Floor)', levels: [[40, 'Your server walks 15% faster'], [90, 'Your server walks 30% faster']] },
@@ -1012,9 +1043,19 @@
       spawn: Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)) * M.spawn,
       patience: Math.max(22, 30 - (d - 1)) * M.patience,
       perStep: 4,
-      goal: Math.round(base * D / 90 * M.goal * .75),
+      goal: goalFor(d, D, M, Math.max(d >= 20 ? 4.7 : 5.2, 8.5 - 0.4 * (d - 1)) * M.spawn, base),
     };
   };
+  // The goal is the smaller of the old curve and ~55% of what a near-perfect shift (checked with a bot;
+  // the estimate below runs ~30% low, hence the .8), so three stars stay possible on long, busy days.
+  function goalFor(d, D, M, spawn, base) {
+    const drinks = DRINKS.filter(x => x.day <= d), pk = Object.values(PASTRY_BASE).filter(x => x.day <= d);
+    const avgDrink = drinks.reduce((a, x) => a + x.price, 0) / drinks.length;
+    const avgPastry = pk.length ? pk.reduce((a, x) => a + x.price, 0) / pk.length : 0;
+    const perfect = Math.floor((D - 8) / spawn) * (avgDrink + .35 * avgPastry) * 1.15;
+    const capMult = { Easy: .85, Medium: 1, Hard: 1.12 }[M.label] || 1;
+    return Math.round(Math.min(base * D / 90 * M.goal * .75, perfect * .8 * capMult));
+  }
 
   /* ---------- Save data (this browser only) ---------- */
   let SAVE;
@@ -1089,14 +1130,14 @@
   const unlockedDrinks = d => allDrinks().filter(x => x.day <= d);
   const unlockedPastries = d => { const P = pastries(); return Object.keys(P).filter(k => P[k].day <= d); };
   const lv = id => SAVE.lv[id] || 0;
-  const shotTime = () => [1.5, 1.2, .9, .7][lv('grinder')];
+  const shotTime = () => [1.5, 1.2, .9, .7, .45, .3][lv('grinder')];
   const warmTime = () => [3, 2.5, 2][lv('ovenspeed')];
   const burnTime = () => [10, 13, 16][lv('ovenspeed')];
   const decorCount = () => DECOR.filter(d => own(d.id)).length;
   const tipMult = () => [1, 1.1, 1.2, 1.3][lv('tipsign')] * (1 + .03 * decorCount());
   const patienceMult = () => 1 + .1 * lv('chairs') + (own('decor_cat') ? .05 : 0);
   const hearts = name => { const n = SAVE.regs[name] || 0; return n < 5 ? 1 : n < 15 ? 2 : 3; };
-  const stationTime = k => k === 'shot' ? shotTime() : ING[k].time;
+  const stationTime = k => k === 'shot' ? shotTime() : ING[k].station === 'steamer' ? ING[k].time * [1, .8, .6, .4, .2][lv('wand')] : ING[k].time;
   const cap = st => st === 'machine' ? (own('machine2') ? 2 : 1) : (own('steamer2') ? 2 : 1);
   const showsRecipe = o => !!o.drink && (hintsAll || o.drink.sig || S.day - o.drink.day < 2);
 
@@ -1255,8 +1296,8 @@
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
       b.disabled = locked;
-      const sub = locked ? `Day ${ing.day}` : ing.station ? `${stationTime(k)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
-      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k]}</span>`;
+      const sub = locked ? `Day ${ing.day}` : ing.station ? `${+stationTime(k).toFixed(2)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
+      b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k] || ''}</span>`;
       b.addEventListener('click', () => add(k));
       wrap.appendChild(b);
       stationBusyEls[k] = b.querySelector('.busy');
@@ -1280,7 +1321,8 @@
     });
     $('#oven').hidden = !S.oven.length;
     const shown = document.querySelectorAll('.pad .station:not(:disabled)').length;
-    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : 5);
+    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : shown <= 20 ? 5 : 6);
+    document.querySelector('.pad').classList.toggle('dense', shown > 20);
   }
 
   function renderMenu() {
@@ -1524,7 +1566,7 @@
     let vis;
     if (!cup.base) vis = `<span class="emptycup">no cup</span>`;
     else {
-      const layers = cup.items.map(k => `<span class="layer${ING[k].top ? ' top' : ''}" style="--c:${ING[k].c}"></span>`).join('');
+      const layers = cup.items.map(k => `<span class="layer${ING[k].top ? ' top' : ''}" style="--c:${ING[k].c};${ING[k].lb ? `background:${ING[k].lb}` : ''}"></span>`).join('');
       vis = `<span class="cupholder ${cup.base}" style="display:block"><span class="cup ${cup.base}">${layers}</span></span>`;
     }
     const parts = cup.items.map(k => ING[k].label);
@@ -1973,7 +2015,7 @@
 
   /* ---------- Keyboard shortcuts (computers) ---------- */
   const KEYS = { hot: 'q', iced: 'w', shot: 'e', water: 'r', milk: 't', oat: 'y', foam: 'u', vanilla: 'i', caramel: 'o', choc: 'p',
-                 chai: 'z', matcha: 'x', pumpkin: 'c', whip: 'v' };
+                 chai: 'z', matcha: 'x', pumpkin: 'c', whip: 'v', tea: 'g', boba: 'h', taro: 'j', brownsugar: 'k', strawberry: 'l', lemonade: '[', mango: ']' };
   const PKEYS = { croissant: 'b', muffin: 'n', cookie: 'm', sig: ',' };
   const SPOT_KEYS = ['a', 's', 'd', 'f'];
   function keysCard(back) {
@@ -2794,6 +2836,65 @@
     $('#dayBack').onclick = back;
   }
 
+  /* ---------- Admin "master key" (edits this device's game only) ---------- */
+  const ADMIN_HASH = 'a8203b3d9420df15ce6e86d420d61d6058c7f8af9415d2a35e869b61be41107f';
+  async function sha256(t) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  function adminLogin(msg = '') {
+    showCard(`
+      <h2>🔑 Admin</h2>
+      <div class="field"><label for="adminPass">Passcode</label><input id="adminPass" type="password" autocomplete="off" spellcheck="false"></div>
+      ${msg ? `<p class="codemsg">${msg}</p>` : ''}
+      <div class="btnrow"><button class="big" id="adminGo" type="button">Unlock</button><button class="big alt" id="adminCancel" type="button">Cancel</button></div>`, '', false);
+    $('#adminPass').focus();
+    const go = async () => {
+      try {
+        if (await sha256($('#adminPass').value.trim().toLowerCase()) === ADMIN_HASH) { SAVE.admin = true; persist(); sfx.cash(); adminCard(); }
+        else adminLogin('That passcode isn\'t right.');
+      } catch (e) { adminLogin('Admin needs the website (https) to unlock.'); }
+    };
+    $('#adminGo').onclick = go;
+    $('#adminPass').onkeydown = e => { if (e.key === 'Enter') go(); };
+    $('#adminCancel').onclick = title;
+  }
+  function adminCard(msg = '', confirmReset = false) {
+    const fl = SAVE.mode === 'floor', best = fl ? SAVE.fbest : SAVE.best;
+    showCard(`
+      <h2>🔑 Admin</h2>
+      <p class="small" style="margin-top:0">Changes only this device's game. Mode: <b>${fl ? 'Floor Service' : 'Behind the Bar'}</b> (switch on the title screen).</p>
+      ${msg ? `<div class="unlock goal">${msg}</div>` : ''}
+      <div class="admin">
+        <div class="arow"><label for="aDay">Jump to day</label><input id="aDay" type="number" min="1" max="99" value="${best + 1}"><button class="big alt" id="aJump" type="button">Go</button></div>
+        <div class="arow"><span>Savings: <b>${money(SAVE.bank)}</b></span><button class="big alt" id="aCash" type="button">+$1,000</button></div>
+        <div class="arow"><span>Unlock every upgrade, decor, theme and maker</span><button class="big alt" id="aAll" type="button">Unlock all</button></div>
+        <div class="arow"><span>Clear high scores on this device</span><button class="big alt" id="aHs" type="button">Clear</button></div>
+        <div class="arow"><span>Start completely over</span><button class="big alt danger" id="aReset" type="button">${confirmReset ? 'Tap again to erase everything' : 'Reset progress'}</button></div>
+      </div>
+      <div class="btnrow"><button class="big" id="aDone" type="button">Done</button><button class="big alt" id="aLock" type="button">Lock admin</button></div>`, 'wide', false);
+    $('#aJump').onclick = () => {
+      const d = Math.max(1, Math.min(99, Math.floor(+$('#aDay').value || 1)));
+      if (fl) SAVE.fbest = d - 1; else SAVE.best = d - 1;
+      persist(); fl ? floorStartDay(d) : startDay(d);
+    };
+    $('#aCash').onclick = () => { SAVE.bank = Math.round((SAVE.bank + 1000) * 100) / 100; persist(); adminCard('Added $1,000.'); };
+    $('#aAll').onclick = () => {
+      [...UPGRADES, ...MAKERS, ...THEMES, ...DECOR].forEach(x => { SAVE.owned[x.id] = true; });
+      TIERS.forEach(t => { SAVE.lv[t.id] = t.levels.length; });
+      persist(); renderDecor(); adminCard('Everything unlocked and maxed.');
+    };
+    $('#aHs').onclick = () => { SAVE.hs = {}; persist(); adminCard('High scores on this device cleared.'); };
+    $('#aReset').onclick = () => {
+      if (!confirmReset) { adminCard('', true); return; }
+      const keep = { admin: true, initials: SAVE.initials };
+      SAVE = normalizeSave({ best: 0, bank: 0, owned: {}, theme: 'theme_mint', stars: {}, ...keep });
+      persist(); applyTheme(SAVE.theme); renderDecor(); setMode(SAVE.mode); adminCard('Progress reset. Admin stays unlocked.');
+    };
+    $('#aDone').onclick = () => { setMode(SAVE.mode); title(); };
+    $('#aLock').onclick = () => { SAVE.admin = false; persist(); title(); };
+  }
+
   /* ---------- Overlays ---------- */
   function showCard(html, cls = '', focus = true) {
     const card = $('#card');
@@ -2811,7 +2912,7 @@
     const starCount = Object.values(fl ? SAVE.fstars : SAVE.stars).reduce((a, b) => a + b, 0);
     const start = d => fl ? floorStartDay(d) : startDay(d);
     showCard(`
-      <img class="titlelogo" src="${LOGO}" alt="" width="120" height="120">
+      <img class="titlelogo" id="titleLogo" src="${LOGO}" alt="" width="120" height="120">
       <h1>Lox Café</h1>
       <div class="diffpick modepick" role="group" aria-label="Game mode">
         <button type="button" class="dp${fl ? '' : ' on'}" data-mode="bar" aria-pressed="${!fl}">Behind the Bar</button>
@@ -2838,6 +2939,7 @@
         <button class="big alt" id="codeTitle" type="button">Save code</button>
         ${fl ? '' : '<button class="big alt desk" id="keysTitle" type="button">Shortcuts</button>'}
         <button class="big alt" id="howTitle" type="button">How to play</button>
+        ${SAVE.admin ? '<button class="big alt" id="adminTitle" type="button">🔑 Admin</button>' : ''}
       </div>
       <p class="small">Progress saves in this browser.${fl ? '' : ' On a computer, press ? for keyboard shortcuts.'}</p>`);
     const sb = $('#startBtn'); if (sb) sb.onclick = () => start(1);
@@ -2850,6 +2952,10 @@
     $('#howTitle').onclick = () => { tutForce = true; start(1); };
     document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { if (SAVE.mode !== b.dataset.mode) { setMode(b.dataset.mode); sfx.click(); } title(); });
     wireDiff(title);
+    const ab = $('#adminTitle'); if (ab) ab.onclick = adminCard;
+    // Secret: tap the logo 5 times quickly to unlock admin on this device
+    let taps = 0, tapT = 0;
+    $('#titleLogo').onclick = () => { const now = Date.now(); taps = now - tapT < 800 ? taps + 1 : 1; tapT = now; if (taps >= 5) { taps = 0; SAVE.admin ? adminCard() : adminLogin(); } };
   }
 
   function pause(on, view = 'break') {
