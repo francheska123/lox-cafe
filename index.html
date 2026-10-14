@@ -536,6 +536,11 @@
 
   /* Shop */
   .shopsec h3 { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-align: left; margin: 14px 0 6px; }
+  details.shopsec { text-align: left; margin-top: 10px; }
+  details.shopsec > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 12px 14px; border: 2.5px solid var(--ink); border-radius: 12px; background: #FFF3C2; box-shadow: 0 3px 0 var(--ink); margin-bottom: 8px; }
+  details.shopsec > summary::-webkit-details-marker { display: none; }
+  details.shopsec > summary::after { content: "▾"; font-size: 18px; transition: transform .15s; }
+  details.shopsec[open] > summary::after { transform: rotate(180deg); }
   .item { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; text-align: left; border: 2px solid #E6DCD4; border-radius: 12px; padding: 8px 10px; margin-bottom: 6px; }
   .item .nm { font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .item .ds { font-size: 13px; color: var(--muted); line-height: 1.3; }
@@ -786,6 +791,9 @@
     .pad.dense .station { font-size: min(10.5px, 2.7vw); letter-spacing: -.02em; min-height: 58px; }
     .pad.dense .station .ic { width: 23px; height: 23px; }
     .pad.dense .station .pz.mini { zoom: .6; }
+    .pad { overflow: hidden; touch-action: none; grid-auto-rows: minmax(0, 1fr); }
+    .pad .station, .pad.dense .station { min-height: 0; }
+    .station:active:not(:disabled), .slot:active, .ovslot:active, .trash:active { transform: none; filter: brightness(.88); }
     .station .t, .case .cl { display: none; }
     .station:disabled { display: none; }
     .station .pz.mini { transform: none; zoom: .72; margin: 0; }
@@ -1009,20 +1017,20 @@
 
   // One-time equipment
   const UPGRADES = [
-    { id: 'steamer2', name: 'Second steam wand',       desc: 'Steam two milks at the same time.',      price: 35 },
-    { id: 'machine2', name: 'Second espresso machine', desc: 'Pull two shots at once.',                price: 60 },
-    { id: 'cup3',     name: 'Third cup spot',          desc: 'Juggle three drinks. Key 3 selects it.', price: 90 },
-    { id: 'oven3',    name: 'Bigger oven',             desc: 'Warm three pastries at once.',           price: 50, day: OVEN_DAY },
-    { id: 'tray',     name: 'Serving tray (Floor)',    desc: 'Your server carries three things at once.', price: 70 },
+    { id: 'steamer2', name: 'Second steam wand',       desc: 'Steam two milks at the same time.',      price: 35, mode: 'bar' },
+    { id: 'machine2', name: 'Second espresso machine', desc: 'Pull two shots at once.',                price: 60, mode: 'bar' },
+    { id: 'cup3',     name: 'Third cup spot',          desc: 'Juggle three drinks. Key 3 selects it.', price: 90, mode: 'bar' },
+    { id: 'oven3',    name: 'Bigger oven',             desc: 'Warm three pastries at once.',           price: 50, day: OVEN_DAY, mode: 'bar' },
+    { id: 'tray',     name: 'Serving tray',            desc: 'Your server carries three things at once.', price: 70, mode: 'floor' },
   ];
   // Upgrades with levels: [price, what that level does]
   const TIERS = [
-    { id: 'grinder',   name: 'Grinder',         levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s'], [260, 'Espresso pulls in 0.45s'], [400, 'Espresso pulls in 0.3s (5× faster)']] },
-    { id: 'wand',      name: 'Steam wand pressure', levels: [[45, 'Milk steams in 0.8s'], [100, 'Milk steams in 0.6s'], [180, 'Milk steams in 0.4s'], [300, 'Milk steams in 0.2s (5× faster)']] },
+    { id: 'grinder',   name: 'Grinder', mode: 'bar', levels: [[40, 'Espresso pulls in 1.2s'], [90, 'Espresso pulls in 0.9s'], [160, 'Espresso pulls in 0.7s'], [260, 'Espresso pulls in 0.45s'], [400, 'Espresso pulls in 0.3s (5× faster)']] },
+    { id: 'wand',      name: 'Steam wand pressure', mode: 'bar', levels: [[45, 'Milk steams in 0.8s'], [100, 'Milk steams in 0.6s'], [180, 'Milk steams in 0.4s'], [300, 'Milk steams in 0.2s (5× faster)']] },
     { id: 'chairs',    name: 'Comfy seating',   levels: [[50, 'Customers wait 10% longer'], [110, 'Customers wait 20% longer'], [200, 'Customers wait 30% longer']] },
     { id: 'tipsign',   name: 'Tip jar',         levels: [[75, 'Customers tip 10% more'], [150, 'Customers tip 20% more'], [260, 'Customers tip 30% more']] },
-    { id: 'sneakers',  name: 'Comfy sneakers (Floor)', levels: [[40, 'Your server walks 15% faster'], [90, 'Your server walks 30% faster']] },
-    { id: 'ovenspeed', name: 'Convection oven', day: OVEN_DAY, levels: [[60, 'Pastries warm in 2.5s and take 3s longer to burn'], [130, 'Pastries warm in 2s and take 6s longer to burn']] },
+    { id: 'sneakers',  name: 'Comfy sneakers', mode: 'floor', levels: [[40, 'Your server walks 15% faster'], [90, 'Your server walks 30% faster']] },
+    { id: 'ovenspeed', name: 'Convection oven', day: OVEN_DAY, mode: 'bar', levels: [[60, 'Pastries warm in 2.5s and take 3s longer to burn'], [130, 'Pastries warm in 2s and take 6s longer to burn']] },
   ];
   const DECOR = [
     { id: 'decor_plant',   cls: 'plant',   name: 'Monstera plant',     price: 45 },
@@ -1146,7 +1154,7 @@
     if (!DIFFS[s.diff]) s.diff = 'medium';
     if (s.tutDone === undefined) s.tutDone = s.best > 0; // players who already cleared a day skip it
     s.mode = ['floor', 'kitchen'].includes(s.mode) ? s.mode : 'bar';
-    s.fbest = s.fbest || 0; s.fstars = s.fstars || {}; s.ftutDone = !!s.ftutDone;
+    s.fbest = s.fbest || 0; s.fstars = s.fstars || {}; s.ftutDone = !!s.ftutDone; s.simple = !!s.simple;
     return s;
   }
   function persist() {
@@ -1193,8 +1201,11 @@
     return p;
   }
   const allDrinks = () => SAVE.sigDrink ? [...DRINKS, { ...SAVE.sigDrink, sig: true }] : DRINKS;
-  const unlockedDrinks = d => allDrinks().filter(x => x.day <= d);
-  const unlockedPastries = d => { const P = pastries(); return Object.keys(P).filter(k => P[k].day <= d); };
+  // "Simple menu": the menu stops growing at 20 items (Day 17). Later days only get busier.
+  const SIMPLE_DAY = 17;
+  const cday = d => SAVE && SAVE.simple ? Math.min(d, SIMPLE_DAY) : d;
+  const unlockedDrinks = d => allDrinks().filter(x => x.day <= cday(d) || (x.sig && x.day <= d));
+  const unlockedPastries = d => { const P = pastries(); return Object.keys(P).filter(k => P[k].day <= cday(d) || (P[k].sig && P[k].day <= d)); };
   const lv = id => SAVE.lv[id] || 0;
   const shotTime = () => [1.5, 1.2, .9, .7, .45, .3][lv('grinder')];
   const warmTime = () => [3, 2.5, 2][lv('ovenspeed')];
@@ -1314,13 +1325,15 @@
       <p>${d === 1 ? 'Learn these three, then open up.' : fresh ? `${fresh} new item${fresh > 1 ? 's' : ''} today, marked in yellow.` : 'Same menu, busier crowd.'}
         Goal: <b>${money(S.c.goal)}</b> in <b>${secs} seconds</b>.</p>
       ${diffPicker()}
-      ${NEWS[d] ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
+      ${NEWS[d] && d <= cday(d) ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
+      ${d >= 14 ? menuPicker() : ''}
       ${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text}. Bonus <b>${money(S.task.reward)}</b> to savings.</div>` : ''}
       ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> costs 20% more and is extra popular.</p>` : ''}
       ${recipesHTML(d, d >= 3)}
       <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>
       <p class="small">Tickets spell out the recipe for new drinks during their first two days. Tap Hints up top to show it on every ticket. The Menu button pauses the clock and shows every recipe.</p>`, 'chalk');
     wireDiff(() => startDay(d));
+    wireMenuPick(() => startDay(d));
     $('#openBtn').onclick = () => {
       S.running = true; last = performance.now();
       $('#overlay').hidden = true; sfx.bell();
@@ -1341,11 +1354,11 @@
         <span class="rsteps"><span class="rstep">Pastry case</span><span class="rstep">Oven ${warmTime()}s</span><span class="rstep">Serve</span></span>
       </li>`;
     const mods = [];
-    if (d >= OAT_DAY) mods.push(`<li class="rmod"><b>Oat</b> tag: use Oat milk instead of Milk</li>`);
-    if (d >= SHOT_DAY) mods.push(`<li class="rmod"><b>+Shot</b> tag: add one more Espresso</li>`);
-    if (d >= PUMP_DAY) mods.push(`<li class="rmod"><b>2 pumps</b> tag: add that syrup twice</li>`);
-    if (d >= NOWHIP_DAY) mods.push(`<li class="rmod"><b>No whip</b> tag: leave the Whip off</li>`);
-    if (d >= ADDSYR_DAY) mods.push(`<li class="rmod"><b>+Vanilla / +Caramel</b> tag: add one pump of that syrup</li>`);
+    if (cday(d) >= OAT_DAY) mods.push(`<li class="rmod"><b>Oat</b> tag: use Oat milk instead of Milk</li>`);
+    if (cday(d) >= SHOT_DAY) mods.push(`<li class="rmod"><b>+Shot</b> tag: add one more Espresso</li>`);
+    if (cday(d) >= PUMP_DAY) mods.push(`<li class="rmod"><b>2 pumps</b> tag: add that syrup twice</li>`);
+    if (cday(d) >= NOWHIP_DAY) mods.push(`<li class="rmod"><b>No whip</b> tag: leave the Whip off</li>`);
+    if (cday(d) >= ADDSYR_DAY) mods.push(`<li class="rmod"><b>+Vanilla / +Caramel</b> tag: add one pump of that syrup</li>`);
     const drinks = unlockedDrinks(d), pk = unlockedPastries(d);
     const all = drinks.map(drinkLi).join('') + pk.map(pastryLi).join('') + mods.join('');
     if (!collapse) return `<ul class="recipes">${all}</ul>`;
@@ -1353,43 +1366,53 @@
     return `${fresh ? `<ul class="recipes">${fresh}</ul>` : ''}<details class="fullmenu"><summary>Full menu (${drinks.length + pk.length} items)</summary><ul class="recipes">${all}</ul></details>`;
   }
 
+  // Pick the fewest columns (biggest buttons) whose rows still fit the pad, so nothing is cut off or scrolls
+  function fitPad() {
+    const shown = document.querySelectorAll('.pad .station:not(:disabled)').length;
+    const pad = document.querySelector('.pad'), padH = pad.clientHeight - 12;
+    let cols = shown <= 16 ? 4 : 5;
+    while (cols < 6 && padH > 0 && Math.ceil(shown / cols) * 64 > padH) cols++;
+    pad.style.setProperty('--cols', cols);
+    pad.style.setProperty('--lcols', shown <= 15 ? 4 : shown <= 24 ? 5 : 6);
+    pad.classList.toggle('dense', cols >= 6);
+  }
+  addEventListener('resize', () => { if (S && S.mode !== 'floor' && S.mode !== 'kitchen' && S.cups) fitPad(); });
+
   function buildStations() {
     const wrap = $('#stations'); wrap.innerHTML = ''; stationBusyEls = {};
+    const cd = cday(S.day), tease = cd === S.day ? 1 : 0;
     stationOrder().forEach(k => {
       const ing = ING[k];
-      if (ing.day > S.day + 1) return; // tease only tomorrow's unlock
-      const locked = ing.day > S.day;
+      if (ing.day > cd + tease) return; // tease only tomorrow's unlock
+      const locked = ing.day > cd;
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
       b.disabled = locked;
       const sub = locked ? `Day ${ing.day}` : ing.station ? `${+stationTime(k).toFixed(2)}s${cap(ing.station) > 1 ? ' · ×2' : ''}` : ing.cup ? 'grab' : 'add';
       b.innerHTML = `<span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span><span class="lbl-f">${ing.label}</span><span class="lbl-m">${ing.m || ing.label}</span><span class="t">${sub}</span><span class="busy"></span><span class="kbd">${KEYS[k] || ''}</span>`;
-      b.addEventListener('click', () => add(k));
+      onPress(b, () => add(k));
       wrap.appendChild(b);
       stationBusyEls[k] = b.querySelector('.busy');
     });
     const d2 = document.createElement('button');
     d2.type = 'button'; d2.className = 'station dumpbtn';
     d2.innerHTML = '<span class="ic dumpic"></span>Dump<span class="t">selected</span>';
-    d2.addEventListener('click', dump);
+    onPress(d2, dump);
     wrap.appendChild(d2);
     const cs = $('#case'), P = pastries();
-    const keys = Object.keys(P).filter(k => P[k].day <= S.day + 1);
+    const keys = Object.keys(P).filter(k => P[k].day <= cd + tease || (P[k].sig && P[k].day <= S.day));
     cs.hidden = !keys.length;
     cs.innerHTML = keys.length ? '<span class="cl">Pastry case · tap one to warm it in the oven</span>' : '';
     keys.forEach(k => {
-      const locked = P[k].day > S.day;
+      const locked = P[k].day > cd && !P[k].sig;
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'station' + (P[k].sig ? ' sig' : ''); b.disabled = locked;
       b.innerHTML = `${pastryHTML(P[k].look, 'mini')}${esc(P[k].short)}<span class="t">${locked ? `Day ${P[k].day}` : P[k].sig ? 'your signature' : `warm ${warmTime()}s`}</span><span class="kbd">${PKEYS[k] || ''}</span>`;
-      b.addEventListener('click', () => bake(k));
+      onPress(b, () => bake(k));
       cs.appendChild(b);
     });
     $('#oven').hidden = !S.oven.length;
-    const shown = document.querySelectorAll('.pad .station:not(:disabled)').length;
-    document.querySelector('.pad').style.setProperty('--cols', shown <= 16 ? 4 : shown <= 25 ? 5 : 6);
-    document.querySelector('.pad').style.setProperty('--lcols', shown <= 15 ? 4 : shown <= 24 ? 5 : 6);
-    document.querySelector('.pad').classList.toggle('dense', shown > 25);
+    fitPad();
   }
 
   function renderMenu() {
@@ -1405,17 +1428,17 @@
     const P = pastries(), pk = unlockedPastries(S.day);
     $('#pastryBoard').innerHTML = pk.length ? `<h3>From the oven</h3><ul>${pk.map(k => `<li><div class="row"><span>${esc(P[k].label)}${P[k].day === S.day && !P[k].sig ? '<span class="new">new!</span>' : ''}</span><span class="price">${P[k].price.toFixed(2)}</span></div></li>`).join('')}</ul>` : '';
     const notes = [];
-    if (S.day >= OAT_DAY) notes.push('“Oat” means swap Milk for Oat milk.');
-    if (S.day >= SHOT_DAY) notes.push('“+Shot” means one more Espresso.');
-    if (S.day >= PUMP_DAY) notes.push('“2 pumps” means add that syrup twice.');
-    if (S.day >= NOWHIP_DAY) notes.push('“No whip” means leave it off.');
+    if (cday(S.day) >= OAT_DAY) notes.push('“Oat” means swap Milk for Oat milk.');
+    if (cday(S.day) >= SHOT_DAY) notes.push('“+Shot” means one more Espresso.');
+    if (cday(S.day) >= PUMP_DAY) notes.push('“2 pumps” means add that syrup twice.');
+    if (cday(S.day) >= NOWHIP_DAY) notes.push('“No whip” means leave it off.');
     notes.push('Build it, then tap the customer to hand it over.');
     $('#boardfoot').innerHTML = notes.join('<br>');
   }
 
   /* ---------- Customers ---------- */
   function makeOrder() {
-    const d = S.day, drinks = unlockedDrinks(d), pk = unlockedPastries(d), P = pastries();
+    const d = cday(S.day), drinks = unlockedDrinks(S.day), pk = unlockedPastries(S.day), P = pastries();
     const here = S.spots.filter(Boolean).map(c => c.o.who);
     const regs = d >= REG_DAY ? REGULARS.filter(g => !here.includes(g.name) && drinks.some(x => x.name === g.fav)) : [];
     const drinkW = x => (x.day === d && d > 1 ? 2 : 1) + (x.sig ? 2 : 0) + (x.name === S.special ? 1 : 0);
@@ -1480,7 +1503,7 @@
     }
     const ppart = o.pastry ? `<span class="part p${o.drink ? '' : ' solo'}">${o.drink ? '+ ' : ''}${esc(P[o.pastry].label)}</span>` : '';
     el.innerHTML = `<span class="ticket">${tag ? `<span class="who">${tag}</span>` : ''}${dpart}${ppart}</span>${personHTML(o.look)}`;
-    el.addEventListener('click', () => serve(i));
+    onPress(el, () => serve(i));
     document.querySelectorAll('.spot')[i].appendChild(el);
     const steps = (o.drink ? 1 + o.drink.items.length : 0) + (o.pastry ? 3 : 0);
     const mult = patienceMult() * (o.kind === 'critic' ? .7 : o.kind === 'regular' ? 1.2 : 1);
@@ -1610,6 +1633,12 @@
     cup.items.push(k); sfx.click(); renderCups();
   }
   const tutPoke = () => { if (S && S.tut) tutTick(); };
+  // Fire on touch-down, so a firm press or a tiny finger slide never gets lost on phones.
+  // Keyboard presses (click with detail 0) still work.
+  function onPress(el, fn) {
+    el.addEventListener('pointerdown', e => { if (e.button > 0) return; e.preventDefault(); fn(e); });
+    el.addEventListener('click', e => { if (e.detail === 0) fn(e); });
+  }
 
   function bake(k) {
     if (!S || !S.running || S.paused || !S.oven.length) return;
@@ -1763,6 +1792,7 @@
   }
 
   function unlocksFor(n) {
+    if (n > cday(n)) return [];
     const P = pastries();
     const list = [
       ...STATION_ORDER.filter(k => ING[k].day === n).map(k => ING[k].label),
@@ -1844,21 +1874,22 @@
   function openShop(back) { initAudio(); shopBack = back; renderShop(); }
 
   let shopNote = '';
+  const shopOpen = { up: true };
   function renderShop() {
-    const r = reach();
+    const r = reach(), fl = SAVE.mode === 'floor', mine = x => !x.mode || x.mode === (fl ? 'floor' : 'bar');
     const priceBtn = (attr, id, price, day) => day && day > r
       ? `<button class="buy" type="button" disabled>Day ${day}</button>`
       : `<button class="buy" type="button" data-${attr}="${id}" ${SAVE.bank < price ? 'disabled' : ''}>Buy ${money(price)}</button>`;
     const owned = label => `<button class="buy owned" type="button" disabled>${label}</button>`;
     const row = (name, desc, btn, extra = '') => `<div class="item"><span class="nm">${name}${extra}</span><span class="ds">${desc}</span>${btn}</div>`;
-    const tiers = TIERS.map(t => {
+    const tiers = TIERS.filter(mine).map(t => {
       const L = lv(t.id), max = t.levels.length;
       const pips = ` <span class="pips" aria-label="Level ${L} of ${max}">${t.levels.map((_, i) => `<i class="${i < L ? 'on' : ''}"></i>`).join('')}</span>`;
       if (L >= max) return row(t.name, t.levels[max - 1][1], owned('Maxed'), pips);
       const [price, desc] = t.levels[L];
       return row(t.name, (L ? 'Next level: ' : '') + desc + '.', priceBtn('tier', t.id, price, t.day), pips);
     }).join('');
-    const ups = UPGRADES.map(it => row(it.name, it.desc, own(it.id) ? owned('Owned') : priceBtn('buy', it.id, it.price, it.day))).join('');
+    const ups = UPGRADES.filter(mine).map(it => row(it.name, it.desc, own(it.id) ? owned('Owned') : priceBtn('buy', it.id, it.price, it.day))).join('');
     const decor = DECOR.map(d => row(d.name, d.desc || 'Shows up in your café. A cozier café gets 3% bigger tips.',
       own(d.id) ? owned('Owned') : priceBtn('buy', d.id, d.price), ` <span class="dprev">${decorHTML(d.cls, true)}</span>`)).join('');
     const makers = MAKERS.map(it => {
@@ -1874,18 +1905,21 @@
       return row(t.name, t.price ? 'New walls, counter, awning and bar colors.' : 'The original look.', btn, sw);
     }).join('');
     const cozy = 3 * decorCount();
+    const sec = (id, name, body) => `<details class="shopsec" data-sec="${id}"${shopOpen[id] ? ' open' : ''}><summary>${name}</summary>${body}</details>`;
     showCard(`
-      <h2>Café shop</h2>
+      <h2>${fl ? 'Floor shop' : 'Café shop'}</h2>
       <p class="bank">Savings: ${money(SAVE.bank)}</p>
       ${shopNote ? `<div class="shopnote">${shopNote}</div>` : ''}
       <p class="small" style="margin-top:-6px">You keep everything you earn, even on days you miss the goal.</p>
       <div class="btnrow"><button class="big alt" id="stkBtn" type="button">Sticker book · ${STICKERS.filter(x => SAVE.ach[x.id]).length}/${STICKERS.length}</button></div>
-      <div class="shopsec"><h3>Upgrades</h3>${tiers}${ups}</div>
-      <div class="shopsec"><h3>Decor · tips now +${cozy}% from coziness</h3>${decor}</div>
-      <div class="shopsec"><h3>Make it yours</h3>${makers}</div>
-      <div class="shopsec"><h3>Café themes</h3>${themes}</div>
+      ${sec('up', fl ? 'Floor upgrades' : 'Bar upgrades', tiers + ups)}
+      ${fl ? '' : sec('decor', `Decorations · tips +${cozy}%`, decor)}
+      ${fl ? '' : sec('make', 'Make it yours', makers)}
+      ${sec('theme', 'Café themes', themes)}
+      <p class="small">${fl ? 'Bar upgrades and decorations are in the shop when you play V1.' : ''}</p>
       <div class="btnrow" style="margin-top:14px"><button class="big" id="shopDone" type="button">Done</button></div>`, 'wide');
     shopNote = '';
+    document.querySelectorAll('details.shopsec').forEach(d => d.ontoggle = () => { shopOpen[d.dataset.sec] = d.open; });
     document.querySelectorAll('[data-buy]').forEach(b => b.onclick = () => buy(b.dataset.buy));
     document.querySelectorAll('[data-tier]').forEach(b => b.onclick = () => buyTier(b.dataset.tier));
     document.querySelectorAll('[data-make]').forEach(b => b.onclick = () => b.dataset.make === 'sigdrink' ? drinkMaker() : pastryMaker());
@@ -2074,6 +2108,19 @@
       `<button type="button" class="dp${cur === id ? ' on' : ''}" data-diff="${id}" aria-pressed="${cur === id}">${m.label}</button>`).join('')}</div>
       <p class="small dpnote">${DIFFS[cur].note}</p>`;
   }
+  function menuPicker() {
+    const cur = SAVE.simple ? 'simple' : 'full';
+    return `<div class="diffpick" role="group" aria-label="Menu size">${[['full', 'Full menu'], ['simple', 'Simple menu']].map(([id, l]) =>
+      `<button type="button" class="dp${cur === id ? ' on' : ''}" data-menu="${id}" aria-pressed="${cur === id}">${l}</button>`).join('')}</div>
+      <p class="small dpnote">${SAVE.simple ? 'Simple: the menu stops at 20 items (Day 17). Later days only get busier.' : 'Full: new recipes keep coming through Day 29. Simple stops at 20 items.'}</p>`;
+  }
+  function wireMenuPick(onChange) {
+    document.querySelectorAll('[data-menu]').forEach(b => b.onclick = () => {
+      const v = b.dataset.menu === 'simple';
+      if (!!SAVE.simple === v) return;
+      SAVE.simple = v; persist(); sfx.click(); onChange();
+    });
+  }
   function wireDiff(onChange) {
     document.querySelectorAll('[data-diff]').forEach(b => b.onclick = () => {
       if (SAVE.diff === b.dataset.diff) return;
@@ -2218,11 +2265,11 @@
     { name: 'Cookie',              pastry: 'cookie', price: 3.25, day: 12 },
   ];
   const SUPPLIES = { napkins: { label: 'Napkins', day: 4 }, sugar: { label: 'Sugar', day: 4 }, straw: { label: 'Straw', day: 5 }, water: { label: 'Water', day: 5 } };
-  const F_COLOR_DAY = 3, F_REQ_DAY = 4, F_REG_DAY = 7, F_CRITIC_DAY = 9;
+  const F_COLOR_DAY = 1, F_STREAK_DAY = 3, F_REQ_DAY = 4, F_REG_DAY = 7, F_CRITIC_DAY = 9;
   const PARTY_COLORS = { red: '#E8505B', blue: '#4F8FE0', yellow: '#F2C14E', green: '#4CB782' };
   const FNEWS = {
-    2: { title: 'Groups and big tables', text: 'Groups of up to 4 arrive. Two-seat tables fit 1–2 people; four-seat tables fit up to 4.' },
-    3: { title: 'Color match', text: 'Seat a group at a table the same color as their shirts for a tip bonus.' },
+    2: { title: 'Big booths', text: 'Groups of up to 4 arrive. The two big booths seat 4; the little table and booth seat 2.' },
+    3: { title: 'Color streaks', text: 'Color matches in a row pay more each time: ×2, ×3, up to ×4. A mismatch starts it over.' },
     4: { title: 'Extra requests', text: 'While they eat, guests may ask for napkins or sugar. Grab it from the supply shelf and bring it over.' },
     5: { title: 'Straws and water', text: 'Two more things guests ask for. Same shelf, same idea.' },
     6: { title: 'Pastries', text: 'Bea plates pastries too. They come out on the same trays.' },
@@ -2234,14 +2281,16 @@
     const D = dur(d), M = difficulty();
     return {
       dur: D,
-      spawn: Math.max(8, 15 - .8 * (d - 1)) * M.spawn,
-      patience: Math.max(24, 36 - (d - 1)) * M.patience,
+      // Eased 2026-10-14: after Day 5 groups came too fast and gave up too soon
+      spawn: Math.max(10, 16 - .6 * (d - 1)) * M.spawn,
+      patience: Math.max(40, 52 - 1.2 * (d - 1)) * M.patience,
       // Calibrated with a bot: a great shift earns ~1.7-2x the goal on every day
-      goal: Math.round((16 + 6 * Math.min(d - 1, 3) + 1.5 * Math.max(0, d - 4)) * D / 90 * M.goal),
+      // Longer shifts don't add tables, so the goal grows slower than the clock (bot: ~2-2.5x goal on Days 1-15)
+      goal: Math.round((16 + 6 * Math.min(d - 1, 3) + 1.5 * Math.max(0, d - 4)) * (1 + .6 * (D / 90 - 1)) * M.goal),
     };
   };
   const handCap = () => own('tray') ? 3 : 2;
-  const walkSpeed = () => 150 * (1 + .15 * lv('sneakers'));
+  const walkSpeed = () => 175 * (1 + .15 * lv('sneakers'));
   const fShort = n => n.replace('Pumpkin Spice Latte', 'PSL').replace('Iced Caramel Latte', 'Iced Caramel').replace('Blueberry Muffin', 'Muffin').replace('Strawberry Lemonade', 'Berry Lemonade').replace('Classic Milk Tea', 'Milk Tea');
 
   /* ---------- Pixel chibi sprites (12×16, drawn 3 px per pixel) ---------- */
@@ -2250,17 +2299,21 @@
     'kssessssessk', 'ksbssssssbsk', '.ksssmmsssk.', '..kkkkkkkk..', '.kcccccccck.', 'kcccccccccck',
     'ksccccccccsk', '.kcccccccck.', '..kppkkppk..', '..kffk.kffk.',
   ];
-  function spriteRows(style, apron) {
+  function spriteRows(style, apron, back, step) {
     const r = SPR.slice();
     if (style === 1) { [4, 5, 6, 7].forEach(i => { r[i] = 'h' + r[i].slice(1, 11) + 'h'; }); r[8] = 'hksssmmssskh'; r[9] = 'hhkkkkkkkkhh'; }   // long hair
     if (style === 2) { r[0] = '...khhhhk...'; r.unshift('....khhk....'); }                                                                  // bun
     if (style === 3) { r[1] = '..kkccccckk.'; r[2] = '.kcccccccck.'; r[3] = 'kcccccccccck'; r[4] = 'kkkkhsshkkkk'; }                       // cap
     if (apron) { const n = r.length; r[n - 5] = r[n - 5].slice(0, 4) + 'aaaa' + r[n - 5].slice(8); r[n - 4] = r[n - 4].slice(0, 4) + 'aaaa' + r[n - 4].slice(8); r[n - 3] = r[n - 3].slice(0, 4) + 'aaaa' + r[n - 3].slice(8); }
+    const o = r.length - 16, n = r.length;   // the bun style adds a row on top
+    if (back) { for (let i = 4; i <= 7; i++) r[i + o] = r[i + o].replace(/[semb]/g, 'h'); r[8 + o] = r[8 + o].replace(/m/g, 's'); }
+    if (step === 1) r[n - 1] = '..kffk..kk..';
+    if (step === 3) r[n - 1] = '...kk..kffk.';
     return r;
   }
   function drawSprite(ctx, x, y, look, o = {}) {
     // x, y = the sprite's feet (or seat line when seated)
-    const px = o.px || 3, rows = spriteRows(look.style || 0, o.apron), n = o.seated ? rows.length - 5 : rows.length;
+    const px = o.px || 3, rows = spriteRows(look.style || 0, o.apron, o.back, o.seated ? 0 : o.step), n = o.seated ? rows.length - 5 : rows.length;
     const pal = { k: '#2B1A14', e: '#2B1A14', m: '#2B1A14', f: '#2B1A14', h: look.hair, s: look.skin, c: look.shirt, b: '#F58E8E', p: '#3D4A6B', a: '#FFFFFF' };
     const ox = Math.round(x - 6 * px), oy = Math.round(y - n * px + (o.bob || 0));
     for (let r = 0; r < n; r++) for (let c = 0; c < 12; c++) {
@@ -2269,6 +2322,15 @@
       ctx.fillStyle = pal[ch] || '#000'; ctx.fillRect(ox + c * px, oy + r * px, px, px);
     }
     if (look.acc === 'critic') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(ox + 2 * px, oy + 6 * px, 8 * px, px); ctx.fillStyle = '#3A2E5C'; ctx.fillRect(ox + px, oy - px, 10 * px, 2 * px); }
+  }
+  // A soft shadow under anyone standing, so they feel planted on the floor
+  function drawShadow(ctx, x, y, px) { ctx.fillStyle = 'rgba(43,26,20,.2)'; ctx.beginPath(); ctx.ellipse(x, y, 5 * px, 1.5 * px, 0, 0, 7); ctx.fill(); }
+  function drawGroup(ctx, P, x, y, px, moving, lift = 0) {
+    P.looks.forEach((lk, j) => {
+      const gx = x - (P.size - 1) * 7 + j * 14, gy = y + (j % 2) * 3, st = moving ? Math.floor((P.wd || 0) / 8 + j * 2) % 4 : 0;
+      drawShadow(ctx, gx, gy + lift, px);
+      drawSprite(ctx, gx, gy, lk, { px, step: st, bob: st % 2 ? -1 : 0 });
+    });
   }
   const HEART = ['.k.k.', 'krkrk', 'krrrk', '.krk.', '..k..'];
   function drawHearts(ctx, x, y, p) {
@@ -2304,19 +2366,21 @@
 
   /* ---------- State ---------- */
   function fTables(d) {
-    const t = d >= 2 ? [[2, 'red'], [2, 'blue'], [4, 'yellow'], [4, 'green']] : [[2, 'red'], [2, 'blue'], [2, 'yellow']];
-    return t.map(([seats, color], i) => ({ id: 'ABCD'[i], seats, color, party: null, dirty: false }));
+    // Diner booths (Johnny Rockets vibe) plus one little two-top with stools
+    const t = d >= 2 ? [[2, 'red', 'table'], [2, 'blue', 'booth'], [4, 'yellow', 'booth'], [4, 'green', 'booth']]
+                     : [[2, 'red', 'booth'], [2, 'blue', 'table'], [2, 'yellow', 'booth']];
+    return t.map(([seats, color, style], i) => ({ id: 'ABCD'[i], seats, color, style, party: null, dirty: false }));
   }
   function fFresh(d) {
     const c = fcfg(d);
     return {
       mode: 'floor', day: d, c, t: 0, money: 0, streak: 0, bestStreak: 0,
-      stats: { served: 0, people: 0, missed: 0, wrong: 0, sales: 0, tips: 0, regulars: 0, critics: 0, requests: 0, bussed: 0 },
+      stats: { served: 0, people: 0, missed: 0, wrong: 0, sales: 0, tips: 0, regulars: 0, critics: 0, requests: 0, bussed: 0, matches: 0 },
       running: false, paused: false, task: null, inRush: false,
       tables: fTables(d), parties: [], sel: null, pid: 0, nextNum: 0,
       spike: [], making: null, pickups: [null, null, null], floaters: [],
       srv: { x: 0, y: 0, queue: [], cur: null, doing: 0, placed: false, tickets: [], hands: [] },
-      chain: { type: null, n: 0 }, bestChain: 0, nextSpawn: 1.5, view: { W: 360, H: 540 },
+      chain: { type: null, n: 0 }, bestChain: 0, matchRun: 0, drag: null, nextSpawn: 1.5, view: { W: 360, H: 540 },
     };
   }
   const fAll = () => S.parties.filter(p => p.state !== 'gone');
@@ -2324,8 +2388,8 @@
   function fMakeParty(forced = {}) {
     const d = S.day, menu = FMENU.filter(x => x.day <= d);
     const size = forced.size || (d < 2 ? (Math.random() < .6 ? 1 : 2) : rnd([1, 2, 2, 3, 4, 4]));
-    const colors = S.tables.map(t => t.color);
-    const color = forced.color || rnd(colors);
+    const colors = S.tables.map(t => t.color), fits = S.tables.filter(t => t.seats >= size).map(t => t.color);
+    const color = forced.color || (Math.random() < .75 ? rnd(fits) : rnd(colors));
     let kind = 'normal', who = null;
     const looks = Array.from({ length: size }, () => ({ skin: rnd(SKIN), hair: rnd(HAIR), shirt: PARTY_COLORS[color], style: Math.floor(Math.random() * 4), acc: 'none' }));
     if (size === 1 && !forced.size) {
@@ -2338,7 +2402,7 @@
     const pat = S.c.patience * patienceMult() * (kind === 'critic' ? .7 : kind === 'regular' ? 1.2 : 1);
     const door = fL().door;
     return { id: ++S.pid, num: ++S.nextNum, size, color, looks, items, kind, who, state: 'door', p: 1, pat, timer: 0,
-      req: null, reqT: 0, reqAt: null, reqs: 0, match: false, table: null, x: door.x, y: door.y };
+      req: null, reqT: 0, reqAt: null, reqs: 0, match: false, table: null, x: door.x, y: door.y, wd: 0, mv: false };
   }
 
   /* ---------- Layout (logical units; the canvas scales to fit) ---------- */
@@ -2347,12 +2411,17 @@
     const qStep = Math.min(78, (H - ch - 60) / 3.3);
     const oneRow = land && H < 380;
     const tx0 = oneRow ? 150 : 84, tx1 = land ? W - 64 : W - 8, ty0 = ch + 34, ty1 = H - (land ? 18 : 52);
-    const nT = S.tables.length, cols = [tx0 + (tx1 - tx0) * .27, tx0 + (tx1 - tx0) * .75], rows = [ty0 + (ty1 - ty0) * .28, ty0 + (ty1 - ty0) * .8];
+    const nT = S.tables.length, cols = [tx0 + (tx1 - tx0) * .27, tx0 + (tx1 - tx0) * .75], rows = [ty0 + (ty1 - ty0) * .26, ty0 + (ty1 - ty0) * .8];
     const tables = S.tables.map((t, i) => {
       const cx = oneRow ? tx0 + (tx1 - tx0) * (i + .5) / nT : nT === 3 && i === 2 ? (cols[0] + cols[1]) / 2 : cols[i % 2];
-      const cy = oneRow ? (ty0 + ty1) / 2 + 16 : rows[Math.floor(i / 2)];
-      const tw = t.seats === 4 ? 92 : 64, th = t.seats === 4 ? 46 : 38;
-      return { cx, cy, tw, th, hit: { x: cx - tw / 2 - 20, y: cy - th / 2 - 46, w: tw + 40, h: th + 62 }, stand: { x: cx, y: cy + th / 2 + 34 } };
+      const cy = oneRow ? (ty0 + ty1) / 2 + 14 : rows[Math.floor(i / 2)];
+      const booth = t.style === 'booth';
+      const tw = booth ? (t.seats === 4 ? 88 : 50) : 38, th = booth ? 34 : 32, bd = booth ? 15 : 0;
+      const half = booth ? tw / 2 + 6 : tw / 2 + 30;              // half the footprint, people included
+      const top = booth ? cy - th / 2 - 26 : cy - 24;              // top of the seated heads
+      const bot = booth ? cy + th / 2 + bd + 6 : cy + th / 2 + 4;
+      return { cx, cy, tw, th, bd, booth, half, top, bot,
+        hit: { x: cx - half - 8, y: top - 40, w: 2 * half + 16, h: bot - top + 58 }, stand: { x: cx, y: bot + 26 } };
     });
     const pickW = Math.min(52, (W - 220) / 3.4);
     const pick = [0, 1, 2].map(i => ({ x: 118 + i * (pickW + 8), y: ch - 44, w: pickW, h: 38 }));
@@ -2377,15 +2446,61 @@
     if (a.type === 'supply') { const s2 = L.supplies.find(x => x.k === a.k); return s2 ? (L.land ? { x: s2.x - 18, y: s2.y + s2.h } : { x: s2.x + s2.w / 2, y: s2.y - 4 }) : null; }
     return null;
   }
-  const seatSpots = (t, T) => T.seats === 4
-    ? [{ x: t.cx - 22, y: t.cy - t.th / 2 }, { x: t.cx + 22, y: t.cy - t.th / 2 }, { x: t.cx - t.tw / 2 - 12, y: t.cy + 6 }, { x: t.cx + t.tw / 2 + 12, y: t.cy + 6 }]
-    : [{ x: t.cx - 15, y: t.cy - t.th / 2 }, { x: t.cx + 15, y: t.cy - t.th / 2 }];
+  // Where each guest sits. Booths: far bench faces you, near bench shows their backs.
+  function seatSpots(g, T) {
+    const far = g.cy - g.th / 2 + 4, near = g.cy + g.th / 2 + g.bd + 2;
+    if (!g.booth) return [{ x: g.cx - g.tw / 2 - 16, y: g.cy + 8 }, { x: g.cx + g.tw / 2 + 16, y: g.cy + 8 }];
+    if (T.seats === 2) return [{ x: g.cx, y: far }, { x: g.cx, y: near, back: true }];
+    return [{ x: g.cx - 22, y: far }, { x: g.cx - 22, y: near, back: true }, { x: g.cx + 22, y: far }, { x: g.cx + 22, y: near, back: true }];
+  }
 
   /* ---------- Drawing ---------- */
   let FCOL = null;
   function fColors() {
     const cs = getComputedStyle(document.documentElement), v = n => cs.getPropertyValue(n).trim();
     FCOL = { tile: v('--tile') || '#F4FBF7', tile2: v('--wall-2') || '#A8DCC6', wood: v('--wood') || '#B8683D', woodDk: v('--wood-dk') || '#8C4A28', wall: v('--wall') || '#BFE6D5' };
+  }
+  const INK = '#2B1A14', CHROME = '#C9CED6';
+  function drawSpot(ctx, g, T, P) {
+    const col = PARTY_COLORS[T.color], dk = mix(col, INK, .35), hi = mix(col, '#FFFFFF', .4), seats = seatSpots(g, T);
+    const sat = P ? P.looks.map((lk, j) => ({ lk, s: seats[j] })) : [];
+    const bench = (y, h) => { // a vinyl booth bench seen from above, with a chrome frame and tufting
+      const x0 = g.cx - g.tw / 2 - 4, w = g.tw + 8;
+      ctx.fillStyle = INK; ctx.fillRect(x0 - 2, y - 2, w + 4, h + 4);
+      ctx.fillStyle = CHROME; ctx.fillRect(x0, y, w, h);
+      ctx.fillStyle = col; ctx.fillRect(x0 + 2, y + 2, w - 4, h - 4);
+      ctx.fillStyle = dk; for (let x = x0 + 9; x < x0 + w - 5; x += 11) ctx.fillRect(x, y + 3, 2, h - 6);
+      ctx.fillStyle = hi; ctx.fillRect(x0 + 3, y + 3, w - 6, 2);
+    };
+    if (g.booth) {
+      bench(g.cy - g.th / 2 - g.bd, g.bd);
+      sat.filter(w => !w.s.back).forEach(w => drawSprite(ctx, w.s.x, w.s.y, w.lk, { seated: true, px: 2.5 }));
+    } else {
+      seats.forEach(s2 => {   // chrome stools with a colored seat
+        ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(s2.x, s2.y, 11, 0, 7); ctx.fill();
+        ctx.fillStyle = CHROME; ctx.beginPath(); ctx.arc(s2.x, s2.y, 9, 0, 7); ctx.fill();
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(s2.x, s2.y, 7, 0, 7); ctx.fill();
+      });
+      sat.forEach(w => drawSprite(ctx, w.s.x, w.s.y, w.lk, { seated: true, px: 2.5 }));
+    }
+    // Table top: white formica, chrome rim, a stripe in the table's color
+    ctx.fillStyle = INK; ctx.fillRect(g.cx - g.tw / 2 - 2, g.cy - g.th / 2 - 2, g.tw + 4, g.th + 4);
+    ctx.fillStyle = CHROME; ctx.fillRect(g.cx - g.tw / 2, g.cy - g.th / 2, g.tw, g.th);
+    ctx.fillStyle = '#FFFDF7'; ctx.fillRect(g.cx - g.tw / 2 + 2, g.cy - g.th / 2 + 2, g.tw - 4, g.th - 4);
+    ctx.fillStyle = col; ctx.fillRect(g.cx - g.tw / 2 + 2, g.cy + g.th / 2 - 6, g.tw - 4, 4);
+    pxText(ctx, T.id, g.cx - g.tw / 2 + 8, g.cy - g.th / 2 + 8, 6, '#9C8D85');
+    if (P && (P.state === 'eating' || P.state === 'check')) P.items.forEach((it, j) => drawCup(ctx, g.cx - (P.items.length - 1) * 8 + j * 16, g.cy, it.cup || 'hot'));
+    if (T.dirty) { for (let j = 0; j < 3; j++) { ctx.fillStyle = INK; ctx.fillRect(g.cx - 16 + j * 12, g.cy - 4, 9, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(g.cx - 15 + j * 12, g.cy - 3, 7, 6); } }
+    if (g.booth) {
+      const y = g.cy + g.th / 2 + 2;
+      bench(y, g.bd);
+      sat.filter(w => w.s.back).forEach(w => drawSprite(ctx, w.s.x, w.s.y, w.lk, { seated: true, px: 2.5, back: true }));
+      // the near bench's backrest, in front of the guests sitting on it
+      const x0 = g.cx - g.tw / 2 - 4, w = g.tw + 8;
+      ctx.fillStyle = INK; ctx.fillRect(x0 - 2, y + g.bd - 4, w + 4, 10);
+      ctx.fillStyle = col; ctx.fillRect(x0, y + g.bd - 2, w, 6);
+      ctx.fillStyle = hi; ctx.fillRect(x0 + 2, y + g.bd - 2, w - 4, 2);
+    }
   }
   function fDraw() {
     const cv = $('#fcanvas'); if (!cv || !S || S.mode !== 'floor') return;
@@ -2399,59 +2514,52 @@
     ctx.setTransform(k, 0, 0, k, 0, 0); ctx.imageSmoothingEnabled = false;
     if (!FCOL) fColors();
     const L = fL(), { H } = S.view, t = S.t;
-    // Floor tiles
-    for (let iy = 0, y = L.ch; y < H; iy++, y += 24) for (let ix = 0, x = 0; x < W; ix++, x += 24) { ctx.fillStyle = (ix + iy) % 2 ? FCOL.tile : mix(FCOL.tile.replace('#', '').length === 6 ? FCOL.tile : '#F4FBF7', FCOL.tile2.length === 7 ? FCOL.tile2 : '#A8DCC6', .35); ctx.fillRect(x, y, 24, 24); }
-    // Counter wall + counter
+    // Diner checkerboard floor
+    for (let iy = 0, y = L.ch; y < H; iy++, y += 24) for (let ix = 0, x = 0; x < W; ix++, x += 24) { ctx.fillStyle = (ix + iy) % 2 ? '#FFF8EC' : '#C9C1B6'; ctx.fillRect(x, y, 24, 24); }
+    // Wall with a red diner stripe, then the counter with a chrome edge
     ctx.fillStyle = FCOL.wall; ctx.fillRect(0, 0, W, L.ch - 26);
+    ctx.fillStyle = '#FFFDF7'; ctx.fillRect(0, L.ch - 40, W, 14); ctx.fillStyle = '#E8505B'; ctx.fillRect(0, L.ch - 37, W, 8);
     drawSprite(ctx, L.bea.x, L.ch - 20, { skin: '#E8B48F', hair: '#B23A2F', shirt: '#3FA37D', style: 2 }, { apron: true, seated: true });
     ctx.fillStyle = FCOL.wood; ctx.fillRect(0, L.ch - 26, W, 26); ctx.fillStyle = FCOL.woodDk; ctx.fillRect(0, L.ch - 4, W, 4);
-    ctx.fillStyle = '#2B1A14'; ctx.fillRect(0, L.ch - 28, W, 2);
+    ctx.fillStyle = CHROME; ctx.fillRect(0, L.ch - 26, W, 4);
+    ctx.fillStyle = INK; ctx.fillRect(0, L.ch - 28, W, 2);
     pxText(ctx, 'BEA', L.bea.x, L.ch - 12, 7, '#FFFDF7');
-    // Bea's progress
-    if (S.making) { ctx.fillStyle = '#2B1A14'; ctx.fillRect(L.bea.x - 16, 6, 32, 6); ctx.fillStyle = '#FFD66B'; ctx.fillRect(L.bea.x - 15, 7, 30 * Math.min(1, S.making.t / S.making.dur), 4); }
+    if (S.making) { ctx.fillStyle = INK; ctx.fillRect(L.bea.x - 16, 6, 32, 6); ctx.fillStyle = '#FFD66B'; ctx.fillRect(L.bea.x - 15, 7, 30 * Math.min(1, S.making.t / S.making.dur), 4); }
     // Ticket spike
     const sp = L.spike;
-    ctx.fillStyle = '#2B1A14'; ctx.fillRect(sp.x + 16, sp.y + 4, 4, sp.h - 10); ctx.fillRect(sp.x + 8, sp.y + sp.h - 8, 20, 4);
-    S.spike.slice(0, 4).forEach((tk, i) => { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sp.x + 9, sp.y + 8 + i * 7, 18, 6); ctx.fillStyle = '#2B1A14'; ctx.fillRect(sp.x + 9, sp.y + 13 + i * 7, 18, 1); });
-    pxText(ctx, 'TICKETS', sp.x + 18, sp.y - 2, 5, '#2B1A14');
+    ctx.fillStyle = INK; ctx.fillRect(sp.x + 16, sp.y + 4, 4, sp.h - 10); ctx.fillRect(sp.x + 8, sp.y + sp.h - 8, 20, 4);
+    S.spike.slice(0, 4).forEach((tk, i) => { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sp.x + 9, sp.y + 8 + i * 7, 18, 6); ctx.fillStyle = INK; ctx.fillRect(sp.x + 9, sp.y + 13 + i * 7, 18, 1); });
+    pxText(ctx, 'TICKETS', sp.x + 18, sp.y - 2, 5, INK);
     // Pickup trays
     L.pick.forEach((p, i) => {
       ctx.fillStyle = 'rgba(43,26,20,.25)'; ctx.fillRect(p.x, p.y + p.h - 8, p.w, 6);
       const tr = S.pickups[i];
       if (!tr) return;
-      ctx.fillStyle = '#2B1A14'; ctx.fillRect(p.x, p.y + 10, p.w, p.h - 12); ctx.fillStyle = '#C9CED6'; ctx.fillRect(p.x + 2, p.y + 12, p.w - 4, p.h - 16);
+      ctx.fillStyle = INK; ctx.fillRect(p.x, p.y + 10, p.w, p.h - 12); ctx.fillStyle = CHROME; ctx.fillRect(p.x + 2, p.y + 12, p.w - 4, p.h - 16);
       tr.items.slice(0, 4).forEach((it, j) => drawCup(ctx, p.x + 8 + j * ((p.w - 14) / Math.max(1, Math.min(4, tr.items.length) - 1 || 1)), p.y + 20, it.cup || 'hot'));
-      ctx.fillStyle = PARTY_COLORS[tr.color]; ctx.fillRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12); ctx.fillStyle = '#2B1A14'; ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 2; ctx.strokeRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12);
+      ctx.fillStyle = PARTY_COLORS[tr.color]; ctx.fillRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(p.x + p.w / 2 - 12, p.y - 2, 24, 12);
       pxText(ctx, '#' + tr.num, p.x + p.w / 2, p.y + 4, 7, '#FFFDF7');
     });
     // Bus tub
     const b = L.bus;
-    ctx.fillStyle = '#2B1A14'; ctx.fillRect(b.x, b.y + 8, b.w, b.h - 10); ctx.fillStyle = '#8FA3B5'; ctx.fillRect(b.x + 2, b.y + 10, b.w - 4, b.h - 14);
-    pxText(ctx, 'BUS TUB', b.x + b.w / 2, b.y + 2, 5, '#2B1A14');
+    ctx.fillStyle = INK; ctx.fillRect(b.x, b.y + 8, b.w, b.h - 10); ctx.fillStyle = '#8FA3B5'; ctx.fillRect(b.x + 2, b.y + 10, b.w - 4, b.h - 14);
+    pxText(ctx, 'BUS TUB', b.x + b.w / 2, b.y + 2, 5, INK);
     // Supply shelf
-    L.supplies.forEach(s2 => { ctx.fillStyle = FCOL.woodDk; ctx.fillRect(s2.x, s2.y, s2.w, s2.h); ctx.fillStyle = '#2B1A14'; ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 2; ctx.strokeRect(s2.x, s2.y, s2.w, s2.h); drawSupply(ctx, s2.k, s2.x + s2.w / 2, s2.y + s2.h / 2); });
+    L.supplies.forEach(s2 => { ctx.fillStyle = FCOL.woodDk; ctx.fillRect(s2.x, s2.y, s2.w, s2.h); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(s2.x, s2.y, s2.w, s2.h); drawSupply(ctx, s2.k, s2.x + s2.w / 2, s2.y + s2.h / 2); });
     // Door mat
     ctx.fillStyle = '#8C4A28'; ctx.fillRect(4, H - 12, 60, 10); pxText(ctx, 'DOOR', 34, H - 7, 5, '#FFFDF7');
-    // Tables (and seated groups)
+    // Booths and tables (with seated groups)
+    const pickId = S.drag && S.drag.moved ? S.drag.id : S.sel, picked = pickId != null ? S.parties.find(x => x.id === pickId) : null;
     S.tables.forEach((T, i) => {
-      const g = L.tables[i], seats = seatSpots(g, T), P = T.party && ['reading', 'ready', 'ordered', 'eating', 'check'].includes(T.party.state) ? T.party : null;
-      // chairs
-      seats.forEach(s2 => { ctx.fillStyle = '#2B1A14'; ctx.fillRect(s2.x - 9, s2.y - 9, 18, 14); ctx.fillStyle = FCOL.wood; ctx.fillRect(s2.x - 7, s2.y - 7, 14, 10); });
-      if (P) P.looks.slice(0, 2).forEach((lk, j) => drawSprite(ctx, seats[j].x, seats[j].y - 3, lk, { seated: true, px: 2.5 }));
-      // table top
-      ctx.fillStyle = '#2B1A14'; ctx.fillRect(g.cx - g.tw / 2 - 2, g.cy - g.th / 2 - 2, g.tw + 4, g.th + 4);
-      ctx.fillStyle = PARTY_COLORS[T.color]; ctx.fillRect(g.cx - g.tw / 2, g.cy - g.th / 2, g.tw, g.th);
-      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(g.cx - g.tw / 2 + 4, g.cy - g.th / 2 + 4, g.tw - 8, 4);
-      if (P) P.looks.slice(2).forEach((lk, j) => drawSprite(ctx, seats[2 + j].x, seats[2 + j].y + 12, lk, { seated: true, px: 2.5 }));
-      if (P && (P.state === 'eating' || P.state === 'check')) P.items.forEach((it, j) => drawCup(ctx, g.cx - (P.items.length - 1) * 8 + j * 16, g.cy + 2, it.cup || 'hot'));
-      if (T.dirty) { for (let j = 0; j < 3; j++) { ctx.fillStyle = '#2B1A14'; ctx.fillRect(g.cx - 16 + j * 12, g.cy - 2, 9, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(g.cx - 15 + j * 12, g.cy - 1, 7, 6); } }
-      pxText(ctx, T.id + (T.seats === 4 ? ' ·4' : ' ·2'), g.cx, g.cy + g.th / 2 - 7, 6, '#2B1A14');
-      if (S.sel != null && !T.party && !T.dirty) {
-        const pp = S.parties.find(x => x.id === S.sel);
-        if (pp && pp.size <= T.seats) { ctx.strokeStyle = (Math.floor(t * 4) % 2) ? '#FFD66B' : '#FFFDF7'; ctx.lineWidth = 3; ctx.strokeRect(g.cx - g.tw / 2 - 6, g.cy - g.th / 2 - 6, g.tw + 12, g.th + 12); }
+      const g = L.tables[i], P = T.party && ['reading', 'ready', 'ordered', 'eating', 'check'].includes(T.party.state) ? T.party : null;
+      // Where the picked-up group can sit: gold blink = same color (bonus!)
+      if (picked && !T.party && !T.dirty && picked.size <= T.seats) {
+        const m = picked.color === T.color;
+        ctx.fillStyle = m ? ((Math.floor(t * 4) % 2) ? 'rgba(255,214,107,.75)' : 'rgba(255,214,107,.4)') : 'rgba(255,253,247,.55)';
+        ctx.fillRect(g.cx - g.half - 6, g.top - 4, 2 * g.half + 12, g.bot - g.top + 10);
       }
-      // bubble + hearts
-      const by = g.cy - g.th / 2 - 40;
+      drawSpot(ctx, g, T, P);
+      const by = g.top - 14;
       if (P) {
         drawHearts(ctx, g.cx, by - 20, P.p);
         if (P.state === 'reading') { bubble(ctx, g.cx, by, 26, 16); pxText(ctx, '...', g.cx, by + 1, 7); }
@@ -2459,33 +2567,35 @@
         else if (P.state === 'ordered') { bubble(ctx, g.cx, by, 30, 16); pxText(ctx, '#' + P.num, g.cx, by + 1, 7); }
         else if (P.state === 'eating' && P.req) { bubble(ctx, g.cx, by, 26, 18, '#FFF3C2'); drawSupply(ctx, P.req, g.cx, by); }
         else if (P.state === 'check') { bubble(ctx, g.cx, by, 26, 16, '#E8F7F0'); pxText(ctx, '$', g.cx, by + 1, 9, '#3FA37D'); }
-      } else if (T.dirty) { bubble(ctx, g.cx, by + 10, 34, 14); pxText(ctx, 'CLEAR', g.cx, by + 11, 5); }
+      } else if (T.dirty) { bubble(ctx, g.cx, by + 6, 34, 14); pxText(ctx, 'CLEAR', g.cx, by + 7, 5); }
     });
-    // Parties at the door and walking
-    const q = fQueue();
-    q.forEach((P, i) => {
-      const pos = L.queue(i);
-      P.x += (pos.x - P.x) * .2; P.y += (pos.y - P.y) * .2;
+    // Groups waiting at the door (one may be lifted by your finger)
+    fQueue().forEach(P => {
+      if (S.drag && S.drag.moved && S.drag.id === P.id) return;
       if (S.sel === P.id) { ctx.fillStyle = '#FFD66B'; ctx.fillRect(P.x - 30, P.y - 52, 60, 56); }
-      P.looks.forEach((lk, j) => drawSprite(ctx, P.x - (P.size - 1) * 7 + j * 14, P.y + (j % 2) * 3, lk, { px: 2.2 }));
+      drawGroup(ctx, P, P.x, P.y, 2.2, P.mv);
       drawHearts(ctx, P.x, P.y - 60, P.p);
-      pxText(ctx, '#' + P.num, P.x + 24, P.y - 40, 6, '#2B1A14');
+      pxText(ctx, '#' + P.num, P.x + 24, P.y - 40, 6, INK);
     });
-    S.parties.filter(P => P.state === 'walking' || P.state === 'leaving').forEach(P => {
-      P.looks.forEach((lk, j) => drawSprite(ctx, P.x - (P.size - 1) * 7 + j * 14, P.y, lk, { px: 2.2, bob: Math.floor(t * 8 + j) % 2 }));
-    });
+    S.parties.filter(P => P.state === 'walking' || P.state === 'leaving').forEach(P => drawGroup(ctx, P, P.x, P.y, 2.2, true));
     // Server
-    const sv = S.srv, moving = sv.cur && !sv.doing;
-    drawSprite(ctx, sv.x, sv.y, { skin: '#C98D63', hair: '#2B1A14', shirt: '#2A4D73', style: 1 }, { apron: true, bob: moving ? Math.floor(t * 10) % 2 : 0 });
+    const sv = S.srv, moving = sv.cur && !sv.doing, sst = moving ? Math.floor((sv.wd || 0) / 9) % 4 : 0;
+    drawShadow(ctx, sv.x, sv.y, 3);
+    drawSprite(ctx, sv.x, sv.y, { skin: '#C98D63', hair: INK, shirt: '#2A4D73', style: 1 }, { apron: true, step: sst, bob: sst % 2 ? -1 : 0 });
     sv.hands.forEach((h, i) => {
       const hx = sv.x - 14 + i * 16, hy = sv.y - 56;
-      if (h.type === 'tray') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(hx - 8, hy, 16, 6); ctx.fillStyle = PARTY_COLORS[h.color]; ctx.fillRect(hx - 7, hy + 1, 14, 4); }
-      else if (h.type === 'dishes') { ctx.fillStyle = '#2B1A14'; ctx.fillRect(hx - 7, hy - 2, 14, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(hx - 6, hy - 1, 12, 6); }
+      if (h.type === 'tray') { ctx.fillStyle = INK; ctx.fillRect(hx - 8, hy, 16, 6); ctx.fillStyle = PARTY_COLORS[h.color]; ctx.fillRect(hx - 7, hy + 1, 14, 4); }
+      else if (h.type === 'dishes') { ctx.fillStyle = INK; ctx.fillRect(hx - 7, hy - 2, 14, 8); ctx.fillStyle = '#E6DCD4'; ctx.fillRect(hx - 6, hy - 1, 12, 6); }
       else drawSupply(ctx, h.k, hx, hy + 2);
     });
-    if (sv.tickets.length) { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sv.x + 10, sv.y - 40, 10, 12); ctx.strokeStyle = '#2B1A14'; ctx.lineWidth = 1.5; ctx.strokeRect(sv.x + 10, sv.y - 40, 10, 12); }
+    if (sv.tickets.length) { ctx.fillStyle = '#FFFDF7'; ctx.fillRect(sv.x + 10, sv.y - 40, 10, 12); ctx.strokeStyle = INK; ctx.lineWidth = 1.5; ctx.strokeRect(sv.x + 10, sv.y - 40, 10, 12); }
     // Lined-up taps
-    (sv.cur ? [sv.cur] : []).concat(sv.queue).forEach((a, i) => { const pt = fPoint(a); if (!pt) return; ctx.fillStyle = '#2B1A14'; ctx.fillRect(pt.x - 8, pt.y - 72, 16, 16); ctx.fillStyle = '#F2545B'; ctx.fillRect(pt.x - 7, pt.y - 71, 14, 14); pxText(ctx, String(i + 1), pt.x, pt.y - 63, 7, '#FFFDF7'); });
+    (sv.cur ? [sv.cur] : []).concat(sv.queue).forEach((a, i) => { const pt = fPoint(a); if (!pt) return; ctx.fillStyle = INK; ctx.fillRect(pt.x - 8, pt.y - 72, 16, 16); ctx.fillStyle = '#F2545B'; ctx.fillRect(pt.x - 7, pt.y - 71, 14, 14); pxText(ctx, String(i + 1), pt.x, pt.y - 63, 7, '#FFFDF7'); });
+    // The group you're dragging floats just above your finger
+    if (S.drag && S.drag.moved) {
+      const P = S.parties.find(x => x.id === S.drag.id);
+      if (P) { drawGroup(ctx, P, S.drag.x, S.drag.y - 14, 2.4, false, 10); pxText(ctx, '#' + P.num, S.drag.x + 26, S.drag.y - 54, 6, INK); }
+    }
     // Floaters
     S.floaters = S.floaters.filter(f => t - f.t0 < 1.2);
     S.floaters.forEach(f => { const a = (t - f.t0) / 1.2; ctx.globalAlpha = 1 - a; pxText(ctx, f.text, f.x, f.y - a * 26, 7, f.color); ctx.globalAlpha = 1; });
@@ -2506,13 +2616,13 @@
     $('#ftickets').innerHTML = sv.tickets.length ? `Tickets: ${sv.tickets.map(n => '#' + n).join(' ')} <span>→ take to Bea</span>` : '';
   }
 
-  /* ---------- Taps ---------- */
+  /* ---------- Taps and drags ---------- */
+  function fPos(e) { const r = $('#fcanvas').getBoundingClientRect(), k = S.view.W / r.width; return { x: (e.clientX - r.left) * k, y: (e.clientY - r.top) * k }; }
   function fHit(e) {
-    const cv = $('#fcanvas'), r = cv.getBoundingClientRect(), k = S.view.W / r.width;
-    const x = (e.clientX - r.left) * k, y = (e.clientY - r.top) * k, L = fL();
+    const { x, y } = fPos(e), L = fL();
     const inR = q => x >= q.x && x <= q.x + q.w && y >= q.y && y <= q.y + q.h;
-    const qi = fQueue().findIndex((P, i) => { const p = L.queue(i); return inR({ x: p.x - 32, y: p.y - 64, w: 64, h: 66 }); });
-    if (qi >= 0) return { type: 'party', id: fQueue()[qi].id };
+    const qp = fQueue().find(P => inR({ x: P.x - 34, y: P.y - 66, w: 68, h: 70 }));
+    if (qp) return { type: 'party', id: qp.id };
     const ti = L.tables.findIndex(g => inR(g.hit)); if (ti >= 0) return { type: 'table', i: ti };
     if (inR(L.spike)) return { type: 'spike' };
     const pi = L.pick.findIndex(inR); if (pi >= 0) return { type: 'pickup', i: pi };
@@ -2520,22 +2630,50 @@
     const su = L.supplies.find(inR); if (su) return { type: 'supply', k: su.k };
     return null;
   }
-  function fTap(e) {
-    if (!S || S.mode !== 'floor' || !S.running || S.paused) return;
+  const fLive = () => S && S.mode === 'floor' && S.running && !S.paused;
+  function fDown(e) {
+    if (!fLive()) return;
     const h = fHit(e); if (!h) return;
-    if (h.type === 'party') { S.sel = S.sel === h.id ? null : h.id; sfx.click(); setTimeout(tutPoke, 0); return; }
-    if (h.type === 'table' && S.sel != null) {
-      const T = S.tables[h.i], P = S.parties.find(x => x.id === S.sel);
-      if (!P || P.state !== 'door') { S.sel = null; return; }
-      if (T.party || T.dirty) { hint(`Table ${T.id} isn't free yet.`); return; }
-      if (P.size > T.seats) { hint(`Table ${T.id} only seats ${T.seats}. This group has ${P.size}.`); return; }
-      const g = fL().tables[h.i];
-      P.state = 'walking'; P.table = h.i; P.tx = g.cx; P.ty = g.cy - 10; T.party = P; S.sel = null;
-      P.match = S.day >= F_COLOR_DAY && P.color === T.color;
-      if (P.match) { fFloat(g.cx, g.cy - 50, 'COLOR MATCH!', '#D9A93A'); sfx.cash(); } else sfx.done();
-      setTimeout(tutPoke, 0); return;
+    if (h.type === 'party') {
+      const p = fPos(e);
+      S.drag = { id: h.id, x: p.x, y: p.y, sx: p.x, sy: p.y, moved: false };
+      try { $('#fcanvas').setPointerCapture(e.pointerId); } catch (_) {}
+      return;
     }
+    if (h.type === 'table' && S.sel != null) { fSeat(S.sel, h.i); return; }
     fQueueAct(h); setTimeout(tutPoke, 0);
+  }
+  function fMove(e) {
+    if (!S || !S.drag) return;
+    const p = fPos(e); S.drag.x = p.x; S.drag.y = p.y;
+    if (!S.drag.moved && Math.hypot(p.x - S.drag.sx, p.y - S.drag.sy) > 10) { S.drag.moved = true; S.sel = null; sfx.click(); }
+  }
+  function fUp() {
+    if (!S || !S.drag) return;
+    const dg = S.drag; S.drag = null;
+    if (!fLive()) return;
+    // A quick tap picks the group up; tap a table next to seat them
+    if (!dg.moved) { S.sel = S.sel === dg.id ? null : dg.id; sfx.click(); setTimeout(tutPoke, 0); return; }
+    const L = fL(), ti = L.tables.findIndex(g => dg.x >= g.hit.x - 10 && dg.x <= g.hit.x + g.hit.w + 10 && dg.y >= g.hit.y && dg.y <= g.hit.y + g.hit.h + 10);
+    if (ti >= 0) fSeat(dg.id, ti);
+  }
+  function fSeat(id, i) {
+    const T = S.tables[i], P = S.parties.find(x => x.id === id);
+    if (!P || P.state !== 'door') { S.sel = null; return; }
+    if (T.party || T.dirty) { hint(`Table ${T.id} isn't free yet.`); return; }
+    if (P.size > T.seats) { hint(`Table ${T.id} only seats ${T.seats}. This group has ${P.size}.`); return; }
+    const g = fL().tables[i];
+    P.state = 'walking'; P.table = i; P.tx = g.stand.x; P.ty = g.stand.y; T.party = P; S.sel = null;
+    P.match = S.day >= F_COLOR_DAY && P.color === T.color;
+    if (P.match) {
+      // Colors in a row pay more (from Day 3): ×2, ×3, up to ×4
+      S.matchRun++; S.stats.matches++;
+      const run = S.day >= F_STREAK_DAY ? Math.min(4, S.matchRun) : 1, bonus = .25 * P.size * run;
+      S.money += bonus; S.stats.tips += bonus;
+      fFloat(g.cx, g.top - 30, run > 1 ? `COLOR x${run} +${money(bonus)}` : `COLOR MATCH +${money(bonus)}`, '#D9A93A');
+      sfx.cash(); renderHUD();
+    } else { S.matchRun = 0; sfx.done(); }
+    setTimeout(tutPoke, 0);
   }
   function fQueueAct(a) {
     const sv = S.srv;
@@ -2552,8 +2690,8 @@
     if (!sv.cur) { sv.cur = sv.queue.shift() || null; if (!sv.cur) return; }
     const pt = fPoint(sv.cur); if (!pt) { sv.cur = null; return; }
     const dx = pt.x - sv.x, dy = pt.y - sv.y, dist = Math.hypot(dx, dy), step = walkSpeed() * dt;
-    if (dist <= step) { sv.x = pt.x; sv.y = pt.y; sv.doing = ACT_TIME[sv.cur.type]; }
-    else { sv.x += dx / dist * step; sv.y += dy / dist * step; }
+    if (dist <= step) { sv.x = pt.x; sv.y = pt.y; sv.doing = ACT_TIME[sv.cur.type]; sv.wd = 0; }
+    else { sv.x += dx / dist * step; sv.y += dy / dist * step; sv.wd = (sv.wd || 0) + step; }
   }
   function fChain(type) {
     const ch = S.chain;
@@ -2600,7 +2738,7 @@
       if (hi >= 0) {
         sv.hands.splice(hi, 1); P.state = 'eating'; P.timer = S.tut ? 3 : 7 + Math.random() * 2; P.p = Math.min(1, P.p + .15);
         S.streak++; S.bestStreak = Math.max(S.bestStreak, S.streak);
-        if (!S.tut && S.day >= F_REQ_DAY && Math.random() < .45) P.reqAt = P.timer - (1.5 + Math.random() * 2);
+        if (!S.tut && S.day >= F_REQ_DAY && Math.random() < .3) P.reqAt = P.timer - (1.5 + Math.random() * 2);
         fChain('serve'); fFloat(g.cx, g.cy - 50, 'RIGHT ORDER!'); sfx.done(); fRender(); return;
       }
       const other = sv.hands.find(h => h.type === 'tray');
@@ -2651,6 +2789,12 @@
   }
 
   /* ---------- Loop ---------- */
+  // Walk toward (x, y) at a steady pace; true once there
+  function fStep(P, x, y, st) {
+    const dx = x - P.x, dy = y - P.y, d = Math.hypot(dx, dy);
+    if (d <= st) { P.x = x; P.y = y; P.mv = false; return true; }
+    P.x += dx / d * st; P.y += dy / d * st; P.wd = (P.wd || 0) + st; P.mv = true; return false;
+  }
   function floorUpdate(dt) {
     S.t += dt;
     const left = S.c.dur - S.t, L = fL();
@@ -2658,17 +2802,14 @@
       if (fQueue().length < 4) { S.parties.push(fMakeParty()); sfx.click(); S.nextSpawn = S.t + S.c.spawn * (.75 + Math.random() * .5); }
       else S.nextSpawn = S.t + 1;
     }
+    const q = fQueue();
     S.parties.forEach(P => {
+      if (P.state === 'door') { const pos = L.queue(q.indexOf(P)); fStep(P, pos.x, pos.y, 90 * dt); }
       if (P.state === 'walking') {
-        const dx = P.tx - P.x, dy = P.ty - P.y, d = Math.hypot(dx, dy), st = 120 * dt;
-        if (d <= st) { P.state = 'reading'; P.timer = S.tut ? 2.5 : 2.5 + Math.random() * 2; } else { P.x += dx / d * st; P.y += dy / d * st; }
+        if (fStep(P, P.tx, P.ty, 115 * dt)) { P.state = 'reading'; P.timer = S.tut ? 2.5 : 2.5 + Math.random() * 2; }
         return;
       }
-      if (P.state === 'leaving') {
-        const dx = L.door.x - P.x, dy = L.door.y - P.y, d = Math.hypot(dx, dy), st = 130 * dt;
-        if (d <= st) P.state = 'gone'; else { P.x += dx / d * st; P.y += dy / d * st; }
-        return;
-      }
+      if (P.state === 'leaving') { if (fStep(P, L.door.x, L.door.y, 130 * dt)) P.state = 'gone'; return; }
       if (P.state === 'reading') { P.timer -= dt; if (P.timer <= 0) { P.state = 'ready'; beep(1046, .08, 'sine', .04); } }
       if (P.state === 'eating') {
         P.timer -= dt;
@@ -2677,11 +2818,11 @@
         if (P.timer <= 0 && !P.req) { P.state = 'check'; beep(1318, .08, 'sine', .04); }
       }
       if (S.tut) return;
-      const drain = P.state === 'door' ? 1 / 1.6 : P.state === 'ready' || P.state === 'check' ? 1 : P.state === 'ordered' ? .6 : P.state === 'eating' && P.req ? .8 : 0;
+      const drain = P.state === 'door' ? 1 / 2.2 : P.state === 'ready' || P.state === 'check' ? 1 : P.state === 'ordered' ? .4 : P.state === 'eating' && P.req ? .8 : 0;
       if (drain) { P.p -= dt * drain / P.pat; if (P.p <= 0) fWalkout(P); }
     });
     S.parties = S.parties.filter(P => P.state !== 'gone');
-    if (!S.making && S.spike.length && S.pickups.some(x => !x)) { const tk = S.spike.shift(); S.making = { ...tk, t: 0, dur: 1.8 + .6 * tk.items.length }; }
+    if (!S.making && S.spike.length && S.pickups.some(x => !x)) { const tk = S.spike.shift(); S.making = { ...tk, t: 0, dur: 1.4 + .45 * tk.items.length }; }
     if (S.making) {
       S.making.t += dt;
       if (S.making.t >= S.making.dur) {
@@ -2697,13 +2838,9 @@
   }
 
   /* ---------- Days ---------- */
-  function floorMenuHTML(d, collapse = false) {
-    const items = FMENU.filter(x => x.day <= d), isNew = x => x.day === d && d > 1;
-    const li = x => `<li class="${isNew(x) ? 'isnew' : ''}"><span class="rname">${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}</span><span class="rsteps"><span class="rstep">${money(x.price)}</span></span></li>`;
-    const all = `<ul class="recipes">${items.map(li).join('')}</ul>`;
-    if (!collapse) return all;
-    const fresh = items.filter(isNew);
-    return `${fresh.length ? `<ul class="recipes">${fresh.map(li).join('')}</ul>` : ''}<details class="fullmenu"><summary>Full menu (${items.length} items)</summary>${all}</details>`;
+  // Solo floor play doesn't need the drink menu, just the job
+  function floorMenuHTML() {
+    return `<div class="unlock goal"><b>The job:</b> drag a group onto a table (same color = bonus) · tap the table at <b>!</b> to take the order · tap the ticket spike · tap the tray with their number · tap the table to serve · tap the <b>$</b> · clear the dishes to the bus tub.</div>`;
   }
   function renderFloorBoard() {
     $('#menu').innerHTML = FMENU.filter(x => x.day <= S.day).map(x => `<li><div class="row"><span>${esc(x.name)}</span><span class="price">${x.price.toFixed(2)}</span></div></li>`).join('');
@@ -2721,8 +2858,7 @@
         Goal: <b>${money(S.c.goal)}</b> in <b>${S.c.dur} seconds</b>.</p>
       ${diffPicker()}
       ${FNEWS[d] ? `<div class="unlock"><b>New: ${FNEWS[d].title}.</b> ${FNEWS[d].text}</div>` : ''}
-      <div class="unlock goal"><b>The job:</b> seat a group · take their order · drop the ticket at Bea's spike · bring the tray with their number · collect the check · clear the dishes to the bus tub.</div>
-      ${floorMenuHTML(d, d >= 3)}
+      ${floorMenuHTML()}
       <div class="btnrow"><button class="big" id="openBtn" type="button">Open the café</button></div>`, 'chalk');
     wireDiff(() => floorStartDay(d));
     $('#openBtn').onclick = () => {
@@ -2764,6 +2900,7 @@
         <span>Day goal</span><span>${money(R.goal)}</span>
         <span>Groups served</span><span>${R.stats.served} (${R.stats.people} people)</span>
         ${R.stats.requests ? `<span>Requests handled</span><span>${R.stats.requests}</span>` : ''}
+        <span>Color matches</span><span>${R.stats.matches || 0}</span>
         <span>Wrong trays</span><span>${R.stats.wrong}</span>
         <span>Walkouts</span><span>${R.stats.missed}</span>
         <span>Best chain</span><span>×${R.bestChain || 0}</span>
@@ -2793,10 +2930,9 @@
   } });
   const P1 = () => S.parties[0];
   const TUT2 = [
-    { el: () => fRect(() => { const p = fL().queue(0); return { x: p.x - 32, y: p.y - 64, w: 64, h: 66 }; }), done: () => S.sel != null || (P1() && P1().table != null),
-      text: 'Group <b>#1</b> is at the door. <b>Tap them</b> to pick them up.' },
-    { el: () => fRect(() => fL().tables[0].hit), done: () => P1() && P1().table != null,
-      text: 'Now <b>tap Table A</b> to seat them. Later, matching their shirt color to the table earns bonus tips!' },
+    { el: () => fRect(() => { const p = fL().queue(0), g = fL().tables[0].hit; const x0 = Math.min(p.x - 34, g.x), y0 = Math.min(p.y - 66, g.y); return { x: x0, y: y0, w: Math.max(p.x + 34, g.x + g.w) - x0, h: Math.max(p.y + 4, g.y + g.h) - y0 }; }),
+      done: () => P1() && P1().table != null,
+      text: () => S.sel != null ? 'Now <b>tap the red booth</b> to seat them.' : 'Group <b>#1</b> is at the door. <b>Drag them onto the red booth</b>. Red shirts + red booth = a <b>color match bonus</b>!' },
     { el: () => fRect(() => fL().tables[0].hit), done: () => P1() && ['ordered', 'eating', 'check'].includes(P1().state),
       text: () => P1() && P1().state === 'ready' ? 'The <b>!</b> means they\'re ready. <b>Tap Table A</b> to take their order.' : 'They\'re reading the menu…' },
     { el: () => fRect(() => fL().spike), done: () => S.spike.length > 0 || !!S.making || S.pickups.some(Boolean) || S.srv.hands.length > 0,
@@ -2821,7 +2957,10 @@
     $('#coach').hidden = false;
     showTutStep();
   }
-  $('#fcanvas').addEventListener('pointerdown', fTap);
+  $('#fcanvas').addEventListener('pointerdown', fDown);
+  $('#fcanvas').addEventListener('pointermove', fMove);
+  $('#fcanvas').addEventListener('pointerup', fUp);
+  $('#fcanvas').addEventListener('pointercancel', () => { if (S) S.drag = null; });
   $('#hands').addEventListener('click', e => {
     const b = e.target.closest('.hand:not(.empty)');
     if (!b || !S || S.mode !== 'floor' || !S.running || S.paused) return;
@@ -3719,7 +3858,7 @@
         <div class="btnrow"><button class="big" id="resumeBtn" type="button">Back to the bar</button><button class="big alt" id="quitBtn" type="button">Title</button></div>
         <div class="btnrow" style="margin-top:10px"><button class="big alt" id="pSound" type="button"></button><button class="big alt" id="pHints" type="button"></button><button class="big alt desk" id="pKeys" type="button">Shortcuts</button>${S.mode === 'floor' ? '' : '<button class="big alt" id="pArr" type="button">Arrange stations</button>'}</div>`;
       showCard(view === 'menu'
-        ? `<h2>Day ${S.day} menu</h2><p>The clock is stopped while you look.</p>${S.mode === 'floor' ? floorMenuHTML(S.day) : recipesHTML(S.day)}${btns}`
+        ? `<h2>Day ${S.day} menu</h2><p>The clock is stopped while you look.</p>${S.mode === 'floor' ? floorMenuHTML() : recipesHTML(S.day)}${btns}`
         : `<h2>On break</h2><p>Customers will wait. Promise.</p>${btns}`);
       $('#resumeBtn').onclick = () => pause(false);
       $('#quitBtn').onclick = title;
@@ -3732,8 +3871,8 @@
   }
 
   /* ---------- Wiring ---------- */
-  $('#cups').addEventListener('click', e => { const b = e.target.closest('.slot'); if (b) selectCup(+b.dataset.i); });
-  $('#ovslots').addEventListener('click', e => { const b = e.target.closest('.ovslot'); if (b) selectOven(+b.dataset.i); });
+  onPress($('#cups'), e => { const b = e.target.closest('.slot'); if (b) selectCup(+b.dataset.i); });
+  onPress($('#ovslots'), e => { const b = e.target.closest('.ovslot'); if (b) selectOven(+b.dataset.i); });
   function dump() {
     if (!S || !S.running || S.paused) return;
     if (S.sel.k === 'oven') {
@@ -3744,7 +3883,7 @@
     if (cup.busy) S.busy[ING[cup.busy.k].station]--;
     S.cups[S.sel.i] = mkCup(); beep(220, .12, 'triangle', .06, -80); renderCups();
   }
-  $('#trash').addEventListener('click', dump);
+  onPress($('#trash'), dump);
   $('#pauseBtn').addEventListener('click', () => pause(!(S && S.paused)));
   function syncToggles() {
     const sl = soundOn ? 'Sound on' : 'Sound off', hl = hintsAll ? 'Hints: all drinks' : 'Hints: new drinks';
@@ -3782,8 +3921,8 @@
       const st = Object.keys(KEYS).find(k => KEYS[k] === key);
       const pk = Object.keys(PKEYS).find(k => PKEYS[k] === key);
       const P = pastries();
-      if (st && ING[st].day <= S.day) add(st);
-      else if (pk && P[pk] && P[pk].day <= S.day && S.oven.length) bake(pk);
+      if (st && ING[st].day <= cday(S.day)) add(st);
+      else if (pk && P[pk] && (P[pk].day <= cday(S.day) || P[pk].sig) && S.oven.length) bake(pk);
       else hit = false;
     }
     if (hit) e.preventDefault();
