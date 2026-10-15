@@ -2749,13 +2749,11 @@
   const ACT_TIME = { table: .45, spike: .25, pickup: .15, bus: .25, supply: .2 };
   function fServerTick(dt) {
     const sv = S.srv;
-    if (!sv.placed) { sv.x = S.view.W * .55; sv.y = S.view.H * .62; sv.placed = true; }
+    if (!sv.placed) { sv.x = S.view.W * .55; sv.y = fL().ch + 40; sv.placed = true; }
     if (sv.doing > 0) { sv.doing -= dt; if (sv.doing <= 0) { sv.doing = 0; const a = sv.cur; sv.cur = null; fResolve(a); } return; }
     if (!sv.cur) { sv.cur = sv.queue.shift() || null; if (!sv.cur) return; }
     const pt = fPoint(sv.cur); if (!pt) { sv.cur = null; return; }
-    const dx = pt.x - sv.x, dy = pt.y - sv.y, dist = Math.hypot(dx, dy), step = walkSpeed() * dt;
-    if (dist <= step) { sv.x = pt.x; sv.y = pt.y; sv.doing = ACT_TIME[sv.cur.type]; sv.wd = 0; }
-    else { sv.x += dx / dist * step; sv.y += dy / dist * step; sv.wd = (sv.wd || 0) + step; }
+    if (fStep(sv, pt.x, pt.y, walkSpeed() * dt)) { sv.doing = ACT_TIME[sv.cur.type]; sv.wd = 0; }
   }
   function fChain(type) {
     const ch = S.chain;
@@ -2833,7 +2831,7 @@
     S.money += sale + tip; S.stats.sales += sale; S.stats.tips += tip; S.stats.served++; S.stats.people += P.size;
     fFloat(g.cx, g.cy - 56, '+' + money(sale + tip)); fFloat(g.cx, g.cy - 40, money(tip) + ' TIP', '#D9A93A');
     fChain('check'); sfx.cash();
-    T.party = null; T.dirty = true; P.state = 'leaving'; P.x = g.cx; P.y = g.cy + 20;
+    T.party = null; T.dirty = true; P.state = 'leaving'; P.x = g.stand.x; P.y = g.stand.y; P.path = null;
     renderHUD();
   }
   function fWalkout(P) {
@@ -2842,7 +2840,7 @@
       const T = S.tables[P.table], g = fL().tables[P.table];
       fFloat(g.cx, g.cy - 50, P.kind === 'critic' ? 'BAD REVIEW...' : 'WALKED OUT', '#F2545B');
       T.party = null; if (P.state === 'eating') T.dirty = true;
-      P.x = g.cx; P.y = g.cy + 20;
+      P.x = g.stand.x; P.y = g.stand.y; P.path = null;
     } else fFloat(P.x, P.y - 70, 'LEFT...', '#F2545B');
     if (S.sel === P.id) S.sel = null;
     S.srv.tickets = S.srv.tickets.filter(n => n !== P.num);
@@ -2854,10 +2852,84 @@
 
   /* ---------- Loop ---------- */
   // Walk toward (x, y) at a steady pace; true once there
+  // Walk toward (x, y) at a steady pace, going around booths and tables; true once there
   function fStep(P, x, y, st) {
-    const dx = x - P.x, dy = y - P.y, d = Math.hypot(dx, dy);
-    if (d <= st) { P.x = x; P.y = y; P.mv = false; return true; }
-    P.x += dx / d * st; P.y += dy / d * st; P.wd = (P.wd || 0) + st; P.mv = true; return false;
+    if (P.x === x && P.y === y) { P.mv = false; return true; }
+    const key = Math.round(x) + ',' + Math.round(y) + ':' + fGrid().key;
+    if (P.pathKey !== key || !P.path || !P.path.length) { P.path = fPath(P.x, P.y, x, y); P.pathKey = key; }
+    while (st > 0 && P.path.length) {
+      const w = P.path[0], dx = w.x - P.x, dy = w.y - P.y, d = Math.hypot(dx, dy);
+      if (d <= st) { P.x = w.x; P.y = w.y; st -= d; P.wd = (P.wd || 0) + d; P.path.shift(); }
+      else { P.x += dx / d * st; P.y += dy / d * st; P.wd = (P.wd || 0) + st; st = 0; }
+    }
+    P.mv = !!P.path.length;
+    if (!P.path.length) { P.x = x; P.y = y; P.path = null; return true; }
+    return false;
+  }
+
+  /* ---------- Walking around furniture: grid A* plus straight-line smoothing ---------- */
+  let FGRID = null;
+  function fGrid() {
+    const L = fL(), key = `${Math.round(L.W)}x${Math.round(L.H)}:${S.tables.length}:${L.supplies.length}`;
+    if (FGRID && FGRID.key === key) return FGRID;
+    const c = 8, cols = Math.ceil(L.W / c), rows = Math.ceil(L.H / c), block = new Uint8Array(cols * rows);
+    // Keep feet out of every booth/table footprint (padded for a group's width), the counter and the supply shelf
+    const rects = L.tables.map(g => ({ x0: g.cx - g.half - 22, x1: g.cx + g.half + 22, y0: (g.booth ? g.cy - g.th / 2 - g.bd : g.cy - g.th / 2) - 8, y1: g.bot + 6 }));
+    rects.push({ x0: -50, x1: L.W + 50, y0: -50, y1: L.ch + 22 });
+    L.supplies.forEach(q => rects.push({ x0: q.x - 4, x1: q.x + q.w + 4, y0: q.y - 2, y1: q.y + q.h + 6 }));
+    const inside = (x, y) => rects.some(r => x > r.x0 && x < r.x1 && y > r.y0 && y < r.y1);
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) block[j * cols + i] = inside((i + .5) * c, (j + .5) * c) ? 1 : 0;
+    return (FGRID = { key, c, cols, rows, block, inside });
+  }
+  function fClear(G, x0, y0, x1, y1) {
+    const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 4);
+    for (let k = 1; k < n; k++) { const t = k / n; if (G.inside(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t)) return false; }
+    return true;
+  }
+  function fPath(x0, y0, x1, y1) {
+    const G = fGrid();
+    if (fClear(G, x0, y0, x1, y1)) return [{ x: x1, y: y1 }];
+    const { c, cols, rows, block } = G;
+    const cell = (x, y) => [Math.max(0, Math.min(cols - 1, Math.floor(x / c))), Math.max(0, Math.min(rows - 1, Math.floor(y / c)))];
+    const free = ([i, j]) => {               // nearest open cell, if this one is blocked
+      if (!block[j * cols + i]) return [i, j];
+      for (let r = 1; r < 20; r++) for (let dj = -r; dj <= r; dj++) for (let di = -r; di <= r; di++) {
+        const a = i + di, b = j + dj;
+        if (a >= 0 && b >= 0 && a < cols && b < rows && !block[b * cols + a]) return [a, b];
+      }
+      return [i, j];
+    };
+    const [si, sj] = free(cell(x0, y0)), [ei, ej] = free(cell(x1, y1)), goal = ej * cols + ei;
+    const gs = new Float32Array(cols * rows).fill(Infinity), from = new Int32Array(cols * rows).fill(-1), done = new Uint8Array(cols * rows);
+    const h = (i, j) => { const dx = Math.abs(i - ei), dy = Math.abs(j - ej); return Math.max(dx, dy) + .414 * Math.min(dx, dy); };
+    const open = [[h(si, sj), sj * cols + si]]; gs[sj * cols + si] = 0;
+    while (open.length) {
+      let bi = 0; for (let k = 1; k < open.length; k++) if (open[k][0] < open[bi][0]) bi = k;
+      const cur = open.splice(bi, 1)[0][1];
+      if (cur === goal) break;
+      if (done[cur]) continue; done[cur] = 1;
+      const ci = cur % cols, cj = (cur - ci) / cols;
+      for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
+        if (!di && !dj) continue;
+        const a = ci + di, b = cj + dj, n = b * cols + a;
+        if (a < 0 || b < 0 || a >= cols || b >= rows || block[n]) continue;
+        if (di && dj && (block[cj * cols + a] || block[b * cols + ci])) continue;   // no cutting corners
+        const g2 = gs[cur] + (di && dj ? 1.414 : 1);
+        if (g2 < gs[n]) { gs[n] = g2; from[n] = cur; open.push([g2 + h(a, b), n]); }
+      }
+    }
+    if (from[goal] < 0 && goal !== sj * cols + si) return [{ x: x1, y: y1 }];      // no route: walk straight
+    const pts = [];
+    for (let n = goal; n >= 0 && n !== sj * cols + si; n = from[n]) { const i = n % cols; pts.unshift({ x: (i + .5) * c, y: ((n - i) / cols + .5) * c }); }
+    pts.push({ x: x1, y: y1 });
+    // Smooth it: from each corner, jump to the farthest point still in a straight clear line
+    const out = []; let ax = x0, ay = y0, k = 0;
+    while (k < pts.length) {
+      let far = k;
+      for (let m = pts.length - 1; m > k; m--) if (fClear(G, ax, ay, pts[m].x, pts[m].y)) { far = m; break; }
+      out.push(pts[far]); ax = pts[far].x; ay = pts[far].y; k = far + 1;
+    }
+    return out;
   }
   function floorUpdate(dt) {
     S.t += dt;
