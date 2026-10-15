@@ -557,6 +557,7 @@
   .rstep + .rstep::before { content: "+"; margin-right: 6px; color: #BDAEA5; }
   .unlock { background: #E8F7F0; border: 2px dashed var(--mint); border-radius: 12px; padding: 8px 10px; margin-bottom: 12px; font-size: 14px; text-align: left; line-height: 1.35; }
   .unlock.goal { background: #FFF3C2; border-color: #D9A93A; }
+  .unlock.season { background: #FDE8EF; border-color: #E07A9B; }
   .fullmenu { text-align: left; margin-bottom: 14px; }
   .fullmenu summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
 
@@ -976,9 +977,13 @@
     strawberry: { label: 'Strawberry',   m: 'Berry',    short: 'Berry',    c: '#F25C7A', day: 24, dark: true },
     lemonade:   { label: 'Lemonade',     short: 'Lemonade', c: '#FFF27A', day: 25 },
     mango:      { label: 'Mango',        short: 'Mango',    c: '#FFB03B', day: 26 },
+    maple:      { label: 'Maple',        short: 'Maple',    c: '#C8742C', day: 999, season: 'fall', dark: true },
+    peppermint: { label: 'Peppermint',   m: 'Mint',     short: 'Mint',     c: '#FFFFFF', day: 999, season: 'winter', tag: '#FFD3D8', ib: 'repeating-linear-gradient(45deg, #F2545B 0 4px, #FFFFFF 4px 8px)', lb: 'repeating-linear-gradient(45deg, #F7A1A8 0 5px, #FFFFFF 5px 10px)' },
+    lavender:   { label: 'Lavender',     short: 'Lavender', c: '#B9A7E8', day: 999, season: 'spring' },
+    coconut:    { label: 'Coconut',      short: 'Coconut',  c: '#F4EFE6', day: 999, season: 'summer' },
   };
   Object.assign(ING, EXTRA_ING);
-  const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip','tea','boba','taro','brownsugar','strawberry','lemonade','mango'];
+  const STATION_ORDER = ['hot','iced','shot','water','milk','oat','foam','vanilla','caramel','choc','chai','matcha','pumpkin','whip','tea','boba','taro','brownsugar','strawberry','lemonade','mango','maple','peppermint','lavender','coconut'];
 
   // One new idea per day. Days 10+ keep adding recipes so later days stay fresh.
   const DRINKS = [
@@ -1008,6 +1013,32 @@
     { name: 'Matcha Milk Tea',     cup: 'iced', items: ['matcha','milk','boba'],          price: 6.50, day: 28 },
     { name: 'Iced Tea Lemonade',   cup: 'iced', items: ['tea','lemonade'],                price: 4.75, day: 29 },
   ];
+
+  // Seasonal menus (2026-10-14): from Day 30 the seasons rotate every 5 days. Each brings
+  // three limited-time drinks and one seasonal syrup, which leave when the season ends.
+  const SEASON_DAY = 30, SEASON_LEN = 5;
+  const SEASONS = [
+    { id: 'fall',   name: 'Fall',   blurb: 'Maple, pumpkin and cozy spice.', drinks: [
+      { name: 'Maple Latte',        cup: 'hot',  items: ['shot', 'maple', 'milk'],                 price: 6.25 },
+      { name: 'Iced Maple Oat',     cup: 'iced', items: ['shot', 'maple', 'oat'],                  price: 6.75 },
+      { name: 'Pumpkin Chai',       cup: 'hot',  items: ['chai', 'pumpkin', 'milk', 'whip'],       price: 6.50 } ] },
+    { id: 'winter', name: 'Winter', blurb: 'Peppermint everything.', drinks: [
+      { name: 'Peppermint Mocha',   cup: 'hot',  items: ['shot', 'choc', 'peppermint', 'milk', 'whip'], price: 6.95 },
+      { name: 'Peppermint Cocoa',   cup: 'hot',  items: ['choc', 'peppermint', 'milk', 'whip'],    price: 4.95 },
+      { name: 'Iced Peppermint Latte', cup: 'iced', items: ['shot', 'peppermint', 'milk'],         price: 6.25 } ] },
+    { id: 'spring', name: 'Spring', blurb: 'Light, floral lavender.', drinks: [
+      { name: 'Lavender Latte',     cup: 'hot',  items: ['shot', 'lavender', 'milk'],              price: 6.25 },
+      { name: 'Lavender Matcha',    cup: 'iced', items: ['matcha', 'lavender', 'oat'],             price: 6.75 },
+      { name: 'Lavender Lemonade',  cup: 'iced', items: ['lavender', 'lemonade'],                  price: 5.50 } ] },
+    { id: 'summer', name: 'Summer', blurb: 'Coconut and sunshine.', drinks: [
+      { name: 'Iced Coconut Latte', cup: 'iced', items: ['shot', 'coconut', 'milk'],               price: 6.50 },
+      { name: 'Coconut Cold Brew',  cup: 'iced', items: ['shot', 'water', 'coconut', 'foam'],      price: 5.95 },
+      { name: 'Mango Coconut Cooler', cup: 'iced', items: ['mango', 'coconut', 'water'],           price: 5.75 } ] },
+  ];
+  const seasonStart = d => SEASON_DAY + Math.floor((d - SEASON_DAY) / SEASON_LEN) * SEASON_LEN;
+  const seasonFor = d => d >= SEASON_DAY ? SEASONS[Math.floor((d - SEASON_DAY) / SEASON_LEN) % SEASONS.length] : null;
+  const seasonDrinks = d => { const se = seasonFor(d); return se ? se.drinks.map(x => ({ ...x, day: seasonStart(d), season: se.name })) : []; };
+  const stationOn = k => ING[k].season ? (seasonFor(S.day) || {}).id === ING[k].season : ING[k].day <= cday(S.day);
 
   const PASTRY_BASE = {
     croissant: { label: 'Croissant',        short: 'Croissant', day: 10, price: 4.25, look: { base: 'croissant' } },
@@ -1234,7 +1265,7 @@
   // "Simple menu": the menu stops growing at 20 items (Day 17). Later days only get busier.
   const SIMPLE_DAY = 17;
   const cday = d => SAVE && SAVE.simple ? Math.min(d, SIMPLE_DAY) : d;
-  const unlockedDrinks = d => allDrinks().filter(x => x.day <= cday(d) || (x.sig && x.day <= d));
+  const unlockedDrinks = d => allDrinks().filter(x => x.day <= cday(d) || (x.sig && x.day <= d)).concat(seasonDrinks(d));
   const unlockedPastries = d => { const P = pastries(); return Object.keys(P).filter(k => P[k].day <= cday(d) || (P[k].sig && P[k].day <= d)); };
   const lv = id => SAVE.lv[id] || 0;
   const shotTime = () => [1.5, 1.2, .9, .7, .45, .3][lv('grinder')];
@@ -1352,10 +1383,11 @@
     const secs = S.c.dur;
     showCard(`
       <h2>Day ${d} menu</h2>
-      <p>${d === 1 ? 'Learn these three, then open up.' : fresh ? `${fresh} new item${fresh > 1 ? 's' : ''} today, marked in yellow.` : 'Same menu, busier crowd.'}
+      <p>${d === 1 ? 'Learn these three, then open up.' : fresh ? `${fresh} new item${fresh > 1 ? 's' : ''} today, marked in yellow.` : seasonFor(d) ? 'This season\'s drinks are below.' : 'Same menu, busier crowd.'}
         Goal: <b>${money(S.c.goal)}</b> in <b>${secs} seconds</b>.</p>
       ${diffPicker()}
       ${NEWS[d] && d <= cday(d) ? `<div class="unlock"><b>New: ${NEWS[d].title}.</b> ${NEWS[d].text}</div>` : ''}
+      ${seasonFor(d) ? `<div class="unlock season"><b>${seasonFor(d).name} menu</b> · Days ${seasonStart(d)}–${seasonStart(d) + SEASON_LEN - 1}. ${seasonFor(d).blurb} ${d === seasonStart(d) ? 'Three new limited-time drinks!' : `${seasonStart(d) + SEASON_LEN - d} day${seasonStart(d) + SEASON_LEN - d > 1 ? 's' : ''} left before the menu changes.`}</div>` : d >= SEASON_DAY - 3 ? `<div class="unlock season">Seasonal menus start on Day ${SEASON_DAY}: new limited-time drinks every 5 days.</div>` : ''}
       ${d >= 14 ? menuPicker() : ''}
       ${S.task ? `<div class="unlock goal"><b>Challenge:</b> ${S.task.text}. Bonus <b>${money(S.task.reward)}</b> to savings.</div>` : ''}
       ${S.special ? `<p>Today's special: <b class="spc">★ ${esc(S.special)}</b> costs 20% more and is extra popular.</p>` : ''}
@@ -1374,9 +1406,9 @@
 
   function recipesHTML(d, collapse = false) {
     const P = pastries();
-    const isNew = x => x.day === d && d > 1 && !x.sig;
+    const isNew = x => (x.day === d && d > 1 && !x.sig) || !!x.season;
     const drinkLi = x => `<li class="${isNew(x) ? 'isnew' : ''}">
-        <span class="rname">${esc(x.name)}${isNew(x) ? '<span class="newtag">New</span>' : ''}${x.sig ? '<span class="newtag sig">Yours</span>' : ''}${S && x.name === S.special ? ' <span class="spc">★ special</span>' : ''}</span>
+        <span class="rname">${esc(x.name)}${x.season ? `<span class="newtag">${x.season}</span>` : isNew(x) ? '<span class="newtag">New</span>' : ''}${x.sig ? '<span class="newtag sig">Yours</span>' : ''}${S && x.name === S.special ? ' <span class="spc">★ special</span>' : ''}</span>
         <span class="rsteps">${[x.cup, ...x.items].map(k => `<span class="rstep"><span class="dot" style="--c:${ING[k].c};${ING[k].ib ? `background:${ING[k].ib}` : ''}"></span>${ING[k].label}</span>`).join('')}</span>
       </li>`;
     const pastryLi = k => `<li class="${isNew(P[k]) ? 'isnew' : ''}">
@@ -1413,8 +1445,8 @@
     const cd = cday(S.day), tease = cd === S.day ? 1 : 0;
     stationOrder().forEach(k => {
       const ing = ING[k];
-      if (ing.day > cd + tease) return; // tease only tomorrow's unlock
-      const locked = ing.day > cd;
+      if (ing.season ? !stationOn(k) : ing.day > cd + tease) return; // tease only tomorrow's unlock
+      const locked = !ing.season && ing.day > cd;
       const b = document.createElement('button');
       b.type = 'button'; b.className = 'station' + (ing.cup ? ' cupbtn' : ''); b.dataset.k = k;
       b.disabled = locked;
@@ -1471,7 +1503,7 @@
     const d = cday(S.day), drinks = unlockedDrinks(S.day), pk = unlockedPastries(S.day), P = pastries();
     const here = S.spots.filter(Boolean).map(c => c.o.who);
     const regs = d >= REG_DAY ? REGULARS.filter(g => !here.includes(g.name) && drinks.some(x => x.name === g.fav)) : [];
-    const drinkW = x => (x.day === d && d > 1 ? 2 : 1) + (x.sig ? 2 : 0) + (x.name === S.special ? 1 : 0);
+    const drinkW = x => (x.day === d && d > 1 ? 2 : 1) + (x.sig ? 2 : 0) + (x.season ? 2 : 0) + (x.name === S.special ? 1 : 0);
     const pastryW = k => (P[k].day === d ? 2 : 1) + (P[k].sig ? 2 : 0);
     let kind = 'normal', who = null, look = randomLook(), drink = null, pastry = null;
 
@@ -1822,6 +1854,7 @@
   }
 
   function unlocksFor(n) {
+    if (seasonFor(n) && n === seasonStart(n)) return [`the ${seasonFor(n).name.toLowerCase()} menu`];
     if (n > cday(n)) return [];
     const P = pastries();
     const list = [
@@ -2142,7 +2175,7 @@
     const cur = SAVE.simple ? 'simple' : 'full';
     return `<div class="diffpick" role="group" aria-label="Menu size">${[['full', 'Full menu'], ['simple', 'Simple menu']].map(([id, l]) =>
       `<button type="button" class="dp${cur === id ? ' on' : ''}" data-menu="${id}" aria-pressed="${cur === id}">${l}</button>`).join('')}</div>
-      <p class="small dpnote">${SAVE.simple ? 'Simple: the menu stops at 20 items (Day 17). Later days only get busier.' : 'Full: new recipes keep coming through Day 29. Simple stops at 20 items.'}</p>`;
+      <p class="small dpnote">${SAVE.simple ? 'Simple: the menu stops at 20 items (Day 17). Later days only get busier.' : 'Full: every recipe through Day 29. Simple stops at 20 items. Both get the seasonal drinks from Day 30.'}</p>`;
   }
   function wireMenuPick(onChange) {
     document.querySelectorAll('[data-menu]').forEach(b => b.onclick = () => {
@@ -2160,7 +2193,8 @@
 
   /* ---------- Keyboard shortcuts (computers) ---------- */
   const KEYS = { hot: 'q', iced: 'w', shot: 'e', water: 'r', milk: 't', oat: 'y', foam: 'u', vanilla: 'i', caramel: 'o', choc: 'p',
-                 chai: 'z', matcha: 'x', pumpkin: 'c', whip: 'v', tea: 'g', boba: 'h', taro: 'j', brownsugar: 'k', strawberry: 'l', lemonade: '[', mango: ']' };
+                 chai: 'z', matcha: 'x', pumpkin: 'c', whip: 'v', tea: 'g', boba: 'h', taro: 'j', brownsugar: 'k', strawberry: 'l', lemonade: '[', mango: ']',
+                 maple: '7', peppermint: '8', lavender: '9', coconut: '0' };
   const PKEYS = { croissant: 'b', muffin: 'n', cookie: 'm', sig: ',' };
   const SPOT_KEYS = ['a', 's', 'd', 'f'];
   function keysCard(back) {
@@ -3045,7 +3079,7 @@
       <p>Tap a station, then tap where you want it. They swap places.</p>
       <div class="arrange">${order.map(k => {
         const ing = ING[k];
-        return `<button type="button" class="arr${picked === k ? ' on' : ''}${ing.day > S.day ? ' later' : ''}" data-k="${k}"><span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span>${ing.m || ing.label}</button>`;
+        return `<button type="button" class="arr${picked === k ? ' on' : ''}${!stationOn(k) ? ' later' : ''}" data-k="${k}"><span class="ic${ing.cup ? ' sq' : ''}" style="--c:${ing.c};${ing.ib ? `background:${ing.ib}` : ''}"></span>${ing.m || ing.label}</button>`;
       }).join('')}</div>
       <div class="btnrow"><button class="big" id="arrDone" type="button">Done</button><button class="big alt" id="arrReset" type="button">Reset order</button></div>`, 'wide', false);
     document.querySelectorAll('.arr').forEach(b => b.onclick = () => {
@@ -3893,7 +3927,7 @@
       const st = Object.keys(KEYS).find(k => KEYS[k] === key);
       const pk = Object.keys(PKEYS).find(k => PKEYS[k] === key);
       const P = pastries();
-      if (st && ING[st].day <= cday(S.day)) add(st);
+      if (st && stationOn(st)) add(st);
       else if (pk && P[pk] && (P[pk].day <= cday(S.day) || P[pk].sig) && S.oven.length) bake(pk);
       else hit = false;
     }
